@@ -149,13 +149,14 @@ def test_cli_matin_offline(capsys, env):
 
 
 def test_scheduled_matin_fixes_protocol_start_and_marks_no_repetition(env, results_client, tmp_path, fixtures_dir):
-    from bases_engine.protocol import PLACEHOLDER, start_date_in_file
+    from bases_engine.protocol import PLACEHOLDER, PLACEHOLDER_COMMIT, start_date_in_file
     proto = tmp_path / "PROTOCOLE_PREENREGISTRE.md"
-    proto.write_text(f"# Protocole\n\n{PLACEHOLDER}\n", encoding="utf-8")
+    proto.write_text(f"# Protocole\n\n{PLACEHOLDER}\n\n{PLACEHOLDER_COMMIT}\n", encoding="utf-8")
     rc = run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto)
     assert rc == 0
     con = storage.connect(env["db"])
     assert storage.protocol_start_date(con) == "2026-09-21" and start_date_in_file(proto) == "2026-09-21"
+    assert "à renseigner" not in proto.read_text(encoding="utf-8") and "à l'activation : `" in proto.read_text(encoding="utf-8")
     assert all(e["repetition"] == 0 for e in storage.editions_for_day(con, "2026-09-21", "T_MATIN"))
     # un second matin planifié ne réécrit jamais la date
     rc = run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto, max_wait=0)
@@ -191,4 +192,5 @@ def test_hebdo_recalibrates_and_reports(env, results_client, snapshot, tmp_path,
     assert saved["version"] == "2026-09-21.1" and saved["calibration"]["k3_m4"]["mode"] == "fixe"   # n < 150 → palier fixe
     md = (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
     assert "Baselines" in md and "3 premiers du moteur" in md and "Critères du protocole" in md and "Non calculé" in md
+    assert "trio publié diffère des 3 premiers du moteur" in md and "Courses concernées" in md
     assert "2026-09-21.1" in (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8") if (tmp_path / "CHANGELOG.md").exists() else True

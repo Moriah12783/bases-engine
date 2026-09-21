@@ -72,13 +72,21 @@ def weekly_stats(con, rows: list[dict], snap=None) -> dict:
     pred = np.array([r["p_calibree_k3"] for r in tgt if r["p_calibree_k3"] is not None])
     obs = np.array([r["hit_k3"] or 0 for r in tgt if r["p_calibree_k3"] is not None], dtype=float)
     out["fiabilite"] = fiabilite(pred, obs) if len(pred) else []
-    # baselines sur les mêmes courses
+    # baselines sur les mêmes courses + compteur cumulé des courses où le trio publié diffère des 3 premiers du moteur
     eng, mkt = [], []
+    div = {"n": 0, "hit_publie": 0, "hit_moteur": 0}
     scon = snap.connect() if snap else None
     try:
         for r in tgt:
             placed = set(json.loads(r["arrivee_json"])[: r["top_m"]])
-            eng.append(len(set(json.loads(r["engine8_json"])[:3]) & placed) == 3)
+            top3 = json.loads(r["engine8_json"])[:3]
+            hit_eng = len(set(top3) & placed) == 3
+            eng.append(hit_eng)
+            trio = json.loads(r["ladder_json"])[f"top{r['top_m']}"]["3"]["chevaux"]
+            if set(trio) != set(top3):
+                div["n"] += 1
+                div["hit_publie"] += int(r["hit_k3"] or 0)
+                div["hit_moteur"] += int(hit_eng)
             if scon is not None:
                 m3 = _market_top3(scon, r["race_id"])
                 if m3:
@@ -89,6 +97,9 @@ def weekly_stats(con, rows: list[dict], snap=None) -> dict:
     out["baseline_moteur_3"] = _rate(eng)
     out["baseline_marche_3"] = _rate(mkt)
     out["n_marche"] = len(mkt)
+    out["divergences"] = {**div, "part": (div["n"] / len(tgt)) if tgt else None,
+                          "taux_publie": (div["hit_publie"] / div["n"]) if div["n"] else None,
+                          "taux_moteur": (div["hit_moteur"] / div["n"]) if div["n"] else None}
     # état des critères du protocole (informatif jusqu'à l'échéance)
     top2 = out["fiabilite"][-2:] if len(out["fiabilite"]) >= 2 else []
     c1 = all(abs(t["freq_observee"] - t["p_annoncee"]) <= 0.05 and t["n"] >= 60 for t in top2) if top2 else None
@@ -119,6 +130,10 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
               f"| Trio publié | {stats['n']} | {_pct(stats['taux_k3'])} |",
               f"| 3 premiers du moteur | {stats['n']} | {_pct(stats['baseline_moteur_3'])} |",
               f"| 3 plus courtes cotes (MARKET_BASELINE, T_MATIN) | {stats['n_marche']} | {_pct(stats['baseline_marche_3'])} |", "",
+              "## Courses où le trio publié diffère des 3 premiers du moteur (cumul, informatif, hors verdict)", "",
+              f"- Courses concernées : **{stats['divergences']['n']}** sur {stats['n']} ({_pct(stats['divergences']['part'])})",
+              f"- 3/3 du trio publié sur ces courses : {_pct(stats['divergences']['taux_publie'])} ({stats['divergences']['hit_publie']}/{stats['divergences']['n']})",
+              f"- 3/3 des 3 premiers du moteur sur ces courses : {_pct(stats['divergences']['taux_moteur'])} ({stats['divergences']['hit_moteur']}/{stats['divergences']['n']})", "",
               "## Fiabilité de P(3/3) annoncée (recalibrée) vs observée", "", "| Tranche | n | annoncée | observée | écart |", "|---|---:|---:|---:|---:|"]
         L += [f"| {t['tranche']} | {t['n']} | {_pct(t['p_annoncee'])} | {_pct(t['freq_observee'])} | {100 * (t['freq_observee'] - t['p_annoncee']):+.1f} pts |" for t in stats["fiabilite"]]
         cr = stats["criteres"]

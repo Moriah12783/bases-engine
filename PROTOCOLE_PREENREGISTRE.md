@@ -9,6 +9,14 @@ que les éditions postérieures. Le palmarès n'est jamais retouché ni filtré.
 
 **Date de début : à renseigner par la première exécution planifiée.**
 
+**Commit du dépôt `bases-engine` à l'activation : à renseigner par la première exécution planifiée.**
+
+Paramètres gelés : `params.json` **version 2026-09-21.2** (validée par le mentor le 21/09/2026 après
+vérification que les seuils de solidité sont calculés sur la P(3/3) **recalibrée**, la quantité comparée
+aux seuils à l'exécution, et que le filtre `priced_ratio ≥ 0,9` du back-test est celui du pipeline
+quotidien). Back-test de référence : horizon T_MATIN, commit moteur **`f1677b6220a882baf8028e232d1a617f32b30d9d`**
+(`turf-engine`), 339 courses du 08/09 au 20/09/2026.
+
 La date est fixée par le premier `matin` déclenché par le cron (événement `schedule`), qui l'écrit
 ici et dans `bases.db` (clé `protocole_debut`). Elle n'est jamais réécrite. Fin : **28 jours** ou
 **800 courses éligibles notées** après cette date, la première des deux échéances atteinte.
@@ -22,8 +30,10 @@ exécutions locales, `--dry-run`) est marquée `repetition = 1` dans `bases_edit
 - Horizon : **T_MATIN** (celui que verrait l'abonné). L'horizon T15 est mesuré chaque soir à titre
   secondaire (éditions `mode = mesure`, jamais publiées).
 - Paramètres : `params.json` version **2026-09-21.2** (lambdas littérature `(1.0, 0.81, 0.65, 0.55, 0.50)`,
-  seuils de solidité top5 A ≥ 0,2275 / B ≥ 0,1466 et top4 A ≥ 0,1344 / B ≥ 0,0781, recalibration à
-  paliers). La recalibration hebdomadaire crée une nouvelle version sans effet rétroactif.
+  seuils de solidité top5 A ≥ 0,2275 / B ≥ 0,1466 et top4 A ≥ 0,1344 / B ≥ 0,0781 — terciles de la
+  P(3/3) recalibrée du back-test T_MATIN sur le commit moteur `f1677b62` —, recalibration à paliers).
+  La recalibration hebdomadaire crée une nouvelle version (calibrateurs seuls) sans effet rétroactif ;
+  les seuils et les lambdas ne changent pas pendant la période.
 - Notation : JSON public `/resultats/` (source de vérité), courses `DEFINITIVE` + `VERIFIEE_PMU`
   uniquement, `ANNULEE` exclues, non-partants jamais placés, ex æquo notés sur `classement[].rang`,
   contrôle croisé avec `race_results` de l'instantané (divergence = pas de notation, alerte).

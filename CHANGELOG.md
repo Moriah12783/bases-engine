@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Retour du mentor sur le rapport T_MATIN : GO pour le gel (version 2026-09-21.2 confirmée)
+
+- Vérification 1 — **seuils calculés sur la P(3/3) recalibrée** : `scoring.analyse()` prend les terciles de `cal_all.transform(p_brute)` ; à l'exécution `compute_edition()` compare `p_calibree` (même calibrateur, depuis `params.json`) aux seuils. Même quantité des deux côtés : aucun recalcul.
+- Vérification 2 — **filtre `priced_ratio ≥ 0,9`** (`config.MIN_PRICED_RATIO`), identique au pipeline quotidien. Sur la cohorte T_MATIN de l'instantané `f1677b62` (397 lignes `odds_real = 1` avec résultat vérifié) : 0 ligne `< 0,9`, 0 ligne NULL, 397 lignes `≥ 0,9` (minimum observé 0,9). Aucun rejeu : **la version 2026-09-21.2 reste la version gelée**, aucun seuil ne bouge.
+- `PROTOCOLE_PREENREGISTRE.md` : mention de la version gelée, du commit moteur du back-test (`f1677b62`) et champ « commit du dépôt à l'activation » rempli automatiquement (`GITHUB_SHA`) par le premier `matin` planifié.
+- Rapport hebdomadaire : compteur cumulé des courses où le trio publié diffère des 3 premiers du moteur (n, part, 3/3 de chacun). Informatif, hors verdict.
+
 ## 2026-09-21 — Décisions du mentor avant activation des crons
 
 - **Date de début du protocole** : champ « à renseigner par la première exécution planifiée » dans `PROTOCOLE_PREENREGISTRE.md` ; fixée par le premier `matin` déclenché par le cron (`GITHUB_EVENT_NAME = schedule`), écrite dans `bases.db` (`meta.protocole_debut`) et dans le fichier (jamais réécrite).
