@@ -6,11 +6,11 @@ name: bases
 on:
   # Propriété des lignes cron : la personne qui a modifié ces lignes en dernier reçoit les notifications
   # d'échec des exécutions planifiées. Steph en est l'auteur de référence : ne pas les retoucher sans le signaler.
-  # schedule:
-  #   - cron: '5 9 * * *'     # matin : édition des bases (instantané 08h30 UTC attendu vers 08h45)
-  #   - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
-  #   - cron: '5 22 * * *'    # soir : notation J et J-7..J-1, mesure T15, palmarès, déploiement
-  #   - cron: '30 7 * * 1'    # lundi : recalibration + rapport hebdomadaire (sprint 3)
+  schedule:
+    - cron: '7 9 * * *'     # matin : édition des bases (instantané 08h30 UTC attendu vers 08h45)
+    - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
+    - cron: '5 22 * * *'    # soir : notation J et J-7..J-1, mesure T15, palmarès, déploiement
+    - cron: '30 7 * * 1'    # lundi : recalibration + rapport hebdomadaire (sprint 3)
   workflow_dispatch:
     inputs:
       command:
