@@ -109,21 +109,28 @@ def test_soir_scores_from_public_json(env, results_client):
     con = storage.connect(env["db"])
     n_mesure = con.execute("select count(*) from bases_editions where mode='mesure' and horizon='T15'").fetchone()[0]
     assert n_mesure > 20
+    per_h = dict(con.execute("select horizon, count(*) from bases_editions where mode='mesure' group by 1").fetchall())
+    assert set(per_h) == {"T90", "T30", "T15"} and all(v > 20 for v in per_h.values())
+    assert all(r[0] == 1 for r in con.execute("select repetition from bases_editions where mode='mesure'"))   # avant le début du protocole
+    assert con.execute("select count(*) from bases_results where horizon='T90'").fetchone()[0] > 40
+    assert con.execute("select count(*) from bases_results where non_partants_json is null").fetchone()[0] == 0
     rows = con.execute("select * from bases_results where horizon='T15'").fetchall()
     # une ligne par cible m = 4 et m = 5 ; une course du 20/09 a moins de 4 classés (non notée, motif journalisé)
     assert len(rows) % 2 == 0 and 2 * (n_mesure - 2) <= len(rows) < 2 * n_mesure
+    assert all(r["repetition"] == 1 for r in rows)
     assert all(r["checked_against_sqlite"] == 1 and r["source"] == "RESULTATS_JSON" for r in rows)
     r5 = [r for r in rows if r["top_m"] == 5]
     assert 0.05 < sum(r["hit_k3"] for r in r5) / len(r5) < 0.6
     assert all(r["hit_k1"] >= r["hit_k2"] >= r["hit_k3"] >= r["hit_k4"] for r in rows)
     assert con.execute("select empreinte_sha256 from results_manifest where date='2026-09-20'").fetchone()[0]
     # second passage : empreinte inchangée → aucune relecture, aucune re-notation
+    total_before = con.execute("select count(*) from bases_results").fetchone()[0]
     before = results_client.requests_made
     rc = run_soir(day="2026-09-20", results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
     assert rc == 0 and results_client.requests_made == before + 2     # manifeste du contrat + manifeste du soir, aucune journée relue
-    assert len(con.execute("select * from bases_results").fetchall()) == len(rows)
+    assert con.execute("select count(*) from bases_results").fetchone()[0] == total_before
     journal = (env["rapports"] / "journal" / "2026-09-20.md").read_text(encoding="utf-8")
-    assert "bilan du 20/09" in journal and "mesure T15" in journal
+    assert "bilan du 20/09" in journal and "mesure intrajournée T90/T30/T15" in journal
 
 
 def test_scoring_rules_dead_heat_and_np():
@@ -181,6 +188,9 @@ def test_hebdo_recalibrates_and_reports(env, results_client, snapshot, tmp_path,
     assert n > 20
     assert run_soir(day="2026-09-20", results_client=results_client, db_path=env["db"], n_sims=N_SIMS) == 0
     con = storage.connect(env["db"])
+    assert con.execute("select count(*) from bases_editions where mode='mesure' and repetition=0 and horizon='T90'").fetchone()[0] > 20
+    con.close()
+    con = storage.connect(env["db"])
     scored = con.execute("select count(*) from bases_results where horizon='T_MATIN' and repetition=0").fetchone()[0]
     assert scored > 40
     con.close()
@@ -193,6 +203,12 @@ def test_hebdo_recalibrates_and_reports(env, results_client, snapshot, tmp_path,
     md = (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
     assert "Baselines" in md and "3 premiers du moteur" in md and "Critères du protocole" in md and "Non calculé" in md
     assert "trio publié diffère des 3 premiers du moteur" in md and "Courses concernées" in md
+    assert "Évolution intrajournée" in md and "| T90 |" in md and "| T30 |" in md and "| T15 |" in md
+    from bases_engine.hebdo import intraday_stats
+    con = storage.connect(env["db"])
+    intra = intraday_stats(con)
+    assert intra["n_matin"] > 20 and all(intra["horizons"][h]["n_communes"] > 20 for h in ("T90", "T30", "T15"))
+    assert 0 <= intra["bases_np"] <= intra["n_matin"]
     assert "2026-09-21.1" in (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8") if (tmp_path / "CHANGELOG.md").exists() else True
 
 

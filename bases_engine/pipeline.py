@@ -209,7 +209,7 @@ def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, 
 
 def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = True, results_client: ResultsClient | None = None,
              db_path=config.DB_PATH, shadow_token: str | None = None, lookback: int = 7, n_sims: int = config.N_SIMS,
-             mesure_horizon: str = "T15") -> int:
+             mesure_horizons: tuple[str, ...] = ("T90", "T30", "T15")) -> int:
     day = day or _date.today().isoformat()
     
     run_id = f"soir-{day}-{uuid.uuid4().hex[:6]}"
@@ -233,8 +233,8 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
 
         repetition = storage.is_repetition(con, day)
-        # 1. Mesure T15 (éditions rétrospectives, non publiées) pour la journée J
-        n_mesure = _mesure_horizon(con, snap, day, mesure_horizon, n_sims, repetition=repetition)
+        # 1. Mesure intrajournée (éditions rétrospectives T90 / T30 / T15, jamais publiées) pour la journée J
+        n_mesure = sum(_mesure_horizon(con, snap, day, h, n_sims, repetition=repetition) for h in mesure_horizons)
 
         # 2. Notation J-lookback..J sur le JSON public (source de vérité), contrôle croisé SQLite
         stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0}
@@ -342,13 +342,14 @@ def _score_course(con, scon, course: dict, stats: dict) -> None:
             k3 = ladders[f"top{m}"]["3"]
             prior = con.execute("select 1 from bases_results where race_id=? and top_m=? and horizon=?", (race_id, m, ed["horizon"])).fetchone()
             rep = int(bool(ed.get("repetition")) or storage.is_repetition(con, ed["date"]))
+            nps = sorted(int(x["num"]) for x in course.get("non_partants") or [])
             con.execute("""insert or replace into bases_results(race_id, result_version, arrivee_json, top_m, hit_k1, hit_k2, hit_k3, hit_k4, hit_2of3,
-                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut, repetition)
-                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut, repetition, non_partants_json)
+                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                         (race_id, version, json.dumps(arrivee), m, hits["hit_k1"], hits["hit_k2"], hits["hit_k3"], hits["hit_k4"], hits["hit_2of3"],
                          iso_utc(), "RESULTATS_JSON", 1 if check else 0, ed["edition_id"], json.dumps(hits),
                          ed["solidite"] if m == ed["top_m"] else None, k3.get("p_calibree"), ed["horizon"],
-                         (course.get("statut") or {}).get("code"), rep))
+                         (course.get("statut") or {}).get("code"), rep, json.dumps(nps)))
             if m == ed["top_m"] and ed["horizon"] == "T_MATIN":
                 if prior:
                     stats["renotees"] += 1
@@ -369,7 +370,7 @@ def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None
     g = pal.get("global", {})
     if g.get("n"):
         L.append(f"Palmarès depuis le {pal.get('depuis')} ({g['n']} courses) : 1 base {100 * g['taux_k1']:.0f} % · 2 bases {100 * g['taux_k2']:.0f} % · 3 bases {100 * g['taux_k3']:.0f} % · 4 bases {100 * g['taux_k4']:.0f} % · ≥ 2/3 {100 * g['taux_2of3']:.0f} % · abstentions {pal.get('abstentions', 0)}")
-    L.append(f"Journées relues : {', '.join(stats['jours_relus']) or 'aucune (empreintes inchangées)'} · notées {stats['notees']} · re-notées {stats['renotees']} · mesure T15 : {n_mesure} édition(s)")
+    L.append(f"Journées relues : {', '.join(stats['jours_relus']) or 'aucune (empreintes inchangées)'} · notées {stats['notees']} · re-notées {stats['renotees']} · mesure intrajournée T90/T30/T15 : {n_mesure} édition(s), jamais publiées")
     if stats["ignorees"]:
         L.append("Non notées : " + ", ".join(f"{k} = {v}" for k, v in stats["ignorees"].items()))
     if stats["divergences"]:

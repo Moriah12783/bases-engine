@@ -111,11 +111,38 @@ def weekly_stats(con, rows: list[dict], snap=None) -> dict:
     return out
 
 
+def intraday_stats(con) -> dict:
+    """Évolution intrajournée (informatif, hors protocole) : trio du matin vs trio T90 / T30 / T15 sur les courses
+    notées (cible publiée, hors répétitions) ; bases du matin devenues non-partantes au résultat."""
+    rows = {}
+    for r in storage.latest_results(con, "T_MATIN"):
+        if r["ed_mode"] in ("shadow", "live") and r["top_m"] == r["ed_top_m"] and not r["repetition"] and not r["ed_repetition"]:
+            rows[r["race_id"]] = r
+    out = {"n_matin": len(rows), "horizons": {}, "bases_np": 0}
+    for r in rows.values():
+        trio = json.loads(r["ladder_json"])["cible"]["3"]["chevaux"]
+        nps = set(json.loads(r["non_partants_json"] or "[]"))
+        if set(trio) & nps:
+            out["bases_np"] += 1
+    for h in ("T90", "T30", "T15"):
+        hrows = {r["race_id"]: r for r in storage.latest_results(con, h)
+                 if r["ed_mode"] == "mesure" and r["top_m"] == r["ed_top_m"] and not r["repetition"] and not r["ed_repetition"]}
+        common = [rid for rid in rows if rid in hrows and hrows[rid]["top_m"] == rows[rid]["top_m"]]
+        diff = [rid for rid in common
+                if set(json.loads(rows[rid]["ladder_json"])["cible"]["3"]["chevaux"]) != set(json.loads(hrows[rid]["ladder_json"])["cible"]["3"]["chevaux"])]
+        out["horizons"][h] = {
+            "n_communes": len(common), "n_differentes": len(diff), "part": (len(diff) / len(common)) if common else None,
+            "matin_3of3": _rate([rows[rid]["hit_k3"] or 0 for rid in diff]), "matin_2of3": _rate([rows[rid]["hit_2of3"] or 0 for rid in diff]),
+            "horizon_3of3": _rate([hrows[rid]["hit_k3"] or 0 for rid in diff]), "horizon_2of3": _rate([hrows[rid]["hit_2of3"] or 0 for rid in diff]),
+        }
+    return out
+
+
 def _pct(x):
     return "—" if x is None else f"{100 * x:.1f} %"
 
 
-def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str | None, n_rep: int) -> str:
+def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str | None, n_rep: int, intraday: dict | None = None) -> str:
     d = datetime.strptime(day, "%Y-%m-%d")
     week = f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}"
     L = [f"# Rapport hebdomadaire bases-engine — {week} (généré le {day})", "",
@@ -142,6 +169,14 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
               f"1. Calibration (2 tranches sup., |écart| ≤ 5 pts, n ≥ 60 chacune ; n actuels {cr['n_tranches_sup']}) : {fmt(cr['calibration'])}",
               f"2. Sélectivité (A ≥ 1,8 × C et A ≥ 28 %) : {fmt(cr['selectivite'])}",
               f"3. Non-régression (trio publié ≥ 3 premiers moteur − 2 pts) : {fmt(cr['non_regression'])}"]
+    if intraday is not None:
+        L += ["", "## Évolution intrajournée (informatif, hors protocole ; mesures T90 / T30 / T15 jamais publiées)", "",
+              f"- Courses du matin notées : {intraday['n_matin']} · courses où une base du trio du matin figure dans les non-partants au résultat : **{intraday['bases_np']}**", "",
+              "| Horizon | Courses communes | Trio différent du matin | Part | 3/3 matin | 3/3 horizon | ≥ 2/3 matin | ≥ 2/3 horizon |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
+        for h, v in intraday["horizons"].items():
+            L.append(f"| {h} | {v['n_communes']} | {v['n_differentes']} | {_pct(v['part'])} | {_pct(v['matin_3of3'])} | {_pct(v['horizon_3of3'])} | {_pct(v['matin_2of3'])} | {_pct(v['horizon_2of3'])} |")
+        L.append("")
+        L.append("_Taux calculés sur les seules courses où le trio de l'horizon diffère du trio du matin._")
     L += ["", "## Rendement des structures de ticket", "", "_Non calculé : le mapping des rapports (`docs/rapports_mapping.md`) n'est pas validé par Steph. Informatif et « non validé » le jour où il le sera._", "",
           "---", "_Aucun chiffre retouché. Les répétitions manuelles antérieures au début du protocole sont exclues._"]
     return "\n".join(L) + "\n"
@@ -165,7 +200,8 @@ def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.
         new = recalibrate(con, rows, day, params) if recalibrer else None
         stats = weekly_stats(con, rows, snap)
         n_rep = con.execute("select count(*) from bases_editions where repetition=1").fetchone()[0]
-        md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep)
+        intraday = intraday_stats(con)
+        md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep, intraday)
         d = datetime.strptime(day, "%Y-%m-%d")
         path = config.RAPPORTS_DIR / f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}.md"
         path.parent.mkdir(parents=True, exist_ok=True)

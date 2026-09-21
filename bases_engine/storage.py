@@ -81,6 +81,10 @@ MIGRATIONS: list[tuple[int, str]] = [
     DROP TABLE bases_results;
     ALTER TABLE bases_results_v4 RENAME TO bases_results;
     """),
+    (5, """
+    -- Mesure intrajournée (T90/T30/T15) : non-partants au résultat pour compter les bases du matin devenues NP.
+    ALTER TABLE bases_results ADD COLUMN non_partants_json TEXT;
+    """),
 ]
 
 

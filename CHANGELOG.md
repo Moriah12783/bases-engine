@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Mesure intrajournée (demande du mentor, hors protocole)
+
+- `soir` : la mesure rétrospective couvre **T90, T30 et T15** (même calcul, même graine), éditions `mode = mesure` stockées par horizon dans `bases_editions`, notées par horizon dans `bases_results`, `repetition` selon la règle en vigueur. Jamais publiées.
+- `bases_results.non_partants_json` (migration 5) : non-partants au résultat.
+- Rapport hebdomadaire, section « Évolution intrajournée » : part des courses où le trio T90 / T30 / T15 diffère du trio du matin, taux 3/3 et ≥ 2/3 du trio du matin contre celui de l'horizon sur ces seules courses, nombre de courses où une base du trio du matin figure dans les non-partants au résultat. Informatif, hors verdict.
+- Aucune publication intrajournée, aucun changement des éditions publiées, du protocole ni de `params.json`.
+
 ## 2026-09-21 — Courses Trio / Couplé placé seulement (retour du mentor sur 57ea54b)
 
 - Courses sans Quarté+, Multi ni 2sur4 : une **échelle cible top 3** est calculée avec le simulateur (mêmes lambdas, même graine), stockée dans `ladder_json.top3` et exposée dans le JSON en champ additif `echelle_top3` (+ `note_top3`). La ligne de structure affiche « Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = xx % (estimation brute, non recalibrée) », avec les 2 bases du barreau 2 de cette échelle. Plus aucune probabilité top 4 affichée à côté d'un pari sur les 3 premiers.
