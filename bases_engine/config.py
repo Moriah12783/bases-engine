@@ -40,8 +40,15 @@ PROB_SUM_TOL = 0.01
 # --- Calcul (§4.3) ------------------------------------------------------------------------
 N_SIMS = 40_000
 DEFAULT_LAMBDAS = (1.0, 0.81, 0.65, 0.55, 0.50)
-SHRINK = 0.85
-CALIB_MIN_N = 150
+SHRINK = 0.85                      # facteur fixe du palier « fixe »
+CALIB_MIN_N = 150                 # (historique) — remplacé par CALIB_LEVELS
+# Échelle d'estimateurs de recalibration (décision mentor 21/09/2026), par (k, top_m) selon n :
+CALIB_LEVELS = {
+    "fixe": {"n_max": 150, "facteur": 0.85},
+    "ratio": {"n_min": 150, "n_max": 300, "bornes": [0.60, 1.00]},
+    "logit": {"n_min": 300, "n_max": 1000},
+    "isotonique": {"n_min": 1000},
+}
 
 # --- Stockage ---------------------------------------------------------------------------------
 DB_PATH = Path(os.environ.get("BASES_DB_PATH", ROOT / "bases.db"))

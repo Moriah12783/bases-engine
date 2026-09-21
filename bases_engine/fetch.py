@@ -169,6 +169,13 @@ class ResultsClient:
         self._last = self._clock()
 
     def get_json(self, name: str) -> dict:
+        if self.base_url.startswith("file://"):            # fixture locale : format de production identique
+            path = Path(self.base_url[len("file://"):]) / name
+            if not path.exists():
+                raise FetchError(f"résultats locaux : {path} absent")
+            self.requests_made += 1
+            with path.open(encoding="utf-8") as f:
+                return json.load(f)
         self._throttle()
         url = f"{self.base_url}/{name}"
         try:

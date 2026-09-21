@@ -1,6 +1,8 @@
 """Bout-en-bout (hors réseau) : back-test sur l'extrait figé, calcul d'édition, CLI."""
 import json
 
+import pytest
+
 from bases_engine import __main__ as cli
 from bases_engine.compute import compute_edition
 from bases_engine.eligibility import EligibleRace, evaluate_race
@@ -16,7 +18,7 @@ def test_backtest_on_fixture_is_consistent(snapshot):
         assert a["n"] == bt["n_courses"]
         assert 1 >= a["taux_k1"] >= a["taux_k2"] >= a["taux_k3"] >= a["taux_k4"] >= 0
         assert a["taux_2of3"] >= a["taux_k3"]
-        assert a["calibration"]["k3_m%d" % a["top_m"]]["mode"] == "shrink"    # n < 150 → repli
+        assert a["calibration"]["k3_m%d" % a["top_m"]]["mode"] == "fixe"      # n < 150 → facteur fixe
         assert a["seuils_solidite"]["A"] >= a["seuils_solidite"]["B"]
     assert a5["taux_k3"] >= a4["taux_k3"]          # top 5 est plus facile que top 4
     assert "RESULT" not in json.dumps(bt["abstentions"]) or bt["abstentions"]
@@ -34,7 +36,7 @@ def test_compute_edition_is_reproducible(snapshot):
     assert e1["ladders"] == e2["ladders"]
     lad = e1["ladders"][ev.top_m]["echelle"]
     assert all(set(lad[k]["chevaux"]) <= set(ev.candidates) for k in (1, 2, 3, 4))
-    assert lad[3]["p_calibree"] == lad[3]["p_brute"] * 0.85           # shrink faute d'historique
+    assert lad[3]["p_calibree"] == pytest.approx(lad[3]["p_brute"] * 0.85)   # palier fixe faute d'historique
     assert e1["solidite"] in "ABC" and e1["structure"]["code"]
 
 

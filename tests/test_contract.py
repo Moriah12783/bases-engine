@@ -49,3 +49,10 @@ def test_contract_detects_schema_drift(snapshot, tmp_path):
     drift = Snapshot("drift", tmp_path, db, snapshot.report_path)
     res = run_contract_checks(drift, "2026-09-21", network=False)
     assert not res.ok and res.failed[0][0] == "schema:predictions"
+
+
+def test_contract_passes_with_local_results_fixture(snapshot, fixtures_dir):
+    from bases_engine.fetch import ResultsClient
+    client = ResultsClient(base_url=f"file://{fixtures_dir / 'resultats'}")
+    res = run_contract_checks(snapshot, "2026-09-21", results_client=client)
+    assert res.ok and not res.skipped, res.summary()

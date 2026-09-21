@@ -56,18 +56,18 @@ def cmd_backtest(args) -> int:
         params = {
             "version": version, "valid_from": stamp, "lambdas": bt["lambdas"],
             "seuils_solidite": {f"top{m}": bt["par_cible"][m]["seuils_solidite"] for m in (4, 5) if bt["par_cible"][m].get("seuils_solidite")},
-            "shrink": config.SHRINK, "calib_min_n": config.CALIB_MIN_N, "n_sims": config.N_SIMS,
+            "shrink": config.SHRINK, "calibration_paliers": config.CALIB_LEVELS, "n_sims": config.N_SIMS,
             "calibration": {}, "source": {"snapshot_commit": snap.sha, "horizon": args.horizon, "since": args.since, "n_courses": bt["n_courses"]},
             "note": (f"Gelé le {stamp} par `backtest --since {args.since} --horizon {args.horizon}` sur {bt['n_courses']} courses. "
                      "Lambdas = littérature (pas de ré-estimation avant 1 500 courses). Seuils = terciles de P(3/3) recalibrée. "
+                     "Recalibration par paliers selon n (fixe 0,85 < 150 ≤ ratio borné [0,60 ; 1,00] < 300 ≤ logit-linéaire < 1000 ≤ isotonique). "
                      "Inchangés jusqu'au verdict du protocole pré-enregistré ; recalibration hebdomadaire = nouvelle version."),
         }
         for m in (4, 5):
             for key, entry in bt["par_cible"][m].get("calibration", {}).items():
-                params["calibration"][key] = {"n": entry["n"], "mode": entry["mode"], "shrink": config.SHRINK,
-                                              "knots_x": entry.get("knots_x"), "knots_y": entry.get("knots_y")}
-                k = int(key[1])
-                storage.insert_calibration(con, iso_utc(), k, m, entry["n"], {"knots_x": entry.get("knots_x"), "knots_y": entry.get("knots_y")}, version)
+                cal = {kk: v for kk, v in entry.items() if kk in ("n", "mode", "facteur", "a", "b", "knots_x", "knots_y")}
+                params["calibration"][key] = cal
+                storage.insert_calibration(con, iso_utc(), int(key[1]), m, entry["n"], cal, version)
         existing = load_params()
         if existing.get("version") == version and not args.force:
             print(f"params.json version {version} existe déjà — non réécrit (utiliser --force).")

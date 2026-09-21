@@ -71,3 +71,13 @@ def test_results_client_rejects_bad_fingerprint():
     c = ResultsClient(session=s, sleep=lambda x: None)
     with pytest.raises(FetchError, match="empreinte"):
         c.day("2026-09-20")
+
+
+def test_results_client_reads_local_fixture(fixtures_dir):
+    c = ResultsClient(base_url=f"file://{fixtures_dir / 'resultats'}")
+    man = c.manifest()
+    assert "2026-09-20" in man["journees"] and man["journees"]["2026-09-20"]["empreinte_sha256"]
+    day = c.day("2026-09-20", expected_fingerprint=man["journees"]["2026-09-20"]["empreinte_sha256"])
+    assert day["nb_courses"] == 72 and day["courses"][0]["statut"]["definitive"]
+    with pytest.raises(FetchError, match="≠ manifeste"):
+        c.day("2026-09-19", expected_fingerprint="0" * 64)

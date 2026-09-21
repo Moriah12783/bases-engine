@@ -1,0 +1,355 @@
+{
+ "schema_version": "1.1",
+ "fournisseur": "Elite Turf — prono.elite-turf.fr",
+ "version_code": {
+  "commit": "1c8b6807c82c20374ea1b715a9be4356edf3973a",
+  "run_id": "35579587617",
+  "depot": "Moriah12783/turf-engine"
+ },
+ "genere_le_utc": "2026-09-21T08:46:40Z",
+ "url_base": "https://prono.elite-turf.fr/",
+ "nb_journees": 28,
+ "inventaire_corrections": {
+  "fichier": "resultats/corrections.json",
+  "nb_corrections": 34,
+  "empreinte_sha256": "e124de6a64a785052b8f2f59390e267ee62e3889ad16796eeaac83686d350749"
+ },
+ "journees": {
+  "2026-09-21": {
+   "nb_courses": 32,
+   "compte_par_statut": {
+    "EN_ATTENTE": 32,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 0,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "cc4608010e43f53bddc4957eb072eb47ba86c240e2b5d1ec7b9c46ba389e97d2",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-21.json"
+  },
+  "2026-09-20": {
+   "nb_courses": 72,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 72,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "17b9e714a70f76f44996dcd6e763b5113c0883c66baf59dda06cc2e1d06adb48",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-20.json"
+  },
+  "2026-09-19": {
+   "nb_courses": 59,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 59,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "932cdcea81e07c6566d5867852187813a6004150e549806b31b102848a945c73",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-19.json"
+  },
+  "2026-09-18": {
+   "nb_courses": 40,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 40,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "929af672d9970030ad98c37e7c1c83971b6d9c0b839bf2b39d35ba38d6f39888",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-18.json"
+  },
+  "2026-09-17": {
+   "nb_courses": 24,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 24,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "023d8529b442f58244f13c2249e1e0ed0c1e106c5e4a631dd2372e8e8daa3d88",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-17.json"
+  },
+  "2026-09-16": {
+   "nb_courses": 24,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 24,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "09eae3b5616a19ff1c8b107ca1f739e39d6c4345b7fb3d07546f2e101aa25575",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-16.json"
+  },
+  "2026-09-15": {
+   "nb_courses": 24,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 24,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "37da39df20be7272f7130235bc906f75fabee9c086e9643fb30dc93dfaf62fe7",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-15.json"
+  },
+  "2026-09-14": {
+   "nb_courses": 39,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 39,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "cfd0d194fd42dc0b6e440b98a5b61ff54a1e9d55e8396c14139a7dce65590f66",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-14.json"
+  },
+  "2026-09-13": {
+   "nb_courses": 34,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 34,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "523a9b280a9e6e49214367a09d6854ccdb50d49f1d82c8b356b22ff34f5761bf",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-13.json"
+  },
+  "2026-09-12": {
+   "nb_courses": 49,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 49,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "e99c92216644be8fa61f42aeb45ac2d78d6816a0b1caefe90f9aa1bfcacbaeb8",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-12.json"
+  },
+  "2026-09-11": {
+   "nb_courses": 40,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 40,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "c4f145053b806beae76064c904037a40aef9f122804c493fdc79ded7309f4dd6",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-11.json"
+  },
+  "2026-09-10": {
+   "nb_courses": 25,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 25,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "4d1bc646439b3e8b1ac31b1191965ee6769ba5d9e9464d38011577098df05780",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-10.json"
+  },
+  "2026-09-09": {
+   "nb_courses": 31,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 31,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "b07399fd53e1eecb124d278c84cd631ad3f4b5f0d4a66b619ca39fc8df7a681c",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-09.json"
+  },
+  "2026-09-08": {
+   "nb_courses": 25,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 25,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "4684155734017cd3abb8b64522649f2d7ed3d63d0f23bc9ca008f488a882ad1f",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-08.json"
+  },
+  "2026-09-07": {
+   "nb_courses": 25,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 25,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "b996f0d3181d8cc211487bf397035018f38b7f580099487a0d4495ccc851849c",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-07.json"
+  },
+  "2026-09-06": {
+   "nb_courses": 49,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 49,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "ed13225503f5a34c5e0b2d35de75ca754819357cde7f1443d33f3d1d816a549d",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-06.json"
+  },
+  "2026-09-05": {
+   "nb_courses": 41,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 41,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "118b3c27f07ae45db778f49afa149e5f03b8d981e063652ea8f75e727864335e",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-05.json"
+  },
+  "2026-09-04": {
+   "nb_courses": 46,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 45,
+    "ANNULEE": 1
+   },
+   "empreinte_sha256": "2a971bdd7f713bfa4af514e35c2ff89dbefc42c9b9c277636ca86f697719ac3c",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-04.json"
+  },
+  "2026-09-03": {
+   "nb_courses": 33,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 33,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "4ca75b3ada98b9a3e805f7bb6df642377bfffd5d0f0de5c67a1c29e4d96d527f",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-03.json"
+  },
+  "2026-09-02": {
+   "nb_courses": 54,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 54,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "ad28ce06f5ef94461dfa336ef019c14f457536b05c3e0c4e259baf599e4427a2",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-02.json"
+  },
+  "2026-09-01": {
+   "nb_courses": 44,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 44,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "c4a7b5bb360881bf16901b3be8d40384ff5c33cd2ba9e1e79aa1b886d70115b1",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-09-01.json"
+  },
+  "2026-08-31": {
+   "nb_courses": 45,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 45,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "5770a96ab75083bfc4d834ce795fb4bc7e24d8403e7853d9498b65db89e25bd5",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-31.json"
+  },
+  "2026-08-30": {
+   "nb_courses": 50,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 50,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "3612de2e991d5ee61a22a9b073781e7da792d71adcdb2a4f4e766b5dc2353ede",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-30.json"
+  },
+  "2026-08-29": {
+   "nb_courses": 66,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 66,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "4682c48e35b2c53cf406b24f1b97951d83b1091257ae9c00870a9209f7ef5bbe",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-29.json"
+  },
+  "2026-08-28": {
+   "nb_courses": 46,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 46,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "d323299bafeadbf94dcf7c8e953528217c1d5b80396dbe6e2b9f1e9521a5d495",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-28.json"
+  },
+  "2026-08-27": {
+   "nb_courses": 46,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 46,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "385f8431bbe934bc523825ba84b65fb1c757ff7ecfa1b0df61ec0744f9ded26e",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-27.json"
+  },
+  "2026-08-26": {
+   "nb_courses": 42,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 42,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "c66451aa2054de60d0ea341515e3a6f8d17dc2b7a64c2a4531d7c87b44b6986d",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-26.json"
+  },
+  "2026-08-25": {
+   "nb_courses": 40,
+   "compte_par_statut": {
+    "EN_ATTENTE": 0,
+    "PROVISOIRE": 0,
+    "DEFINITIVE": 40,
+    "ANNULEE": 0
+   },
+   "empreinte_sha256": "e51e9150bdd86f8ee3b7f325db1973e3df504176c98fea904343b109c5a4cde6",
+   "genere_le_utc": "2026-09-21T08:46:40Z",
+   "fichier": "resultats/2026-08-25.json"
+  }
+ }
+}

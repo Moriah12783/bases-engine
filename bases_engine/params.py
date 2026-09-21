@@ -5,13 +5,13 @@ import json
 from pathlib import Path
 
 from . import config
-from .core import PostSelectionCalibrator
+from .calibration import LadderCalibrator
 
 
 def load_params(path: Path = config.PARAMS_PATH) -> dict:
     if not path.exists():
         return {"version": "defaut", "valid_from": None, "lambdas": list(config.DEFAULT_LAMBDAS),
-                "seuils_solidite": None, "shrink": config.SHRINK, "calibration": {}, "note": "params.json absent : lambdas littérature, pas de seuils gelés"}
+                "seuils_solidite": None, "shrink": config.SHRINK, "calibration_paliers": config.CALIB_LEVELS, "calibration": {}, "note": "params.json absent : lambdas littérature, pas de seuils gelés"}
     with path.open(encoding="utf-8") as f:
         return json.load(f)
 
@@ -22,15 +22,12 @@ def save_params(params: dict, path: Path = config.PARAMS_PATH) -> None:
         f.write("\n")
 
 
-def calibrator_for(params: dict, k: int, top_m: int) -> PostSelectionCalibrator:
-    """Calibrateur (k, top_m) reconstruit depuis params.json ; repli shrink si absent ou n < 150."""
-    cal = PostSelectionCalibrator(shrink=params.get("shrink", config.SHRINK), min_n=config.CALIB_MIN_N)
+def calibrator_for(params: dict, k: int, top_m: int) -> LadderCalibrator:
+    """Calibrateur (k, top_m) reconstruit depuis params.json (palier choisi selon n à l'ajustement) ;
+    repli palier « fixe » (facteur 0,85) si aucune entrée."""
+    levels = params.get("calibration_paliers") or config.CALIB_LEVELS
     entry = (params.get("calibration") or {}).get(f"k{k}_m{top_m}")
-    if entry and entry.get("knots_x") and entry.get("knots_y") and entry.get("n", 0) >= config.CALIB_MIN_N:
-        import numpy as np
-        cal.n = int(entry["n"])
-        cal.knots_x, cal.knots_y = np.array(entry["knots_x"]), np.array(entry["knots_y"])
-    return cal
+    return LadderCalibrator.from_dict(entry, levels)
 
 
 def solidite(p_calibree_k3: float, params: dict, top_m: int) -> str:

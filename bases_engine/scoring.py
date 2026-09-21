@@ -14,7 +14,7 @@ import numpy as np
 
 from . import config
 from .compute import ladder_for
-from .core import PostSelectionCalibrator
+from .calibration import LadderCalibrator
 from .eligibility import Abstention, EligibleRace, evaluate_race
 from .fetch import Snapshot
 
@@ -124,14 +124,13 @@ def analyse(recs: list[RaceRecord], m: int, *, calib_split: float = 0.5) -> dict
     for k in (1, 2, 3, 4):
         pk = np.array([r.ladders[m]["echelle"][k]["p_brute"] for r in recs])
         ok = np.array([hits(r.ladders[m]["echelle"][k]["chevaux"], t) == k for r, t in zip(recs, tops)], dtype=float)
-        cal_oos = PostSelectionCalibrator(shrink=config.SHRINK, min_n=config.CALIB_MIN_N).fit(pk[:split], ok[:split])
-        cal_all = PostSelectionCalibrator(shrink=config.SHRINK, min_n=config.CALIB_MIN_N).fit(pk, ok)
-        entry = {"n": n, "n_fit_oos": int(split), "mode": "isotonic" if cal_all.knots_x is not None else "shrink",
-                 **cal_all.to_dict()}
+        cal_oos = LadderCalibrator().fit(pk[:split], ok[:split])
+        cal_all = LadderCalibrator().fit(pk, ok)
+        entry = {"n_fit_oos": int(split), **cal_all.to_dict()}
         if k == 3:
             p_oos = cal_oos.transform(pk[split:])
             entry["fiabilite_recalibree_oos"] = fiabilite(p_oos, ok[split:])
-            entry["oos_mode"] = "isotonic" if cal_oos.knots_x is not None else "shrink"
+            entry["oos_mode"] = cal_oos.mode
             p_all = cal_all.transform(pk)
             entry["fiabilite_recalibree_in_sample"] = fiabilite(p_all, ok)
             q1, q2 = np.quantile(p_all, [1 / 3, 2 / 3])

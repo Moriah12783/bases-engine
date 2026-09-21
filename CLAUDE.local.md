@@ -11,3 +11,10 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Livré : paquet `bases_engine` (core inchangé, config, util, fetch, contract, eligibility, compute, scoring, report, storage, params, CLI), 26 tests hors réseau (fixture 2 Mo, 2 journées), back-test T15 (394 courses, 54 s), `params.json` v2026-09-21.1 gelé, `bases.db` initialisé.
 - Écarts / décisions consignés dans `CHANGELOG.md` (notation du back-test sur SQLite, seuils par cible top4/top5, commandes sprint 2 en stub).
 - Reste pour le sprint 2 : `pipeline.py` (matin/soir), `publish.py`, `notify.py`, workflow, `PROTOCOLE_PREENREGISTRE.md`, secrets Cloudflare (Steph).
+
+## 2026-09-21 — Session 1, suite (décisions du mentor)
+
+- Dépôt `Moriah12783/bases-engine` : non accessible à la session au moment de la vérification (introuvable ou sans accès). L'extraction (`git subtree split`) et la suppression de la branche `claude/magical-dijkstra-l07c3r` restent à faire dès que l'accès est ouvert.
+- Fixture résultats construite depuis `site/resultats/` de l'instantané (19 et 20/09, manifeste, corrections). `ResultsClient` lit `file://`.
+- Calibration à paliers implémentée et testée (fixe / ratio / logit / isotonique). Back-test T_MATIN rejoué, `params.json` v2026-09-21.2 gelé.
+- Incident bénin : le run `backtest` T_MATIN a perdu sa sortie standard (pipe fermé) après le gel ; ligne `runs` corrigée à la main avec la cause dans `error`.

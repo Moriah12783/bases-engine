@@ -23,7 +23,7 @@ sera ajouté au sprint 2, dans le dépôt dédié (GitHub ne lit les workflows q
 ```bash
 cd bases-engine
 python3.11 -m pip install -r requirements.txt   # numpy, requests, pytest
-python -m pytest -q                              # 26 tests, hors réseau (fixtures/snapshot/)
+python -m pytest -q                              # tests hors réseau (fixtures/snapshot/, fixtures/resultats/)
 ```
 
 ## Commandes
@@ -44,7 +44,7 @@ Variables d'environnement utiles :
 | `BASES_CACHE_DIR` | cache des instantanés `.cache/<sha>/` (défaut : `./.cache`) |
 | `BASES_LOCAL_SNAPSHOT_DIR` | instantané déjà rempli (tests, hors-ligne) — court-circuite le réseau |
 | `BASES_SOURCE_BASE_URL`, `BASES_DB_FILENAME` (`.gz` accepté), `BASES_REPORT_FILENAME` | source alternative (§12 : croissance de `turf_bench.db`) |
-| `BASES_RESULTS_BASE_URL` | base des JSON de résultats publics |
+| `BASES_RESULTS_BASE_URL` | base des JSON de résultats publics (`file://<dossier>` accepté pour une fixture) |
 
 ## Pipeline (résumé)
 
@@ -55,17 +55,21 @@ Variables d'environnement utiles :
 5. `scoring.py` / `report.py` — back-test rétrospectif (rapport Markdown + JSON dans `rapports/backtest/`), calibrateurs, seuils.
 6. `storage.py` — `bases.db` (runs, bases_editions, bases_results, calibration, params) ; `params.json` = export lisible de la version courante.
 
-## Paramètres gelés (`params.json`, version 2026-09-21.1)
+## Paramètres gelés (`params.json`, version 2026-09-21.2)
 
-Lambdas `(1.0, 0.81, 0.65, 0.55, 0.50)` (pas de ré-estimation avant 1 500 courses), shrink 0,85 tant que
-n < 150, seuils de solidité = terciles de P(3/3) recalibrée du back-test T15 (394 courses, commit `f1677b6`).
-Ils ne changent plus jusqu'au verdict du protocole pré-enregistré ; la recalibration hebdomadaire créera
-une nouvelle version sans toucher aux éditions passées.
+Lambdas `(1.0, 0.81, 0.65, 0.55, 0.50)` (pas de ré-estimation avant 1 500 courses). Recalibration
+post-sélection **à paliers** selon n par (k, cible) : fixe 0,85 (n < 150) → ratio borné [0,60 ; 1,00]
+(< 300) → logit-linéaire (< 1000) → isotonique. Seuils de solidité = terciles de P(3/3) recalibrée du
+back-test **T_MATIN** (339 courses, commit `f1677b6`) : top5 A ≥ 0,2275 / B ≥ 0,1466 ; top4 A ≥ 0,1344 /
+B ≥ 0,0781. Ils ne changent plus jusqu'au verdict du protocole pré-enregistré ; la recalibration
+hebdomadaire créera une nouvelle version sans toucher aux éditions passées.
 
-## Résultats du back-test de référence (T15, 394 courses, 07/09 → 20/09/2026)
+## Résultats du back-test de référence (T_MATIN, 339 courses, 08/09 → 20/09/2026)
 
-Échelle top 5 : 1 base 69,3 % · 2 bases 43,7 % · 3 bases 22,3 % · 4 bases 10,4 % · ≥ 2/3 : 70,8 %.
-Trio joint identique aux 3 premiers du moteur dans 95,7 % des courses. Solidité A / B / C → 3/3 :
-34,8 % / 18,3 % / 13,7 %. Détail : `rapports/backtest/2026-09-21_T15_since-2026-08-25.md`.
+Échelle top 5 : 1 base 63,4 % · 2 bases 33,3 % · 3 bases 20,1 % · 4 bases 9,1 % · ≥ 2/3 : 61,1 %.
+Trio joint identique aux 3 premiers du moteur dans 92,3 % des courses ; 3/3 : trio joint 20,1 % ·
+3 premiers du moteur 19,2 % · 3 plus courtes cotes 18,6 %. Solidité A / B / C → 3/3 : 33,6 % / 15,9 % /
+10,6 %. Détail : `rapports/backtest/2026-09-21_T_MATIN_since-2026-08-25.md` ; référence secondaire T15
+(394 courses) : `rapports/backtest/2026-09-21_T15_since-2026-08-25.md`.
 
 _Aucun chiffre retouché. Rendements non calculés tant que le mapping `rapports` n'est pas validé._
