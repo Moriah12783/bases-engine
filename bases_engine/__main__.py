@@ -10,6 +10,7 @@ from datetime import date as _date
 
 from . import config, storage
 from .fetch import FetchError, get_snapshot
+from .notify import alert, step_summary
 from .util import iso_utc
 
 SPRINT3 = {"hebdo"}
@@ -19,13 +20,17 @@ def cmd_contract_check(args) -> int:
     from .contract import run_contract_checks
     snap = get_snapshot(args.sha)
     day = args.date or _date.today().isoformat()
-    res = run_contract_checks(snap, day, network=not args.no_network)
-    print(f"Contract-check — commit {snap.sha[:10]} — date {day}")
-    print(res.summary())
+    res = run_contract_checks(snap, day, results_client=_results_client(args.no_network), network=not args.no_network)
+    head = f"Contract-check — commit {snap.sha[:10]} — date {day}"
+    print(head); print(res.summary())
     if not res.ok:
-        print(f"\n⛔ BASES — arrêt : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.")
+        msg = f"⛔ BASES — arrêt : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph."
+        print("\n" + msg)
+        alert(f"contract-check : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}", res.summary(), date=day)
         return 2
-    print("\nOK — tous les tests de contrat exécutés sont verts." + (" (test réseau sauté)" if res.skipped else ""))
+    tail = "OK — tous les tests de contrat exécutés sont verts." + (" (test réseau sauté)" if res.skipped else "")
+    print("\n" + tail)
+    step_summary(f"✅ BASES — contract-check {day}", f"{head}\n{res.summary()}\n{tail}")
     return 0
 
 
@@ -51,6 +56,11 @@ def cmd_backtest(args) -> int:
     (out_dir / f"{stamp}_{args.horizon}_since-{args.since}.json").write_text(json.dumps(bt, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print(md)
     print(f"→ rapport : {md_path}")
+    a5 = bt["par_cible"][5]
+    step_summary(f"📊 BASES — backtest {args.horizon} depuis {args.since}",
+                 f"commit {snap.sha[:10]} · {bt['n_courses']} courses · {bt['duree_s']} s\n"
+                 + (f"top 5 : 1 base {100 * a5['taux_k1']:.1f} % · 2 bases {100 * a5['taux_k2']:.1f} % · 3 bases {100 * a5['taux_k3']:.1f} % · 4 bases {100 * a5['taux_k4']:.1f} % · ≥ 2/3 {100 * a5['taux_2of3']:.1f} %\n" if a5.get("n") else "")
+                 + f"rapport : {md_path.relative_to(config.ROOT)}")
 
     if args.freeze_params:
         version = args.params_version or f"{stamp}.1"
@@ -186,14 +196,19 @@ def main(argv=None) -> int:
     for name in sorted(SPRINT3):
         s = sub.add_parser(name, help="sprint 3 — non implémenté")
         s.add_argument("--date")
-        s.set_defaults(fn=lambda a, n=name: (print(f"{n} : sprint 3, non implémenté.") or 3))
+        s.set_defaults(fn=lambda a, n=name: (step_summary(f"⏭️ BASES — {n}", f"{n} : sprint 3, non implémenté.") or 3))
 
     args = p.parse_args(argv)
     try:
         return args.fn(args)
     except FetchError as e:
+        alert(f"arrêt : {args.command} — {e}. Aucune publication. Action requise : Steph.", str(e))
         print(f"⛔ BASES — arrêt : {e}. Aucune publication. Action requise : Steph.", file=sys.stderr)
         return 2
+    except Exception as e:  # noqa: BLE001 — filet de sécurité : la cause va toujours dans le résumé de job (§6.2)
+        import traceback
+        alert(f"échec inattendu de {args.command} : {e!r}", traceback.format_exc())
+        raise
 
 
 if __name__ == "__main__":

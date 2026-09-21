@@ -2,6 +2,12 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Compléments du mentor (sprint 2)
+
+- Workflow : commande `pages-init` (workflow_dispatch **uniquement**, refus explicite sinon) : `npx --yes wrangler@4 pages project create bases-elite-turf --production-branch=main` avec `CLOUDFLARE_API_TOKEN_BASES` / `CLOUDFLARE_ACCOUNT_ID` ; idempotente (projet déjà listé, ou réponse « already exists » → succès). Le rattachement du domaine reste manuel (tableau de bord Pages).
+- Lignes `cron` : note de propriété en tête du bloc `schedule` (l'auteur de la dernière modification reçoit les notifications d'échec — Steph). Elles ne seront plus retouchées sans signalement explicite dans le rapport de session.
+- Résumé de job (§6.2) garanti pour **chaque** exécution : `contract-check` (succès ou échec), `backtest`, `hebdo` (stub), `matin`/`soir` (édition, bilan ou alerte), erreurs de téléchargement et exceptions inattendues (filet dans le CLI → `ALERTES.md` + résumé), et étape de secours du workflow si le processus meurt avant d'écrire.
+
 ## 2026-09-21 — Sprint 2 (pipeline et mode ombre)
 
 - `pipeline.py` : `matin` (instantané du jour avec attente 5 min × 3 puis `SNAPSHOT_LATE` sans échec, tests de contrat bloquants, porte §4.1, calcul, stockage, idempotence par (date, horizon, commit), `superseded_by` si nouveau commit le même matin, publication, notification annexe E) et `soir` (tests de contrat, mesure T15 rétrospective en `mode = mesure` jamais publiée, relecture des journées J-7..J dont l'empreinte a changé, notation sur le JSON public `DEFINITIVE` + `VERIFIEE_PMU` avec contrôle croisé SQLite — divergence = alerte et pas de notation —, re-notation versionnée sur `correction.version`, palmarès, fiabilité, site, bilan).

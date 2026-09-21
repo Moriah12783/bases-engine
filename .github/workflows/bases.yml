@@ -4,6 +4,8 @@
 name: bases
 
 on:
+  # Propriété des lignes cron : la personne qui a modifié ces lignes en dernier reçoit les notifications
+  # d'échec des exécutions planifiées. Steph en est l'auteur de référence : ne pas les retoucher sans le signaler.
   # schedule:
   #   - cron: '5 9 * * *'     # matin : édition des bases (instantané 08h30 UTC attendu vers 08h45)
   #   - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
@@ -12,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: "matin | soir | hebdo | backtest | contract-check"
+        description: "matin | soir | hebdo | backtest | contract-check | pages-init (création du projet Pages, dispatch uniquement)"
         default: "contract-check"
         required: true
       date:
@@ -64,8 +66,37 @@ jobs:
           echo "cmd=$CMD" >> "$GITHUB_OUTPUT"; echo "date=$DATE" >> "$GITHUB_OUTPUT"
           echo "Commande : $CMD ${DATE:+--date $DATE}"
 
+      - name: pages-init — création idempotente du projet Cloudflare Pages (workflow_dispatch uniquement)
+        id: pages_init
+        if: steps.cmd.outputs.cmd == 'pages-init'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "⛔ pages-init n'est autorisé que par workflow_dispatch" | tee -a "$GITHUB_STEP_SUMMARY"; exit 1
+          fi
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "⛔ pages-init : secrets CLOUDFLARE_API_TOKEN_BASES / CLOUDFLARE_ACCOUNT_ID absents" | tee -a "$GITHUB_STEP_SUMMARY"; exit 1
+          fi
+          if npx --yes wrangler@4 pages project list 2>/dev/null | grep -qw "bases-elite-turf"; then
+            echo "## ✅ pages-init — le projet Pages \`bases-elite-turf\` existe déjà (rien à faire)" >> "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          set +e
+          OUT=$(npx --yes wrangler@4 pages project create bases-elite-turf --production-branch=main 2>&1); RC=$?
+          set -e
+          echo "$OUT"
+          if [ $RC -eq 0 ]; then
+            echo "## ✅ pages-init — projet Pages \`bases-elite-turf\` créé (branche de production main). Étape suivante : rattacher bases.elite-turf.fr dans le tableau de bord Pages." >> "$GITHUB_STEP_SUMMARY"
+          elif echo "$OUT" | grep -qi "already exists"; then
+            echo "## ✅ pages-init — le projet Pages \`bases-elite-turf\` existe déjà (rien à faire)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## ⛔ pages-init — échec de la création du projet Pages" >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"; echo "$OUT" | tail -20 >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"; exit 1
+          fi
+
       - name: Exécution
         id: run
+        if: steps.cmd.outputs.cmd != 'pages-init'
         run: |
           ARGS=""
           case "${{ steps.cmd.outputs.cmd }}" in
@@ -75,8 +106,15 @@ jobs:
           if [ "${{ steps.cmd.outputs.cmd }}" = "matin" ] && [ -z "${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}" ]; then ARGS="$ARGS --dry-run"; fi
           python -m bases_engine ${{ steps.cmd.outputs.cmd }} $ARGS
 
+      - name: Résumé de job en cas d'échec avant toute écriture (pip, réseau, plantage)
+        if: failure() && steps.run.outcome == 'failure'
+        run: |
+          if ! grep -q "BASES" "$GITHUB_STEP_SUMMARY" 2>/dev/null; then
+            echo "## ⛔ BASES — ${{ steps.cmd.outputs.cmd }} a échoué avant d'écrire son résumé — voir les logs du run. Action requise : Steph." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Commit des artefacts (bases.db, params.json, site/, rapports/)
-        if: always() && steps.run.outcome != 'skipped'
+        if: always() && steps.run.outcome != 'skipped' && steps.cmd.outputs.cmd != 'pages-init'
         run: |
           git config user.name "bases-engine[bot]"
           git config user.email "bases-engine@users.noreply.github.com"

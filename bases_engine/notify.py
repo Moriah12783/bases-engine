@@ -64,6 +64,11 @@ def _telegram(kind: str, title: str, body: str) -> bool:
         return False
 
 
+def step_summary(title: str, body: str) -> None:
+    """Écrit directement dans $GITHUB_STEP_SUMMARY (ou stdout) — utilisé par les commandes sans journal (contract-check, backtest…)."""
+    _summary(title, body)
+
+
 def notify(kind: str, title: str, body: str, *, date: str | None = None) -> dict:
     sent = {}
     for ch in channels():

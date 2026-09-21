@@ -20,9 +20,10 @@ Dépôt dédié `Moriah12783/bases-engine` (extraction du sous-dossier `bases-en
 
 1. Créer le dépôt privé `Moriah12783/bases-engine` et y pousser l'extraction ; activer « Watch → Custom → Actions » pour recevoir les échecs de workflow.
 2. Secrets : `CLOUDFLARE_API_TOKEN_BASES` (Pages : Edit), `CLOUDFLARE_ACCOUNT_ID`, `SHADOW_TOKEN` (32 caractères aléatoires). Variables : `PUBLICATION_MODE=shadow`, `NOTIFY_CHANNELS=summary,journal`.
-3. Lancer manuellement le workflow avec la commande `contract-check` (Actions → bases → Run workflow). Tant qu'il ne passe pas, les crons restent commentés dans `bases.yml`.
-4. Sur `contract-check` vert : décommenter le bloc `schedule` (décision écrite), puis premier `matin` en mode ombre. Rattacher `bases.elite-turf.fr` au projet Pages `bases-elite-turf`.
-5. Consulter la page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
+3. Lancer manuellement le workflow avec la commande `pages-init` (crée le projet Pages `bases-elite-turf`, idempotent), puis rattacher `bases.elite-turf.fr` dans le tableau de bord Pages.
+4. Lancer manuellement le workflow avec la commande `contract-check` (Actions → bases → Run workflow). Tant qu'il ne passe pas, les crons restent commentés dans `bases.yml`.
+5. Sur `contract-check` vert : décommenter le bloc `schedule` (décision écrite) et modifier soi-même une minute d'une ligne cron pour en devenir l'auteur (destinataire des notifications d'échec), puis premier `matin` en mode ombre.
+6. Consulter la page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
 ## Installation
 
