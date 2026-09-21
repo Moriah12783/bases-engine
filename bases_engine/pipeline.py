@@ -248,7 +248,9 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         # 3. Palmarès, fiabilité, site
         params = load_params()
         pal, fiab = palmares_and_fiabilite(con)
-        contract = build_day_contract(con, day, "T_MATIN", None, params, mode=_mode())
+        # la page d'accueil reste sur la dernière édition publiée (le soir ne recalcule jamais une édition du matin)
+        last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
+        contract = build_day_contract(con, last, "T_MATIN", None, params, mode=_mode())
         site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), con=con, dry_run=False)
         body = soir_message(day, stats, pal, n_mesure, site_info)
         notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}", body, date=day)
