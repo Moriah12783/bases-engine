@@ -60,7 +60,8 @@ def edition_to_course(ed: dict) -> dict:
     stars = fl.get("etoiles")
     paris = [x for x in (fl.get("paris") or "").split("|") if x] if "paris" in fl else ([fl["pari_cible"]] if fl.get("pari_cible") in config.PARIS_UTILES else [])
     engine8 = json.loads(ed["engine8_json"])
-    struct = structure_libelle(ed["solidite"], ed["top_m"], paris, target)
+    top3 = lad.get("top3")
+    struct = structure_libelle(ed["solidite"], ed["top_m"], paris, target, top3)
     struct["code"] = ed["structure_code"] or struct["code"]
     associes = [n for n in engine8 if n not in struct["bases"]] if struct["bases"] else []
     return {
@@ -79,6 +80,8 @@ def edition_to_course(ed: dict) -> dict:
                                  "p_k_moins_1": round(v["p_k_moins_1"], 4)} for k, v in lad[other].items()},
         "base_des_bases": {"chevaux": target["3"]["chevaux"], "p_calibree_3sur3": round(target["3"]["p_calibree"], 4),
                            "p_calibree_2sur3": round(target["3"]["p_k_moins_1"], 4), "solidite": ed["solidite"]},
+        **({"echelle_top3": {k: {"chevaux": v["chevaux"], "p_brute": round(v["p_brute"], 4), "p_k_moins_1": round(v["p_k_moins_1"], 4)} for k, v in top3.items()},
+            "note_top3": "Course sans Quarté+/Multi/2sur4 : échelle cible top 3 (Trio / Couplé placé), probabilités brutes non recalibrées ; solidité et palmarès restent sur la cible top 4 / top 5."} if top3 else {}),
         "trios_alternatifs": [{"chevaux": t["chevaux"], "p_brute": round(t["p_brute"], 4)} for t in json.loads(ed["trios_json"])[1:5]],
         "structure_recommandee": struct,
         "drapeaux": [f for f in json.loads(ed.get("flags_json") or "[]") if ":" not in f],

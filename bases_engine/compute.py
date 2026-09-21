@@ -6,7 +6,7 @@ import numpy as np
 from . import config
 from .core import base_ladder
 from .eligibility import EligibleRace
-from .params import calibrator_for, solidite, structure_for
+from .params import calibrator_for, solidite, structure_for, trio_seulement
 from .util import race_seed
 
 
@@ -39,6 +39,10 @@ def compute_edition(race: EligibleRace, params: dict, *, n_sims: int = config.N_
             cal = calibrator_for(params, k, m)
             rung["p_calibree"] = float(cal.transform(np.array([rung["p_brute"]]))[0])
         out["ladders"][m] = lad
+    if trio_seulement(race.paris_offerts):
+        # Trio / Couplé placé seulement : échelle cible top 3, mêmes lambdas, même graine, probabilité brute (non recalibrée).
+        # La solidité, le palmarès et le protocole restent calculés sur la cible top 4 / top 5.
+        out["ladders"][3] = ladder_for(race, 3, lambdas, n_sims=n_sims)
     target = out["ladders"][race.top_m]
     p3 = target["echelle"][3]["p_calibree"]
     solid = solidite(p3, params, race.top_m)

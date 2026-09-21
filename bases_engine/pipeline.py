@@ -164,13 +164,16 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
 def _edition_row(eid: str, ev: EligibleRace, ed: dict, sha: str, mode: str, params: dict) -> dict:
     ladders = {str(m): {str(k): v for k, v in lad["echelle"].items()} for m, lad in ed["ladders"].items()}
     target = ladders[str(ev.top_m)]
+    ladder_json = {"cible": target, "top4": ladders["4"], "top5": ladders["5"]}
+    if "3" in ladders:
+        ladder_json["top3"] = {k: {"chevaux": v["chevaux"], "p_brute": v["p_brute"], "p_k_moins_1": v["p_k_moins_1"]} for k, v in ladders["3"].items()}
     return {
         "edition_id": eid, "date": ev.date, "race_id": ev.race_id, "race_slug": race_slug(ev.race_id),
         "horizon": ev.horizon, "top_m": ev.top_m, "computed_at_utc": iso_utc(), "snapshot_commit": sha,
         "prediction_hash": ev.prediction_hash, "lock_time_utc": ev.lock_time_utc,
         "engine8_json": json.dumps(ev.engine8), "candidates_json": json.dumps(ev.candidates),
         "lambdas_json": json.dumps(ed["lambdas"]),
-        "ladder_json": json.dumps({"cible": target, "top4": ladders["4"], "top5": ladders["5"]}),
+        "ladder_json": json.dumps(ladder_json),
         "trios_json": json.dumps(ed["ladders"][ev.top_m]["trios"]),
         "solidite": ed["solidite"], "structure_code": ed["structure"]["code"],
         "flags_json": json.dumps(ed["flags"] + [f"pari_cible:{ev.pari_cible}", f"paris:{'|'.join(ev.paris_offerts)}", f"partants:{ev.active_runners}",

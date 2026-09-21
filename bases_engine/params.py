@@ -60,7 +60,15 @@ def pari_principal(paris: list[str]) -> str | None:
     return None
 
 
-def structure_libelle(solid: str, top_m: int, paris: list[str], ladder: dict) -> dict:
+PARIS_A_BASES = ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI", "DEUX_SUR_QUATRE")
+
+
+def trio_seulement(paris: list[str]) -> bool:
+    """Course sans Quarté+, Multi ni 2sur4 : seuls Trio / Couplé placé (3 premiers) sont offerts."""
+    return not any(c in paris for c in PARIS_A_BASES)
+
+
+def structure_libelle(solid: str, top_m: int, paris: list[str], ladder: dict, ladder_top3: dict | None = None) -> dict:
     """Libellé de la structure recommandée dans le pari réellement offert (décision mentor 21/09, présentation seule ;
     le code stocké ne change pas). Retourne {code, texte, motif, pari, barreau, bases, associes_k}."""
     base = structure_for(solid, top_m)
@@ -76,8 +84,13 @@ def structure_libelle(solid: str, top_m: int, paris: list[str], ladder: dict) ->
         k = 2
         if "DEUX_SUR_QUATRE" in paris:
             lib, texte = "2sur4", "2sur4 avec les 2 bases"
-        elif "TRIO" in paris:                     # cas rare (petits pelotons sans 2sur4) : seul pari à bases offert
-            lib, texte = "Trio", "Trio avec les 2 bases + X"
+        elif ladder_top3:                         # Trio / Couplé placé seulement : échelle cible top 3, probabilité brute
+            r2 = ladder_top3.get("2") or ladder_top3.get(2) or {}
+            p2 = r2.get("p_brute")
+            lib = "Trio ou Couplé placé"
+            texte = (f"Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = "
+                     f"{100 * p2:.0f} % (estimation brute, non recalibrée)") if p2 is not None else "Trio ou Couplé placé : 2 bases + X"
+            return {**base, "texte": texte, "pari": lib, "barreau": 2, "bases": list(r2.get("chevaux", [])), "cible_affichee": 3, "p_brute_top3": p2}
         else:
             lib, texte = None, "2 bases, aucun pari à bases offert sur cette course"
     elif principal == "QUINTE_PLUS":

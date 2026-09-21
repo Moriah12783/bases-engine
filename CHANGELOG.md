@@ -2,6 +2,11 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Courses Trio / Couplé placé seulement (retour du mentor sur 57ea54b)
+
+- Courses sans Quarté+, Multi ni 2sur4 : une **échelle cible top 3** est calculée avec le simulateur (mêmes lambdas, même graine), stockée dans `ladder_json.top3` et exposée dans le JSON en champ additif `echelle_top3` (+ `note_top3`). La ligne de structure affiche « Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = xx % (estimation brute, non recalibrée) », avec les 2 bases du barreau 2 de cette échelle. Plus aucune probabilité top 4 affichée à côté d'un pari sur les 3 premiers.
+- Solidité, palmarès et protocole : inchangés, toujours calculés sur la cible top 4 / top 5. Test dédié (Vichy R4C3 du 21/09).
+
 ## 2026-09-21 — Présentation (retour du mentor sur la répétition matin ; hors protocole)
 
 - Pari et structure : l'étiquette « TOP4 » disparaît au profit des paris réellement offerts (`bets_json` : Quinté+, Quarté+, Multi, Mini Multi, 2sur4 ; drapeau `paris:` stocké dans `flags_json`). Structure formulée dans le pari principal : Quinté+ → « 3 bases + XX avec les associés », Quarté+ → « 3 bases + X avec les associés », Multi → « Multi en 5 ou 6 autour des 3 bases », course sans Quarté+/Multi → barreau 2, « 2sur4 avec les 2 bases » ; solidité B → variantes à 2 bases ; C → abstention. **Les codes de structure stockés ne changent pas.**

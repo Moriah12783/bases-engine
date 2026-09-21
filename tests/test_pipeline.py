@@ -206,8 +206,9 @@ def test_presentation_structure_and_order(env, results_client):
     assert m["texte"] == "Multi en 5 ou 6 autour des 3 bases" and m["bases"] == [1, 2, 3]
     d = structure_libelle("A", 4, ["DEUX_SUR_QUATRE"], lad)
     assert d["texte"] == "2sur4 avec les 2 bases" and d["bases"] == [1, 2] and d["barreau"] == 2
-    t = structure_libelle("A", 4, ["TRIO", "COUPLE_PLACE"], lad)
-    assert t["texte"].startswith("Trio avec les 2 bases") and t["barreau"] == 2
+    t = structure_libelle("A", 4, ["TRIO", "COUPLE_PLACE"], lad, {"2": {"chevaux": [1, 3], "p_brute": 0.412}})
+    assert t["texte"] == "Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = 41 % (estimation brute, non recalibrée)"
+    assert t["bases"] == [1, 3] and t["barreau"] == 2 and t["cible_affichee"] == 3
     b = structure_libelle("B", 5, ["QUINTE_PLUS"], lad)
     assert b["texte"] == "2 bases + XXX avec les associés" and b["bases"] == [1, 2] and b["code"] == "2B_XXX"
     assert structure_libelle("C", 4, ["QUARTE_PLUS"], lad)["code"] == "ABSTENTION"
@@ -229,3 +230,26 @@ def test_presentation_structure_and_order(env, results_client):
     assert "Tous à l'arrivée (k/k)" in html and "Un manquant au plus" in html and "Sélection moteur" in html and "Associés" in html
     assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+ du jour" in html
     assert "Mode shadow" in html
+
+
+def test_trio_only_race_gets_top3_ladder(env, results_client):
+    """Vichy R4C3 du 21/09 : Trio et Couplé placé seulement → échelle cible top 3 additive, structure sur les 3 premiers,
+    solidité et cible inchangées (top 4)."""
+    run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
+    day = json.loads((env["site"] / "shadow" / ("t" * 32) / "bases" / "2026-09-21.json").read_text(encoding="utf-8"))
+    by_id = {c["course_id"]: c for c in day["courses"]}
+    c = by_id["R4C3_21092026_VICHY"]
+    assert set(c["paris_offerts"]) == {"TRIO", "COUPLE_PLACE"} and c["top_m"] == 4
+    assert "echelle_top3" in c and c["note_top3"]
+    e3 = c["echelle_top3"]
+    assert 0 < e3["2"]["p_brute"] < e3["1"]["p_brute"] <= 1 and e3["4"]["p_brute"] == 0.0     # 4 chevaux dans les 3 premiers : impossible
+    st = c["structure_recommandee"]
+    if st["code"] != "ABSTENTION":
+        assert st["texte"].startswith("Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = ")
+        assert "estimation brute, non recalibrée" in st["texte"] and st["bases"] == e3["2"]["chevaux"]
+        assert set(c["associes"]) == set(c["moteur"]["selection_8"]) - set(st["bases"])
+    assert c["base_des_bases"]["solidite"] in "ABC" and "echelle_top5" in c
+    # les autres courses n'ont pas d'échelle top 3
+    assert "echelle_top3" not in by_id["R1C1_21092026_LA CAPELLE"]
+    html = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
+    assert "dans les 3 premiers" in html
