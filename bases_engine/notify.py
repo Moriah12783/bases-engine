@@ -23,12 +23,20 @@ def channels() -> list[str]:
     return [c.strip() for c in raw.split(",") if c.strip()]
 
 
+SUMMARY_MARKER = Path(os.environ.get("BASES_SUMMARY_MARKER", config.CACHE_DIR / "summary_written"))
+
+
 def _summary(title: str, body: str) -> None:
     text = f"## {title}\n\n```\n{body}\n```\n"
     path = os.environ.get("GITHUB_STEP_SUMMARY")
     if path:
         with open(path, "a", encoding="utf-8") as f:
             f.write(text)
+        try:                                   # marqueur lu par l'étape de secours du workflow (jamais bloquant)
+            SUMMARY_MARKER.parent.mkdir(parents=True, exist_ok=True)
+            SUMMARY_MARKER.write_text(title + "\n", encoding="utf-8")
+        except OSError:
+            pass
     else:
         print(text)
 

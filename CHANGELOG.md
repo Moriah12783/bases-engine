@@ -2,6 +2,12 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Corrections après le contract-check #2 (commit moteur `71f79f42d2`)
+
+- `publication_reason` : `PRICED_RATIO_LOW` ajouté à l'ensemble connu. Nouvelle règle : une valeur inconnue avec `publishable = false` est un **avertissement** (compté, listé dans le résumé, journalisé dans `ALERTES.md`, non bloquant) ; une valeur inconnue avec `publishable = true` reste **bloquante**. Le drapeau `publishable` est l'autorité, la raison est informative.
+- Workflow, étape « Commit des artefacts » : n'ajoute que les chemins existants (`test -e`), n'échoue jamais sur « rien à ajouter », reste en `if: always()` pour que `ALERTES.md` soit commité même si l'exécution a échoué (cause du run #2 : `git add site` sur un dossier absent).
+- Résumé de secours : écrit seulement si l'exécution n'a posé aucun marqueur (`.cache/summary_written`, posé par le CLI à chaque écriture dans `$GITHUB_STEP_SUMMARY`), pour éviter un double message contradictoire.
+
 ## 2026-09-21 — Retour du mentor sur le rapport T_MATIN : GO pour le gel (version 2026-09-21.2 confirmée)
 
 - Vérification 1 — **seuils calculés sur la P(3/3) recalibrée** : `scoring.analyse()` prend les terciles de `cal_all.transform(p_brute)` ; à l'exécution `compute_edition()` compare `p_calibree` (même calibrateur, depuis `params.json`) aux seuils. Même quantité des deux côtés : aucun recalcul.

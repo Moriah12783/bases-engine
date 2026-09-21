@@ -27,7 +27,7 @@ def cmd_contract_check(args) -> int:
         print("\n" + msg)
         alert(f"contract-check : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}", res.summary(), date=day)
         return 2
-    tail = "OK — tous les tests de contrat exécutés sont verts." + (" (test réseau sauté)" if res.skipped else "")
+    tail = "OK — tous les tests de contrat exécutés sont verts." + (f" · {len(res.warnings)} avertissement(s) non bloquant(s)" if res.warnings else "") + (" (test réseau sauté)" if res.skipped else "")
     print("\n" + tail)
     step_summary(f"✅ BASES — contract-check {day}", f"{head}\n{res.summary()}\n{tail}")
     return 0

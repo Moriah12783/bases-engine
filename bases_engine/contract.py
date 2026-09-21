@@ -32,6 +32,7 @@ class ContractResult:
     passed: list[str] = field(default_factory=list)
     failed: list[tuple[str, str]] = field(default_factory=list)   # (nom du test, détail)
     skipped: list[tuple[str, str]] = field(default_factory=list)
+    warnings: list[tuple[str, str]] = field(default_factory=list)  # non bloquants, comptés et journalisés
 
     @property
     def ok(self) -> bool:
@@ -40,6 +41,7 @@ class ContractResult:
     def summary(self) -> str:
         lines = [f"✅ {t}" for t in self.passed]
         lines += [f"⛔ {t} — {d}" for t, d in self.failed]
+        lines += [f"⚠️ {t} — {d}" for t, d in self.warnings]
         lines += [f"⏭️ {t} — {d}" for t, d in self.skipped]
         return "\n".join(lines)
 
@@ -49,7 +51,7 @@ def _check(res: ContractResult, name: str, cond: bool, detail: str = "") -> None
 
 
 def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsClient | None = None,
-                        network: bool = True) -> ContractResult:
+                        network: bool = True, notify_warnings: bool = True) -> ContractResult:
     res = ContractResult()
     con = snap.connect()
     try:
@@ -98,8 +100,25 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
     _check(res, "historical_logs contient la date J", bool(today), f"0 course pour {date}")
     missing_keys = sorted({k for h in today for k in REQUIRED_LOG_KEYS if k not in h})
     _check(res, "historical_logs : clés attendues", not missing_keys, f"clés absentes : {missing_keys}")
-    unknown = sorted({str(h.get("publication_reason")) for h in logs} - config.KNOWN_PUBLICATION_REASONS)
-    _check(res, "publication_reason dans l'ensemble connu", not unknown, f"valeurs inconnues : {unknown}")
+    # publication_reason : le drapeau `publishable` est l'autorité, la raison est informative.
+    # Valeur inconnue avec publishable = false → AVERTISSEMENT (compté, listé, journalisé, non bloquant) ;
+    # valeur inconnue avec publishable = true → BLOQUANT (une course serait publiée pour une raison que l'on ne comprend pas).
+    unknown_pub = {}
+    unknown_nonpub = {}
+    for h in logs:
+        r = str(h.get("publication_reason"))
+        if r in config.KNOWN_PUBLICATION_REASONS:
+            continue
+        (unknown_pub if h.get("publishable") else unknown_nonpub).setdefault(r, []).append(h.get("race_id"))
+    _check(res, "publication_reason inconnue avec publishable = true", not unknown_pub,
+           "valeurs inconnues sur des courses publiables : " + ", ".join(f"{k} ({len(v)} course(s), ex. {v[0]})" for k, v in sorted(unknown_pub.items())))
+    if unknown_nonpub:
+        detail = "valeurs inconnues sur des courses NON publiables (informatif) : " + ", ".join(
+            f"{k} × {len(v)} (ex. {v[0]})" for k, v in sorted(unknown_nonpub.items()))
+        res.warnings.append(("publication_reason inconnue avec publishable = false", detail))
+        if notify_warnings:
+            from .notify import notify
+            notify("alerte", f"⚠️ BASES — avertissement contrat (non bloquant) — commit {snap.sha[:10]}", detail, date=date)
 
     # 5. Manifeste public
     if not network:
