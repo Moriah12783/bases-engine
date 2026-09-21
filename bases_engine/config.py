@@ -53,4 +53,5 @@ CALIB_LEVELS = {
 # --- Stockage ---------------------------------------------------------------------------------
 DB_PATH = Path(os.environ.get("BASES_DB_PATH", ROOT / "bases.db"))
 PARAMS_PATH = ROOT / "params.json"
-RAPPORTS_DIR = ROOT / "rapports"
+RAPPORTS_DIR = Path(os.environ.get("BASES_RAPPORTS_DIR", ROOT / "rapports"))
+SITE_DIR = Path(os.environ.get("BASES_SITE_DIR", ROOT / "site"))

@@ -1,0 +1,54 @@
+# Protocole pré-enregistré — service Bases (mode ombre)
+
+Rédigé le 21 septembre 2026, **avant** la première exécution en mode ombre, à partir du §10 du
+`BRIEF_SERVICE_BASES.md`. Rien de ce protocole ne se modifie après la première exécution. Toute
+évolution de paramètre pendant la période est consignée avec date dans `CHANGELOG.md` et n'affecte
+que les éditions postérieures. Le palmarès n'est jamais retouché ni filtré.
+
+## Période
+
+À partir du premier `matin` réussi (première ligne `journal_days` au statut `OK`), jusqu'à
+**28 jours** ou **800 courses éligibles notées**, la première des deux échéances atteinte.
+
+## Objet jugé
+
+- Horizon : **T_MATIN** (celui que verrait l'abonné). L'horizon T15 est mesuré chaque soir à titre
+  secondaire (éditions `mode = mesure`, jamais publiées).
+- Paramètres : `params.json` version **2026-09-21.2** (lambdas littérature `(1.0, 0.81, 0.65, 0.55, 0.50)`,
+  seuils de solidité top5 A ≥ 0,2275 / B ≥ 0,1466 et top4 A ≥ 0,1344 / B ≥ 0,0781, recalibration à
+  paliers). La recalibration hebdomadaire crée une nouvelle version sans effet rétroactif.
+- Notation : JSON public `/resultats/` (source de vérité), courses `DEFINITIVE` + `VERIFIEE_PMU`
+  uniquement, `ANNULEE` exclues, non-partants jamais placés, ex æquo notés sur `classement[].rang`,
+  contrôle croisé avec `race_results` de l'instantané (divergence = pas de notation, alerte).
+- Baselines calculées sur les mêmes courses : 3 premiers du moteur ; 3 plus courtes cotes (`MARKET_BASELINE`).
+
+## Critères principaux
+
+1. **Calibration** : sur les deux tranches supérieures de P recalibrée (k = 3, cible publiée),
+   |fréquence observée − P annoncée| ≤ 5 points, avec n ≥ 60 par tranche.
+2. **Sélectivité** : taux 3/3 des courses `A` ≥ 1,8 × taux 3/3 des courses `C`, et taux 3/3 des
+   courses `A` ≥ 28 %.
+3. **Non-régression** : taux 3/3 du trio publié ≥ taux 3/3 des 3 premiers du moteur − 2 points.
+
+## Critères secondaires (informatifs)
+
+Taux ≥ 2/3 par solidité ; taux 2/2 et 1/1 ; rendement des deux structures de ticket
+(« 3 bases + XX / 5 associés », « 3 bases + champ total ») sur les courses avec rapports, marqué
+« non validé » tant que le mapping `rapports` (`docs/rapports_mapping.md`) n'est pas validé par Steph.
+
+## Décision
+
+- Les trois critères principaux tenus → Steph peut passer `PUBLICATION_MODE=live` (décision écrite).
+- Critère 1 échoué → refonte de la recalibration, nouvelle période.
+- Critère 2 échoué → l'indice de solidité est retiré de la publication, l'échelle seule est publiée.
+- Critère 3 échoué → le trio publié devient « les 3 premiers du moteur » et le service ne garde que
+  la tarification.
+
+## Références du back-test préalable (informatif, non décisionnel)
+
+T_MATIN, 339 courses (08/09 → 20/09/2026), commit moteur `f1677b62` : échelle top 5 = 63,4 / 33,3 /
+20,1 / 9,1 % ; 3/3 trio joint 20,1 % vs 19,2 % (3 premiers moteur) vs 18,6 % (marché) ; terciles
+A / B / C → 3/3 = 33,6 / 15,9 / 10,6 %. Voir `rapports/backtest/2026-09-21_T_MATIN_since-2026-08-25.md`.
+
+_Gelé le 21/09/2026 — session développeur Bases. Première exécution ombre : non encore effectuée
+(dépôt dédié et secrets Cloudflare en attente)._

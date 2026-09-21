@@ -37,6 +37,26 @@ MIGRATIONS: list[tuple[int, str]] = [
         version TEXT PRIMARY KEY, valid_from TEXT NOT NULL, lambdas_json TEXT NOT NULL,
         seuils_json TEXT NOT NULL, shrink REAL NOT NULL, note TEXT);
     """),
+    (2, """
+    -- Sprint 2 : lien édition ↔ notation, suivi des empreintes du manifeste public, journal de déploiement.
+    ALTER TABLE bases_results ADD COLUMN edition_id TEXT;
+    ALTER TABLE bases_results ADD COLUMN hits_json TEXT;
+    ALTER TABLE bases_results ADD COLUMN solidite TEXT;
+    ALTER TABLE bases_results ADD COLUMN p_calibree_k3 REAL;
+    ALTER TABLE bases_results ADD COLUMN horizon TEXT NOT NULL DEFAULT 'T_MATIN';
+    ALTER TABLE bases_results ADD COLUMN statut TEXT;
+    CREATE TABLE IF NOT EXISTS results_manifest (
+        date TEXT PRIMARY KEY, empreinte_sha256 TEXT NOT NULL, nb_courses INTEGER,
+        fetched_at_utc TEXT NOT NULL, scored_at_utc TEXT);
+    CREATE TABLE IF NOT EXISTS abstentions (
+        date TEXT NOT NULL, race_id TEXT NOT NULL, horizon TEXT NOT NULL, snapshot_commit TEXT NOT NULL,
+        motif TEXT NOT NULL, recorded_at_utc TEXT NOT NULL,
+        PRIMARY KEY (date, race_id, horizon, snapshot_commit));
+    CREATE TABLE IF NOT EXISTS journal_days (
+        date TEXT NOT NULL, horizon TEXT NOT NULL, snapshot_commit TEXT NOT NULL, run_id TEXT NOT NULL,
+        published_at_utc TEXT, mode TEXT NOT NULL, status TEXT NOT NULL,
+        PRIMARY KEY (date, horizon, snapshot_commit));
+    """),
 ]
 
 
@@ -97,3 +117,80 @@ def insert_calibration(con, computed_at_utc: str, k: int, top_m: int, n: int, kn
 def load_calibrations(con, params_version: str) -> dict[tuple[int, int], dict]:
     return {(r["k"], r["top_m"]): json.loads(r["knots_json"])
             for r in con.execute("select * from calibration where params_version = ?", (params_version,))}
+
+
+# --- éditions -----------------------------------------------------------------------------
+
+def edition_id(date: str, race_id: str, horizon: str, snapshot_commit: str) -> str:
+    from .util import race_slug
+    return f"{race_slug(race_id)}_{horizon}_{snapshot_commit[:10]}"
+
+
+def editions_for_day(con, date: str, horizon: str, *, current_only: bool = True) -> list[dict]:
+    q = "select * from bases_editions where date = ? and horizon = ?"
+    if current_only:
+        q += " and superseded_by is null"
+    return [dict(r) for r in con.execute(q + " order by race_id", (date, horizon))]
+
+
+def editions_exist(con, date: str, horizon: str, snapshot_commit: str) -> bool:
+    return con.execute("select 1 from bases_editions where date=? and horizon=? and snapshot_commit=? limit 1",
+                       (date, horizon, snapshot_commit)).fetchone() is not None
+
+
+def supersede(con, date: str, horizon: str, new_commit: str) -> int:
+    """Marque les éditions courantes d'un autre commit comme remplacées (nouvelle version du matin)."""
+    n = 0
+    for r in con.execute("select edition_id, race_id from bases_editions where date=? and horizon=? and snapshot_commit<>? and superseded_by is null",
+                         (date, horizon, new_commit)):
+        new_id = edition_id(date, r["race_id"], horizon, new_commit)
+        if con.execute("select 1 from bases_editions where edition_id=?", (new_id,)).fetchone():
+            con.execute("update bases_editions set superseded_by=? where edition_id=?", (new_id, r["edition_id"]))
+            n += 1
+    con.commit()
+    return n
+
+
+def insert_edition(con, row: dict) -> None:
+    cols = ",".join(row.keys())
+    con.execute(f"insert or ignore into bases_editions ({cols}) values ({','.join('?' * len(row))})", list(row.values()))
+
+
+def current_edition_for_race(con, race_id: str, horizon: str) -> dict | None:
+    r = con.execute("select * from bases_editions where race_id=? and horizon=? and superseded_by is null order by computed_at_utc desc limit 1",
+                    (race_id, horizon)).fetchone()
+    return dict(r) if r else None
+
+
+# --- résultats ----------------------------------------------------------------------------
+
+def result_already_scored(con, race_id: str, result_version: int, top_m: int, horizon: str) -> bool:
+    return con.execute("select 1 from bases_results where race_id=? and result_version=? and top_m=? and horizon=?",
+                       (race_id, result_version, top_m, horizon)).fetchone() is not None
+
+
+def latest_results(con, horizon: str = "T_MATIN") -> list[dict]:
+    """Dernière version notée de chaque course (par top_m), jointe à son édition."""
+    rows = con.execute("""
+        select r.*, e.date, e.solidite as ed_solidite, e.ladder_json, e.top_m as ed_top_m, e.mode as ed_mode
+        from bases_results r join bases_editions e on e.edition_id = r.edition_id
+        where r.horizon = ? and r.result_version = (
+            select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)
+        order by e.date, r.race_id""", (horizon,))
+    return [dict(r) for r in rows]
+
+
+def manifest_fingerprint(con, date: str) -> str | None:
+    r = con.execute("select empreinte_sha256 from results_manifest where date=?", (date,)).fetchone()
+    return r[0] if r else None
+
+
+def set_manifest_fingerprint(con, date: str, fp: str, nb: int | None, fetched_at: str, scored_at: str | None) -> None:
+    con.execute("insert or replace into results_manifest(date, empreinte_sha256, nb_courses, fetched_at_utc, scored_at_utc) values (?,?,?,?,?)",
+                (date, fp, nb, fetched_at, scored_at))
+    con.commit()
+
+
+def shadow_start_date(con) -> str | None:
+    r = con.execute("select min(date) from journal_days where status='OK'").fetchone()
+    return r[0] if r else None

@@ -1,0 +1,98 @@
+# Service Bases — ordonnancement (§8 du brief).
+# ⚠️ Crons DÉSACTIVÉS jusqu'à ce que le premier `contract-check` complet (workflow_dispatch manuel) passe.
+#    Pour activer : décommenter le bloc `schedule` ci-dessous (décision écrite de Steph).
+name: bases
+
+on:
+  # schedule:
+  #   - cron: '5 9 * * *'     # matin : édition des bases (instantané 08h30 UTC attendu vers 08h45)
+  #   - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
+  #   - cron: '5 22 * * *'    # soir : notation J et J-7..J-1, mesure T15, palmarès, déploiement
+  #   - cron: '30 7 * * 1'    # lundi : recalibration + rapport hebdomadaire (sprint 3)
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "matin | soir | hebdo | backtest | contract-check"
+        default: "contract-check"
+        required: true
+      date:
+        description: "Date J (AAAA-MM-JJ) ; vide = aujourd'hui (UTC)"
+        default: ""
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bases-engine
+  cancel-in-progress: false
+
+env:
+  PUBLICATION_MODE: ${{ vars.PUBLICATION_MODE || 'shadow' }}
+  NOTIFY_CHANNELS: ${{ vars.NOTIFY_CHANNELS || 'summary,journal' }}
+  SHADOW_TOKEN: ${{ secrets.SHADOW_TOKEN }}
+  TELEGRAM_BOT_TOKEN_BASES: ${{ secrets.TELEGRAM_BOT_TOKEN_BASES }}
+  TELEGRAM_CHAT_ID_SHADOW: ${{ secrets.TELEGRAM_CHAT_ID_SHADOW }}
+  TELEGRAM_CHAT_ID_LIVE: ${{ secrets.TELEGRAM_CHAT_ID_LIVE }}
+
+jobs:
+  bases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Commande à exécuter (cron → déduite de l'heure UTC ; dispatch → saisie)
+        id: cmd
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CMD="${{ github.event.inputs.command }}"; DATE="${{ github.event.inputs.date }}"
+          else
+            H=$(date -u +%H); DOW=$(date -u +%u)
+            if [ "$H" = "07" ] && [ "$DOW" = "1" ]; then CMD=hebdo; elif [ "$H" = "22" ]; then CMD=soir; else CMD=matin; fi
+            DATE=""
+          fi
+          echo "cmd=$CMD" >> "$GITHUB_OUTPUT"; echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Commande : $CMD ${DATE:+--date $DATE}"
+
+      - name: Exécution
+        id: run
+        run: |
+          ARGS=""
+          case "${{ steps.cmd.outputs.cmd }}" in
+            backtest) ARGS="--since 2026-08-25 --horizon T_MATIN" ;;
+            matin|soir|contract-check|show) [ -n "${{ steps.cmd.outputs.date }}" ] && ARGS="--date ${{ steps.cmd.outputs.date }}" ;;
+          esac
+          if [ "${{ steps.cmd.outputs.cmd }}" = "matin" ] && [ -z "${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}" ]; then ARGS="$ARGS --dry-run"; fi
+          python -m bases_engine ${{ steps.cmd.outputs.cmd }} $ARGS
+
+      - name: Commit des artefacts (bases.db, params.json, site/, rapports/)
+        if: always() && steps.run.outcome != 'skipped'
+        run: |
+          git config user.name "bases-engine[bot]"
+          git config user.email "bases-engine@users.noreply.github.com"
+          git add -A bases.db params.json site rapports
+          if git diff --cached --quiet; then echo "rien à committer"; exit 0; fi
+          git commit -m "Bases: ${{ steps.cmd.outputs.cmd }} $(date -u +%F) [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && exit 0
+            echo "push tentative $i échouée, nouvel essai dans 10 s"; sleep 10
+          done
+          echo "⛔ push impossible après 3 tentatives (jamais de force-push)"; exit 1
+
+      - name: Déploiement Cloudflare Pages (sauté sans secrets ou en dry-run)
+        if: success() && (steps.cmd.outputs.cmd == 'matin' || steps.cmd.outputs.cmd == 'soir') && env.CLOUDFLARE_API_TOKEN_BASES != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN_BASES: ${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}
+        run: npx --yes wrangler@4 pages deploy site --project-name=bases-elite-turf --branch=main --commit-dirty=true

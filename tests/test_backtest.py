@@ -54,5 +54,5 @@ def test_cli_contract_check_offline(capsys):
     assert rc == 0 and "sauté" in out
 
 
-def test_cli_sprint2_commands_are_stubs(capsys):
-    assert cli.main(["matin"]) == 3
+def test_cli_sprint3_command_is_stub(capsys):
+    assert cli.main(["hebdo"]) == 3

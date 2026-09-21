@@ -18,3 +18,10 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Fixture résultats construite depuis `site/resultats/` de l'instantané (19 et 20/09, manifeste, corrections). `ResultsClient` lit `file://`.
 - Calibration à paliers implémentée et testée (fixe / ratio / logit / isotonique). Back-test T_MATIN rejoué, `params.json` v2026-09-21.2 gelé.
 - Incident bénin : le run `backtest` T_MATIN a perdu sa sortie standard (pipe fermé) après le gel ; ligne `runs` corrigée à la main avec la cause dans `error`.
+
+## 2026-09-21 — Session 1, sprint 2
+
+- Livré : `pipeline.py` (matin/soir), `publish.py`, `notify.py`, migration 2 de `bases.db`, workflow (crons commentés), `PROTOCOLE_PREENREGISTRE.md`, 40 tests hors réseau (dont bout-en-bout matin dry-run → ombre idempotent, remplacement par nouveau commit, arrêt sur contrat, SNAPSHOT_LATE, soir avec notation JSON + contrôle croisé).
+- Validation locale sur l'instantané réel (hors dépôt, dans le bac à sable) : `matin --date 2026-09-21 --dry-run --no-network --now 2026-09-21T09:05:00Z` → 20 éligibles / 12 abstentions, journal annexe E ; `soir --date 2026-09-20` → 43 éditions de mesure T15, 84 notations JSON toutes contrôlées avec SQLite. `bases.db` du dépôt reste vierge d'éditions : la première exécution ombre doit se faire dans GitHub Actions (traçabilité du run).
+- Décision de conception à valider par Steph : `site/shadow/<jeton>/` n'est pas committé (le jeton resterait sinon dans l'historique git) ; seul `site/index.html` (page neutre) l'est. Le contenu ombre est régénéré à chaque run et déployé par wrangler.
+- Reste : dépôt dédié + secrets (Steph), premier `contract-check` par workflow_dispatch, deux journées complètes sans intervention, relance idempotente vérifiée en Actions ; sprint 3 (`hebdo`, mapping `rapports`).

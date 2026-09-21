@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from datetime import date as _date
@@ -11,7 +12,7 @@ from . import config, storage
 from .fetch import FetchError, get_snapshot
 from .util import iso_utc
 
-SPRINT2 = {"matin", "soir", "hebdo"}
+SPRINT3 = {"hebdo"}
 
 
 def cmd_contract_check(args) -> int:
@@ -112,6 +113,38 @@ def cmd_show(args) -> int:
     return 0
 
 
+def _results_client(no_network: bool):
+    from .fetch import ResultsClient
+    if no_network:
+        local = os.environ.get("BASES_RESULTS_LOCAL_DIR")
+        if local:
+            return ResultsClient(base_url=f"file://{local}")
+    return None
+
+
+def cmd_matin(args) -> int:
+    from datetime import datetime, timezone
+    from .pipeline import PipelineStop, run_matin
+    now = datetime.fromisoformat(args.now.replace("Z", "+00:00")).astimezone(timezone.utc) if args.now else None
+    try:
+        return run_matin(day=args.date, horizon=args.horizon, dry_run=args.dry_run, sha=args.sha, network=not args.no_network,
+                         results_client=_results_client(args.no_network), now=now, db_path=args.db, shadow_token=args.shadow_token,
+                         n_sims=args.n_sims, max_wait=0 if args.no_wait else 3)
+    except PipelineStop as e:
+        print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
+        return e.code
+
+
+def cmd_soir(args) -> int:
+    from .pipeline import PipelineStop, run_soir
+    try:
+        return run_soir(day=args.date, sha=args.sha, network=not args.no_network, results_client=_results_client(args.no_network),
+                        db_path=args.db, shadow_token=args.shadow_token, n_sims=args.n_sims)
+    except PipelineStop as e:
+        print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
+        return e.code
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="bases_engine", description="Service Bases Elite Turf (lecture seule du moteur).")
     p.add_argument("--sha", help="commit turf-engine à utiliser (défaut : ls-remote main)")
@@ -136,10 +169,24 @@ def main(argv=None) -> int:
     s.add_argument("--retro", action="store_true", help="mode rétrospectif (ignore la porte publishable et l'heure)")
     s.set_defaults(fn=cmd_show)
 
-    for name in sorted(SPRINT2):
-        s = sub.add_parser(name, help="sprint 2 — non implémenté")
-        s.add_argument("--date"); s.add_argument("--dry-run", action="store_true")
-        s.set_defaults(fn=lambda a, n=name: (print(f"{n} : sprint 2, non implémenté (aucune publication possible).") or 3))
+    s = sub.add_parser("matin", help="édition du matin (§4) : contrat, éligibilité, calcul, stockage, site, journal")
+    s.add_argument("--date"); s.add_argument("--horizon", default="T_MATIN", choices=list(config.HORIZONS))
+    s.add_argument("--dry-run", action="store_true", help="tout sauf la publication (published_at_utc vide, déploiement sauté)")
+    s.add_argument("--no-network", action="store_true"); s.add_argument("--shadow-token")
+    s.add_argument("--now", help="instant de calcul UTC (tests), ex. 2026-09-21T09:05:00Z")
+    s.add_argument("--n-sims", type=int, default=config.N_SIMS)
+    s.add_argument("--no-wait", action="store_true", help="ne pas attendre l'instantané du matin (SNAPSHOT_LATE immédiat)")
+    s.set_defaults(fn=cmd_matin)
+
+    s = sub.add_parser("soir", help="notation J et J-7..J-1 sur le JSON public, mesure T15, palmarès, site, journal")
+    s.add_argument("--date"); s.add_argument("--no-network", action="store_true"); s.add_argument("--shadow-token")
+    s.add_argument("--n-sims", type=int, default=config.N_SIMS)
+    s.set_defaults(fn=cmd_soir)
+
+    for name in sorted(SPRINT3):
+        s = sub.add_parser(name, help="sprint 3 — non implémenté")
+        s.add_argument("--date")
+        s.set_defaults(fn=lambda a, n=name: (print(f"{n} : sprint 3, non implémenté.") or 3))
 
     args = p.parse_args(argv)
     try:

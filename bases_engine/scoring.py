@@ -167,3 +167,53 @@ def backtest(snap: Snapshot, *, since: str, horizon: str = "T15", until: str | N
            "duree_s": None}
     out["duree_s"] = round(time.time() - t0, 1)
     return out
+
+
+# ----------------------------------------------------------------------------
+# Notation quotidienne sur le JSON public (§7) — sprint 2
+# ----------------------------------------------------------------------------
+
+def placed_from_course_json(course: dict, top_m: int) -> tuple[set[int], list[int]]:
+    """Ensemble des numéros placés dans les `top_m` premiers d'après `classement[].rang`
+    (ex æquo : même rang), non-partants exclus. Retourne (placés, arrivée ordonnée)."""
+    nps = {int(x["num"]) for x in course.get("non_partants") or []}
+    ranked = [(int(r["rang"]), int(r["num"])) for r in course.get("classement") or [] if int(r["num"]) not in nps]
+    ranked.sort()
+    placed = {num for rang, num in ranked if rang <= top_m}
+    return placed, [num for _, num in ranked]
+
+
+def course_is_scorable(course: dict) -> tuple[bool, str]:
+    st = course.get("statut") or {}
+    if st.get("annulee") or st.get("code") == "ANNULEE":
+        return False, "ANNULEE"
+    if not st.get("definitive"):
+        return False, f"NON_DEFINITIVE:{st.get('code')}"
+    if st.get("finalite") != "VERIFIEE_PMU":
+        return False, f"FINALITE:{st.get('finalite')}"
+    if len(course.get("classement") or []) < 4:
+        return False, "CLASSEMENT_TROP_COURT"
+    return True, "OK"
+
+
+def score_edition(ladder: dict, placed: set[int]) -> dict:
+    """`ladder` = échelle stockée (k -> {chevaux, ...}) ; retourne hit_k1..4, hit_2of3, n_in_k3."""
+    out = {}
+    for k in (1, 2, 3, 4):
+        rung = ladder.get(str(k)) or ladder.get(k)
+        out[f"hit_k{k}"] = int(rung is not None and len(set(rung["chevaux"]) & placed) == k)
+    trio = ladder.get("3") or ladder.get(3)
+    n3 = len(set(trio["chevaux"]) & placed) if trio else 0
+    out["hit_2of3"] = int(n3 >= 2)
+    out["n_in_k3"] = n3
+    return out
+
+
+def cross_check_sqlite(con_snapshot, race_id: str, arrivee_json: list[int], top_m: int) -> tuple[bool | None, str]:
+    """Contrôle croisé avec race_results de l'instantané : None si absent, False si divergence."""
+    arr, why = arrival_top(con_snapshot, race_id)
+    if arr is None:
+        return None, why or "ABSENT"
+    if arr[:top_m] != list(arrivee_json)[:top_m]:
+        return False, f"DIVERGENCE sqlite={arr[:top_m]} json={list(arrivee_json)[:top_m]}"
+    return True, "OK"

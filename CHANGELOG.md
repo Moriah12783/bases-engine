@@ -2,6 +2,17 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Sprint 2 (pipeline et mode ombre)
+
+- `pipeline.py` : `matin` (instantané du jour avec attente 5 min × 3 puis `SNAPSHOT_LATE` sans échec, tests de contrat bloquants, porte §4.1, calcul, stockage, idempotence par (date, horizon, commit), `superseded_by` si nouveau commit le même matin, publication, notification annexe E) et `soir` (tests de contrat, mesure T15 rétrospective en `mode = mesure` jamais publiée, relecture des journées J-7..J dont l'empreinte a changé, notation sur le JSON public `DEFINITIVE` + `VERIFIEE_PMU` avec contrôle croisé SQLite — divergence = alerte et pas de notation —, re-notation versionnée sur `correction.version`, palmarès, fiabilité, site, bilan).
+- `publish.py` : contrat `bases/AAAA-MM-JJ.json` (annexe B, `contract_version: 1`, plus `echelle_top4`/`echelle_top5`, `edition_id`, `snapshot_commit`, `params_version`), `palmares.json` (compteurs glissants depuis le premier `matin` OK, par k, par solidité, par cible, par jour ; abstentions comptées ; jamais filtré), `fiabilite.json`, `archive/AAAA-MM.json`, page noir et or (heures GMT + Paris). Mode ombre : racine neutre « Service en préparation » + contenu sous `site/shadow/<SHADOW_TOKEN>/` (**non committé** : `.gitignore`, pour ne pas écrire le jeton dans le dépôt ; le contenu est régénéré à chaque run depuis `bases.db`).
+- `notify.py` : `notify(kind, title, body)` → `summary` (`$GITHUB_STEP_SUMMARY`, sinon stdout), `journal` (`rapports/journal/AAAA-MM-JJ.md`, `ALERTES.md`), `telegram` prévu mais inactif tant que `NOTIFY_CHANNELS` ne le contient pas **et** que les secrets n'existent pas.
+- `bases.db` migration 2 : colonnes `edition_id`, `hits_json`, `solidite`, `p_calibree_k3`, `horizon`, `statut` sur `bases_results` ; tables `results_manifest` (empreintes), `abstentions`, `journal_days` (début du mode ombre = première ligne `OK`). Un `matin --dry-run` est journalisé `DRY_RUN` et ne démarre pas la période.
+- `.github/workflows/bases.yml` : `workflow_dispatch` (commande + date) ; **crons commentés** jusqu'au premier `contract-check` complet réussi ; commit des artefacts avec 3 tentatives et rebase, jamais de force-push ; déploiement Pages seulement si `CLOUDFLARE_API_TOKEN_BASES` existe ; `matin` passe en `--dry-run` sans ce secret.
+- `PROTOCOLE_PREENREGISTRE.md` rédigé et gelé (§10) sur `params.json` v2026-09-21.2.
+- Sémantique `--dry-run` (matin) : calcul, stockage, journal et résumé de job, mais `published_at_utc` vide et pas de déploiement.
+- Non fait (sprint 3) : `hebdo` (recalibration du lundi, rapport hebdomadaire), `docs/rapports_mapping.md`, rendements.
+
 ## 2026-09-21 — Décisions du mentor (après rapport de sprint 1)
 
 - **Calibration à paliers** (`bases_engine/calibration.py`, remplace le couple « shrink puis isotonique ») : le palier est choisi automatiquement selon n (courses notées par cible et par k) :

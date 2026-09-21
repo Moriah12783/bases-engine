@@ -1,0 +1,352 @@
+"""Pipeline quotidien (§4, §7, §8) : `matin` et `soir`. `hebdo` arrive au sprint 3."""
+from __future__ import annotations
+
+import json
+import os
+import time
+import uuid
+from datetime import date as _date, datetime, timedelta, timezone
+
+from . import config, storage
+from .compute import compute_edition
+from .contract import run_contract_checks
+from .eligibility import Abstention, EligibleRace, evaluate_race
+from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot, ls_remote
+from .notify import alert, notify
+from .params import load_params
+from .publish import build_day_contract, build_site, palmares_and_fiabilite, write_day_contract
+from .scoring import arrival_top, course_is_scorable, cross_check_sqlite, placed_from_course_json, score_edition
+from .util import iso_utc, now_utc, race_label, race_slug
+
+
+class PipelineStop(RuntimeError):
+    """Arrêt bruyant : la cause a déjà été notifiée."""
+    def __init__(self, code: int, msg: str):
+        super().__init__(msg)
+        self.code = code
+
+
+def _mode() -> str:
+    m = os.environ.get("PUBLICATION_MODE", "shadow").lower()
+    return m if m in ("shadow", "live") else "shadow"
+
+
+# ----------------------------------------------------------------------------
+# MATIN
+# ----------------------------------------------------------------------------
+
+def _snapshot_for_day(day: str, sha: str | None, *, wait_s: float, max_wait: int, sleep=time.sleep) -> tuple[Snapshot | None, str]:
+    """Instantané contenant la date J ; attend (5 min × 3 max) si le commit du matin n'est pas encore là."""
+    tried = 0
+    while True:
+        snap = get_snapshot(sha)
+        if any(h.get("date") == day for h in snap.historical_logs()):
+            return snap, "OK"
+        tried += 1
+        if sha or tried > max_wait:
+            return snap, "SNAPSHOT_LATE"
+        sleep(wait_s)
+        sha_new = ls_remote()
+        if sha_new == snap.sha:
+            continue
+        sha = None          # nouveau commit : on le lit au prochain tour (ls-remote dans get_snapshot)
+
+
+def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool = False, sha: str | None = None,
+              network: bool = True, results_client: ResultsClient | None = None, now: datetime | None = None,
+              db_path=config.DB_PATH, shadow_token: str | None = None, wait_s: float = 300.0, max_wait: int = 3,
+              sleep=time.sleep, n_sims: int = config.N_SIMS) -> int:
+    day = day or _date.today().isoformat()
+    now = now or now_utc()
+    mode = "dry-run" if dry_run else _mode()
+    run_id = f"matin-{day}-{uuid.uuid4().hex[:6]}"
+    t0 = time.time()
+    con = storage.connect(db_path)
+    storage.start_run(con, run_id, "matin", None, mode)
+    try:
+        # 1. Instantané
+        try:
+            snap, state = _snapshot_for_day(day, sha, wait_s=wait_s, max_wait=max_wait, sleep=sleep)
+        except FetchError as e:
+            alert("arrêt : téléchargement de l'instantané", str(e), date=day)
+            raise PipelineStop(2, str(e))
+        con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
+        if state == "SNAPSHOT_LATE":
+            body = f"Le commit {snap.sha[:10]} ne contient pas la date {day} (instantané du matin en retard). Aucune base ce tour ; le rattrapage prendra le relais."
+            notify("alerte", f"⚠️ BASES — {day} — SNAPSHOT_LATE", body, date=day)
+            storage.finish_run(con, run_id, "SNAPSHOT_LATE", races_seen=0, races_published=0, duration_s=round(time.time() - t0, 1))
+            return 0
+
+        # 2. Tests de contrat (bloquants)
+        res = run_contract_checks(snap, day, results_client=results_client, network=network or results_client is not None)
+        if not res.ok:
+            name = res.failed[0][0]
+            alert(f"arrêt : {name} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.",
+                  res.summary(), date=day)
+            storage.finish_run(con, run_id, "CONTRACT_FAILED", error=name, duration_s=round(time.time() - t0, 1))
+            raise PipelineStop(2, f"test de contrat en échec : {name}")
+
+        # 3. Idempotence : (date, horizon, snapshot_commit)
+        replay = storage.editions_exist(con, day, horizon, snap.sha)
+        params = load_params()
+        logs = snap.logs_by_race()
+        scon = snap.connect()
+        editions, abstentions = [], []
+        try:
+            race_ids = [r[0] for r in scon.execute("select race_id from races where date=? order by meeting_number, race_number", (day,))]
+            for race_id in race_ids:
+                ev = evaluate_race(scon, race_id, horizon, logs.get(race_id), mode="matin", now=now)
+                if isinstance(ev, Abstention):
+                    abstentions.append(ev)
+                    con.execute("insert or ignore into abstentions(date, race_id, horizon, snapshot_commit, motif, recorded_at_utc) values (?,?,?,?,?,?)",
+                                (day, race_id, horizon, snap.sha, ev.motif, iso_utc()))
+                    continue
+                eid = storage.edition_id(day, race_id, horizon, snap.sha)
+                existing = con.execute("select * from bases_editions where edition_id=?", (eid,)).fetchone()
+                if existing:
+                    editions.append((ev, json.loads(existing["ladder_json"]), dict(existing)))
+                    continue
+                ed = compute_edition(ev, params, n_sims=n_sims)
+                row = _edition_row(eid, ev, ed, snap.sha, mode if mode != "dry-run" else _mode(), params)
+                storage.insert_edition(con, row)
+                editions.append((ev, ed["ladders"], row))
+            con.commit()
+        finally:
+            scon.close()
+        n_sup = storage.supersede(con, day, horizon, snap.sha)
+
+        # 4. Publication (JSON contrat, site, palmarès) — le déploiement est l'affaire du workflow
+        published_at = None if dry_run else iso_utc()
+        if published_at:
+            con.execute("update bases_editions set published_at_utc=coalesce(published_at_utc, ?) where date=? and horizon=? and snapshot_commit=?",
+                        (published_at, day, horizon, snap.sha))
+            con.commit()
+        contract = build_day_contract(con, day, horizon, snap.sha, params, mode=_mode())
+        pal, fiab = palmares_and_fiabilite(con)
+        site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"),
+                               con=con, dry_run=dry_run)
+        con.execute("insert or replace into journal_days(date, horizon, snapshot_commit, run_id, published_at_utc, mode, status) values (?,?,?,?,?,?,?)",
+                    (day, horizon, snap.sha, run_id, published_at, mode, "DRY_RUN" if dry_run else "OK"))
+        con.commit()
+
+        # 5. Notification (annexe E)
+        body = matin_message(day, snap.sha, contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info)
+        notify("matin", f"🏇 BASES — {day} — édition du matin ({mode})", body, date=day)
+        storage.finish_run(con, run_id, "OK", races_seen=len(race_ids), races_published=len(editions), duration_s=round(time.time() - t0, 1))
+        return 0
+    except PipelineStop:
+        raise
+    except Exception as e:  # noqa: BLE001
+        storage.finish_run(con, run_id, "FAILED", error=repr(e), duration_s=round(time.time() - t0, 1))
+        alert("arrêt : erreur inattendue dans matin", repr(e), date=day)
+        raise
+    finally:
+        con.close()
+
+
+def _edition_row(eid: str, ev: EligibleRace, ed: dict, sha: str, mode: str, params: dict) -> dict:
+    ladders = {str(m): {str(k): v for k, v in lad["echelle"].items()} for m, lad in ed["ladders"].items()}
+    target = ladders[str(ev.top_m)]
+    return {
+        "edition_id": eid, "date": ev.date, "race_id": ev.race_id, "race_slug": race_slug(ev.race_id),
+        "horizon": ev.horizon, "top_m": ev.top_m, "computed_at_utc": iso_utc(), "snapshot_commit": sha,
+        "prediction_hash": ev.prediction_hash, "lock_time_utc": ev.lock_time_utc,
+        "engine8_json": json.dumps(ev.engine8), "candidates_json": json.dumps(ev.candidates),
+        "lambdas_json": json.dumps(ed["lambdas"]),
+        "ladder_json": json.dumps({"cible": target, "top4": ladders["4"], "top5": ladders["5"]}),
+        "trios_json": json.dumps(ed["ladders"][ev.top_m]["trios"]),
+        "solidite": ed["solidite"], "structure_code": ed["structure"]["code"],
+        "flags_json": json.dumps(ed["flags"] + [f"pari_cible:{ev.pari_cible}", f"partants:{ev.active_runners}",
+                                                f"etoiles:{ev.confidence_stars}", f"depart:{ev.scheduled_start_time}",
+                                                f"depart_utc:{ev.start_time_utc}", f"discipline:{ev.discipline}"]),
+        "params_version": params.get("version"), "mode": mode, "published_at_utc": None, "superseded_by": None,
+    }
+
+
+def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, mode: str, *, replay=False, superseded=0, site_info=None) -> str:
+    d = datetime.strptime(day, "%Y-%m-%d")
+    L = [f"🏇 BASES — {d:%d/%m} — édition du matin ({mode})",
+         f"Source moteur commit {sha[:7]} · {n_seen} courses lues · {len(contract['courses'])} éligibles · {len(contract['abstentions'])} abstentions"
+         + (" · rejeu idempotent (aucun doublon)" if replay else "") + (f" · {superseded} édition(s) remplacée(s)" if superseded else ""), ""]
+    order = {"A": 0, "B": 1, "C": 2}
+    for c in sorted(contract["courses"], key=lambda c: (order.get(c["base_des_bases"]["solidite"], 3), c["depart_utc"] or "")):
+        e = c["echelle"]; b = c["base_des_bases"]
+        L.append(f"{c['libelle']} · {c['depart_affiche']} · {c['pari_cible']} · {c['partants']} partants")
+        L.append(f"Base des bases : {' - '.join(map(str, b['chevaux']))} · solidité {b['solidite']} · P(3/3) {100 * b['p_calibree_3sur3']:.0f} % · P(2/3) {100 * b['p_calibree_2sur3']:.0f} %")
+        L.append("Échelle : " + " · ".join(f"{k} base{'s' if int(k) > 1 else ''} {100 * e[k]['p_calibree']:.0f} %" for k in ("1", "2", "3", "4")))
+        L.append(f"Structure : {c['structure_recommandee']['texte']}")
+        L.append("")
+    if contract["abstentions"]:
+        L.append("Abstentions : " + ", ".join(f"{race_label(a['course_id']).split(' - ')[1]} {race_label(a['course_id']).split(' - ')[0]} ({a['motif']})" for a in contract["abstentions"]))
+    if site_info:
+        L.append(f"Site : {site_info}")
+    return "\n".join(L)
+
+
+# ----------------------------------------------------------------------------
+# SOIR
+# ----------------------------------------------------------------------------
+
+def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = True, results_client: ResultsClient | None = None,
+             db_path=config.DB_PATH, shadow_token: str | None = None, lookback: int = 7, n_sims: int = config.N_SIMS,
+             mesure_horizon: str = "T15") -> int:
+    day = day or _date.today().isoformat()
+    run_id = f"soir-{day}-{uuid.uuid4().hex[:6]}"
+    t0 = time.time()
+    con = storage.connect(db_path)
+    storage.start_run(con, run_id, "soir", None, _mode())
+    client = results_client or ResultsClient()
+    try:
+        try:
+            snap = get_snapshot(sha)
+        except FetchError as e:
+            alert("arrêt : téléchargement de l'instantané (soir)", str(e), date=day)
+            raise PipelineStop(2, str(e))
+        con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
+        res = run_contract_checks(snap, day, results_client=client, network=network or results_client is not None)
+        # le soir, l'absence de la date J dans historical_logs n'est pas bloquante (journée sans réunion) : on ne bloque que sur le reste
+        blocking = [(n, d) for n, d in res.failed if n != "historical_logs contient la date J"]
+        if blocking:
+            alert(f"arrêt : {blocking[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.", res.summary(), date=day)
+            storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
+            raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
+
+        # 1. Mesure T15 (éditions rétrospectives, non publiées) pour la journée J
+        n_mesure = _mesure_horizon(con, snap, day, mesure_horizon, n_sims)
+
+        # 2. Notation J-lookback..J sur le JSON public (source de vérité), contrôle croisé SQLite
+        stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0}
+        try:
+            manifest = client.manifest()
+        except FetchError as e:
+            alert("arrêt : manifeste des résultats injoignable (soir)", str(e), date=day)
+            storage.finish_run(con, run_id, "MANIFEST_FAILED", error=str(e), duration_s=round(time.time() - t0, 1))
+            raise PipelineStop(2, str(e))
+        journees = manifest.get("journees") or {}
+        scon = snap.connect()
+        try:
+            for back in range(lookback, -1, -1):
+                d = (datetime.strptime(day, "%Y-%m-%d") - timedelta(days=back)).strftime("%Y-%m-%d")
+                entry = journees.get(d)
+                if not entry:
+                    continue
+                fp = entry.get("empreinte_sha256")
+                if fp and fp == storage.manifest_fingerprint(con, d):
+                    continue                                   # empreinte inchangée : rien à relire
+                if not con.execute("select 1 from bases_editions where date=? limit 1", (d,)).fetchone():
+                    storage.set_manifest_fingerprint(con, d, fp or "", entry.get("nb_courses"), iso_utc(), None)
+                    continue                                   # aucune édition ce jour-là : rien à noter
+                data = client.day(d, expected_fingerprint=fp)
+                stats["jours_relus"].append(d)
+                for course in data.get("courses") or []:
+                    _score_course(con, scon, course, stats)
+                storage.set_manifest_fingerprint(con, d, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
+                con.commit()
+        finally:
+            scon.close()
+
+        # 3. Palmarès, fiabilité, site
+        params = load_params()
+        pal, fiab = palmares_and_fiabilite(con)
+        contract = build_day_contract(con, day, "T_MATIN", None, params, mode=_mode())
+        site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), con=con, dry_run=False)
+        body = soir_message(day, stats, pal, n_mesure, site_info)
+        notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}", body, date=day)
+        if stats["divergences"]:
+            alert("divergence JSON public ↔ SQLite (courses non notées)", "\n".join(stats["divergences"]), date=day)
+        storage.finish_run(con, run_id, "OK", races_seen=stats["notees"] + stats["renotees"], races_published=n_mesure, duration_s=round(time.time() - t0, 1))
+        return 0
+    except PipelineStop:
+        raise
+    except Exception as e:  # noqa: BLE001
+        storage.finish_run(con, run_id, "FAILED", error=repr(e), duration_s=round(time.time() - t0, 1))
+        alert("arrêt : erreur inattendue dans soir", repr(e), date=day)
+        raise
+    finally:
+        con.close()
+
+
+def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int) -> int:
+    """Éditions rétrospectives à l'horizon de mesure (T15) pour la journée J : stockées (mode `mesure`), jamais publiées."""
+    params = load_params()
+    logs = snap.logs_by_race()
+    scon = snap.connect()
+    n = 0
+    try:
+        for (race_id,) in scon.execute("select race_id from races where date=? order by meeting_number, race_number", (day,)):
+            eid = storage.edition_id(day, race_id, horizon, snap.sha)
+            if con.execute("select 1 from bases_editions where edition_id=?", (eid,)).fetchone():
+                continue
+            ev = evaluate_race(scon, race_id, horizon, logs.get(race_id), mode="backtest")
+            if isinstance(ev, Abstention):
+                con.execute("insert or ignore into abstentions(date, race_id, horizon, snapshot_commit, motif, recorded_at_utc) values (?,?,?,?,?,?)",
+                            (day, race_id, horizon, snap.sha, ev.motif, iso_utc()))
+                continue
+            ed = compute_edition(ev, params, n_sims=n_sims)
+            storage.insert_edition(con, _edition_row(eid, ev, ed, snap.sha, "mesure", params))
+            n += 1
+        con.commit()
+    finally:
+        scon.close()
+    return n
+
+
+def _score_course(con, scon, course: dict, stats: dict) -> None:
+    race_id = course.get("course_id")
+    eds = [dict(r) for r in con.execute("select * from bases_editions where race_id=? and superseded_by is null", (race_id,))]
+    if not eds:
+        return
+    ok, why = course_is_scorable(course)
+    if not ok:
+        stats["ignorees"][why] = stats["ignorees"].get(why, 0) + 1
+        return
+    version = int((course.get("correction") or {}).get("version") or 1)
+    nb_corr = int((course.get("correction") or {}).get("nb_corrections") or 0)
+    for ed in eds:
+        ladders = json.loads(ed["ladder_json"])
+        for m in (4, 5):
+            if storage.result_already_scored(con, race_id, version, m, ed["horizon"]):
+                continue
+            placed, arrivee = placed_from_course_json(course, m)
+            check, detail = cross_check_sqlite(scon, race_id, arrivee, m)
+            if check is False:
+                stats["divergences"].append(f"{race_id} (m={m}) : {detail}")
+                continue
+            hits = score_edition(ladders[f"top{m}"], placed)
+            k3 = ladders[f"top{m}"]["3"]
+            prior = con.execute("select 1 from bases_results where race_id=? and top_m=? and horizon=?", (race_id, m, ed["horizon"])).fetchone()
+            con.execute("""insert or replace into bases_results(race_id, result_version, arrivee_json, top_m, hit_k1, hit_k2, hit_k3, hit_k4, hit_2of3,
+                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut)
+                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        (race_id, version, json.dumps(arrivee), m, hits["hit_k1"], hits["hit_k2"], hits["hit_k3"], hits["hit_k4"], hits["hit_2of3"],
+                         iso_utc(), "RESULTATS_JSON", 1 if check else 0, ed["edition_id"], json.dumps(hits),
+                         ed["solidite"] if m == ed["top_m"] else None, k3.get("p_calibree"), ed["horizon"],
+                         (course.get("statut") or {}).get("code")))
+            if m == ed["top_m"] and ed["horizon"] == "T_MATIN":
+                if prior:
+                    stats["renotees"] += 1
+                    if nb_corr:
+                        stats["corrections"] += 1
+                else:
+                    stats["notees"] += 1
+
+
+def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None) -> str:
+    d = datetime.strptime(day, "%Y-%m-%d")
+    today = pal.get("par_jour", {}).get(day, {})
+    L = [f"🌙 BASES — bilan du {d:%d/%m} : {today.get('n', 0)} courses notées"
+         + (f" · 3/3 : {today.get('k3', 0)} ({100 * today.get('taux_k3', 0):.0f} %) · 2/3 : {today.get('k2of3', 0)} ({100 * today.get('taux_2of3', 0):.0f} %)" if today.get("n") else "")
+         + f" · corrections : {stats['corrections']}"]
+    if today.get("par_solidite"):
+        L.append("Solidité : " + " · ".join(f"{s} {v['k3']}/{v['n']}" for s, v in today["par_solidite"].items() if v["n"]))
+    g = pal.get("global", {})
+    if g.get("n"):
+        L.append(f"Palmarès depuis le {pal.get('depuis')} ({g['n']} courses) : 1 base {100 * g['taux_k1']:.0f} % · 2 bases {100 * g['taux_k2']:.0f} % · 3 bases {100 * g['taux_k3']:.0f} % · 4 bases {100 * g['taux_k4']:.0f} % · ≥ 2/3 {100 * g['taux_2of3']:.0f} % · abstentions {pal.get('abstentions', 0)}")
+    L.append(f"Journées relues : {', '.join(stats['jours_relus']) or 'aucune (empreintes inchangées)'} · notées {stats['notees']} · re-notées {stats['renotees']} · mesure T15 : {n_mesure} édition(s)")
+    if stats["ignorees"]:
+        L.append("Non notées : " + ", ".join(f"{k} = {v}" for k, v in stats["ignorees"].items()))
+    if stats["divergences"]:
+        L.append("⚠️ Divergences JSON ↔ SQLite : " + " ; ".join(stats["divergences"]))
+    if site_info:
+        L.append(f"Site : {site_info}")
+    return "\n".join(L)
