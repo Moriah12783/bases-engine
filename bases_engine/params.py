@@ -8,7 +8,8 @@ from . import config
 from .calibration import LadderCalibrator
 
 
-def load_params(path: Path = config.PARAMS_PATH) -> dict:
+def load_params(path: Path | None = None) -> dict:
+    path = path or config.PARAMS_PATH          # résolu à l'appel (surchargeable dans les tests)
     if not path.exists():
         return {"version": "defaut", "valid_from": None, "lambdas": list(config.DEFAULT_LAMBDAS),
                 "seuils_solidite": None, "shrink": config.SHRINK, "calibration_paliers": config.CALIB_LEVELS, "calibration": {}, "note": "params.json absent : lambdas littérature, pas de seuils gelés"}
@@ -16,7 +17,8 @@ def load_params(path: Path = config.PARAMS_PATH) -> dict:
         return json.load(f)
 
 
-def save_params(params: dict, path: Path = config.PARAMS_PATH) -> None:
+def save_params(params: dict, path: Path | None = None) -> None:
+    path = path or config.PARAMS_PATH
     with path.open("w", encoding="utf-8") as f:
         json.dump(params, f, ensure_ascii=False, indent=2)
         f.write("\n")

@@ -13,7 +13,6 @@ from .fetch import FetchError, get_snapshot
 from .notify import alert, step_summary
 from .util import iso_utc
 
-SPRINT3 = {"hebdo"}
 
 
 def cmd_contract_check(args) -> int:
@@ -193,10 +192,9 @@ def main(argv=None) -> int:
     s.add_argument("--n-sims", type=int, default=config.N_SIMS)
     s.set_defaults(fn=cmd_soir)
 
-    for name in sorted(SPRINT3):
-        s = sub.add_parser(name, help="sprint 3 — non implémenté")
-        s.add_argument("--date")
-        s.set_defaults(fn=lambda a, n=name: (step_summary(f"⏭️ BASES — {n}", f"{n} : sprint 3, non implémenté.") or 3))
+    s = sub.add_parser("hebdo", help="lundi : recalibration (k, cible) hors répétitions, rapport hebdomadaire rapports/AAAA-Www.md")
+    s.add_argument("--date"); s.add_argument("--sans-recalibration", action="store_true")
+    s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, sha=a.sha, db_path=a.db, recalibrer=not a.sans_recalibration))
 
     args = p.parse_args(argv)
     try:

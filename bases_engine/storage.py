@@ -57,6 +57,30 @@ MIGRATIONS: list[tuple[int, str]] = [
         published_at_utc TEXT, mode TEXT NOT NULL, status TEXT NOT NULL,
         PRIMARY KEY (date, horizon, snapshot_commit));
     """),
+    (3, """
+    -- Décisions mentor 21/09 : répétitions (exécutions manuelles avant le début du protocole) hors palmarès et verdict ;
+    -- date de début du protocole fixée par le premier `matin` planifié (clé meta `protocole_debut`).
+    ALTER TABLE bases_editions ADD COLUMN repetition INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE bases_results ADD COLUMN repetition INTEGER NOT NULL DEFAULT 0;
+    CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT, set_at_utc TEXT NOT NULL);
+    """),
+    (4, """
+    -- Clé de bases_results étendue à l'horizon : une même course est notée pour l'édition publiée (T_MATIN)
+    -- et pour l'édition de mesure (T15) sans que l'une écrase l'autre.
+    CREATE TABLE bases_results_v4 (
+        race_id TEXT NOT NULL, result_version INTEGER NOT NULL, arrivee_json TEXT NOT NULL,
+        top_m INTEGER NOT NULL, hit_k1 INTEGER, hit_k2 INTEGER, hit_k3 INTEGER, hit_k4 INTEGER,
+        hit_2of3 INTEGER, scored_at_utc TEXT NOT NULL, source TEXT NOT NULL,
+        checked_against_sqlite INTEGER NOT NULL DEFAULT 0,
+        edition_id TEXT, hits_json TEXT, solidite TEXT, p_calibree_k3 REAL,
+        horizon TEXT NOT NULL DEFAULT 'T_MATIN', statut TEXT, repetition INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (race_id, result_version, top_m, horizon));
+    INSERT INTO bases_results_v4 SELECT race_id, result_version, arrivee_json, top_m, hit_k1, hit_k2, hit_k3, hit_k4,
+        hit_2of3, scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3,
+        horizon, statut, repetition FROM bases_results;
+    DROP TABLE bases_results;
+    ALTER TABLE bases_results_v4 RENAME TO bases_results;
+    """),
 ]
 
 
@@ -172,7 +196,8 @@ def result_already_scored(con, race_id: str, result_version: int, top_m: int, ho
 def latest_results(con, horizon: str = "T_MATIN") -> list[dict]:
     """Dernière version notée de chaque course (par top_m), jointe à son édition."""
     rows = con.execute("""
-        select r.*, e.date, e.solidite as ed_solidite, e.ladder_json, e.top_m as ed_top_m, e.mode as ed_mode
+        select r.*, e.date, e.solidite as ed_solidite, e.ladder_json, e.top_m as ed_top_m, e.mode as ed_mode,
+               e.engine8_json, e.repetition as ed_repetition
         from bases_results r join bases_editions e on e.edition_id = r.edition_id
         where r.horizon = ? and r.result_version = (
             select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)
@@ -191,6 +216,27 @@ def set_manifest_fingerprint(con, date: str, fp: str, nb: int | None, fetched_at
     con.commit()
 
 
-def shadow_start_date(con) -> str | None:
-    r = con.execute("select min(date) from journal_days where status='OK'").fetchone()
+def get_meta(con, key: str) -> str | None:
+    r = con.execute("select value from meta where key=?", (key,)).fetchone()
     return r[0] if r else None
+
+
+def set_meta(con, key: str, value: str) -> None:
+    from .util import iso_utc
+    con.execute("insert or replace into meta(key, value, set_at_utc) values (?,?,?)", (key, value, iso_utc()))
+    con.commit()
+
+
+def protocol_start_date(con) -> str | None:
+    """Date de début du protocole : fixée par le premier `matin` planifié (cron). None tant qu'il n'a pas eu lieu."""
+    return get_meta(con, "protocole_debut")
+
+
+def shadow_start_date(con) -> str | None:
+    return protocol_start_date(con)
+
+
+def is_repetition(con, day: str) -> bool:
+    """Toute exécution portant sur un jour antérieur au début du protocole (ou avant qu'il soit fixé) est une répétition."""
+    start = protocol_start_date(con)
+    return start is None or day < start

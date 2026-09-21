@@ -54,7 +54,12 @@ def test_matin_dry_run_then_shadow_is_idempotent(env, results_client, capsys):
     journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
     assert "édition du matin" in journal and "Base des bases" in journal and "Abstentions" in journal
     assert con.execute("select count(*) from journal_days where status='OK'").fetchone()[0] == 1
-    assert storage.shadow_start_date(con) == "2026-09-21"
+    # exécutions manuelles (non planifiées) avant le début du protocole : répétitions, hors palmarès
+    assert storage.protocol_start_date(con) is None
+    assert all(e["repetition"] == 1 for e in eds2)
+    pal = json.loads((content / "palmares.json").read_text(encoding="utf-8"))
+    assert pal["depuis"] is None and pal["editions_publiees"] == 0 and pal["repetitions_exclues"] == 20
+    assert "RÉPÉTITION" in journal
     assert con.execute("select count(*) from runs where command='matin' and status='OK'").fetchone()[0] == 2
     con.close()
 
@@ -141,3 +146,49 @@ def test_cli_matin_offline(capsys, env):
     assert rc == 0
     out = capsys.readouterr().out
     assert "édition du matin" in out and "20 éligibles" in out
+
+
+def test_scheduled_matin_fixes_protocol_start_and_marks_no_repetition(env, results_client, tmp_path, fixtures_dir):
+    from bases_engine.protocol import PLACEHOLDER, start_date_in_file
+    proto = tmp_path / "PROTOCOLE_PREENREGISTRE.md"
+    proto.write_text(f"# Protocole\n\n{PLACEHOLDER}\n", encoding="utf-8")
+    rc = run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto)
+    assert rc == 0
+    con = storage.connect(env["db"])
+    assert storage.protocol_start_date(con) == "2026-09-21" and start_date_in_file(proto) == "2026-09-21"
+    assert all(e["repetition"] == 0 for e in storage.editions_for_day(con, "2026-09-21", "T_MATIN"))
+    # un second matin planifié ne réécrit jamais la date
+    rc = run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto, max_wait=0)
+    assert storage.protocol_start_date(con) == "2026-09-21" and start_date_in_file(proto) == "2026-09-21"
+    assert "début du protocole" in (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+
+
+def test_hebdo_recalibrates_and_reports(env, results_client, snapshot, tmp_path, monkeypatch):
+    """Éditions T_MATIN rétrospectives du 20/09 (simulant un protocole démarré le 20/09), notation le soir, puis hebdo."""
+    import bases_engine.pipeline as pl
+    from bases_engine import config
+    from bases_engine.hebdo import run_hebdo
+    import bases_engine.params as params_mod
+    monkeypatch.setattr(config, "PARAMS_PATH", tmp_path / "params.json")
+    monkeypatch.setattr(params_mod, "config", config)
+    monkeypatch.setattr(config, "ROOT", tmp_path)
+    con = storage.connect(env["db"])
+    storage.set_meta(con, "protocole_debut", "2026-09-20")
+    n = pl._mesure_horizon(con, snapshot, "2026-09-20", "T_MATIN", N_SIMS)
+    con.execute("update bases_editions set mode='shadow', repetition=0")
+    con.commit(); con.close()
+    assert n > 20
+    assert run_soir(day="2026-09-20", results_client=results_client, db_path=env["db"], n_sims=N_SIMS) == 0
+    con = storage.connect(env["db"])
+    scored = con.execute("select count(*) from bases_results where horizon='T_MATIN' and repetition=0").fetchone()[0]
+    assert scored > 40
+    con.close()
+    assert run_hebdo(day="2026-09-21", db_path=env["db"]) == 0
+    con = storage.connect(env["db"])
+    assert con.execute("select version from params order by rowid desc limit 1").fetchone()[0] == "2026-09-21.1"
+    assert con.execute("select count(*) from calibration where params_version='2026-09-21.1'").fetchone()[0] == 8
+    saved = json.loads((tmp_path / "params.json").read_text(encoding="utf-8"))
+    assert saved["version"] == "2026-09-21.1" and saved["calibration"]["k3_m4"]["mode"] == "fixe"   # n < 150 → palier fixe
+    md = (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
+    assert "Baselines" in md and "3 premiers du moteur" in md and "Critères du protocole" in md and "Non calculé" in md
+    assert "2026-09-21.1" in (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8") if (tmp_path / "CHANGELOG.md").exists() else True

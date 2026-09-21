@@ -14,6 +14,7 @@ from .eligibility import Abstention, EligibleRace, evaluate_race
 from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot, ls_remote
 from .notify import alert, notify
 from .params import load_params
+from .protocol import set_start_date
 from .publish import build_day_contract, build_site, palmares_and_fiabilite, write_day_contract
 from .scoring import arrival_top, course_is_scorable, cross_check_sqlite, placed_from_course_json, score_edition
 from .util import iso_utc, now_utc, race_label, race_slug
@@ -24,6 +25,11 @@ class PipelineStop(RuntimeError):
     def __init__(self, code: int, msg: str):
         super().__init__(msg)
         self.code = code
+
+
+def is_scheduled() -> bool:
+    """Exécution planifiée (cron GitHub) — seule habilitée à fixer la date de début du protocole."""
+    return os.environ.get("GITHUB_EVENT_NAME") == "schedule"
 
 
 def _mode() -> str:
@@ -55,10 +61,12 @@ def _snapshot_for_day(day: str, sha: str | None, *, wait_s: float, max_wait: int
 def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool = False, sha: str | None = None,
               network: bool = True, results_client: ResultsClient | None = None, now: datetime | None = None,
               db_path=config.DB_PATH, shadow_token: str | None = None, wait_s: float = 300.0, max_wait: int = 3,
-              sleep=time.sleep, n_sims: int = config.N_SIMS) -> int:
+              sleep=time.sleep, n_sims: int = config.N_SIMS, scheduled: bool | None = None,
+              protocol_path=None) -> int:
     day = day or _date.today().isoformat()
     now = now or now_utc()
     mode = "dry-run" if dry_run else _mode()
+    scheduled = is_scheduled() if scheduled is None else scheduled
     run_id = f"matin-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
@@ -86,7 +94,15 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=name, duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {name}")
 
-        # 3. Idempotence : (date, horizon, snapshot_commit)
+        # 3. Début du protocole (premier matin planifié) et statut de répétition
+        if scheduled and not dry_run and storage.protocol_start_date(con) is None:
+            storage.set_meta(con, "protocole_debut", day)
+            storage.set_meta(con, "protocole_debut_run", run_id)
+            set_start_date(day, run_id, protocol_path)
+            notify("info", f"📌 BASES — début du protocole pré-enregistré fixé au {day}", f"Premier matin planifié (run {run_id}). Fin : 28 jours ou 800 courses notées.", date=day)
+        repetition = dry_run or storage.is_repetition(con, day)
+
+        # Idempotence : (date, horizon, snapshot_commit)
         replay = storage.editions_exist(con, day, horizon, snap.sha)
         params = load_params()
         logs = snap.logs_by_race()
@@ -108,6 +124,7 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
                     continue
                 ed = compute_edition(ev, params, n_sims=n_sims)
                 row = _edition_row(eid, ev, ed, snap.sha, mode if mode != "dry-run" else _mode(), params)
+                row["repetition"] = int(repetition)
                 storage.insert_edition(con, row)
                 editions.append((ev, ed["ladders"], row))
             con.commit()
@@ -130,8 +147,8 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
         con.commit()
 
         # 5. Notification (annexe E)
-        body = matin_message(day, snap.sha, contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info)
-        notify("matin", f"🏇 BASES — {day} — édition du matin ({mode})", body, date=day)
+        body = matin_message(day, snap.sha, contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info, repetition=repetition)
+        notify("matin", f"🏇 BASES — {day} — édition du matin ({mode})" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         storage.finish_run(con, run_id, "OK", races_seen=len(race_ids), races_published=len(editions), duration_s=round(time.time() - t0, 1))
         return 0
     except PipelineStop:
@@ -163,9 +180,9 @@ def _edition_row(eid: str, ev: EligibleRace, ed: dict, sha: str, mode: str, para
     }
 
 
-def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, mode: str, *, replay=False, superseded=0, site_info=None) -> str:
+def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, mode: str, *, replay=False, superseded=0, site_info=None, repetition=False) -> str:
     d = datetime.strptime(day, "%Y-%m-%d")
-    L = [f"🏇 BASES — {d:%d/%m} — édition du matin ({mode})",
+    L = [f"🏇 BASES — {d:%d/%m} — édition du matin ({mode})" + (" · RÉPÉTITION (repetition = 1) : hors palmarès et hors verdict" if repetition else ""),
          f"Source moteur commit {sha[:7]} · {n_seen} courses lues · {len(contract['courses'])} éligibles · {len(contract['abstentions'])} abstentions"
          + (" · rejeu idempotent (aucun doublon)" if replay else "") + (f" · {superseded} édition(s) remplacée(s)" if superseded else ""), ""]
     order = {"A": 0, "B": 1, "C": 2}
@@ -191,6 +208,7 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
              db_path=config.DB_PATH, shadow_token: str | None = None, lookback: int = 7, n_sims: int = config.N_SIMS,
              mesure_horizon: str = "T15") -> int:
     day = day or _date.today().isoformat()
+    
     run_id = f"soir-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
@@ -211,8 +229,9 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
 
+        repetition = storage.is_repetition(con, day)
         # 1. Mesure T15 (éditions rétrospectives, non publiées) pour la journée J
-        n_mesure = _mesure_horizon(con, snap, day, mesure_horizon, n_sims)
+        n_mesure = _mesure_horizon(con, snap, day, mesure_horizon, n_sims, repetition=repetition)
 
         # 2. Notation J-lookback..J sur le JSON public (source de vérité), contrôle croisé SQLite
         stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0}
@@ -252,8 +271,8 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
         contract = build_day_contract(con, last, "T_MATIN", None, params, mode=_mode())
         site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), con=con, dry_run=False)
-        body = soir_message(day, stats, pal, n_mesure, site_info)
-        notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}", body, date=day)
+        body = soir_message(day, stats, pal, n_mesure, site_info, repetition=repetition)
+        notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         if stats["divergences"]:
             alert("divergence JSON public ↔ SQLite (courses non notées)", "\n".join(stats["divergences"]), date=day)
         storage.finish_run(con, run_id, "OK", races_seen=stats["notees"] + stats["renotees"], races_published=n_mesure, duration_s=round(time.time() - t0, 1))
@@ -268,7 +287,7 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         con.close()
 
 
-def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int) -> int:
+def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int, *, repetition: bool = False) -> int:
     """Éditions rétrospectives à l'horizon de mesure (T15) pour la journée J : stockées (mode `mesure`), jamais publiées."""
     params = load_params()
     logs = snap.logs_by_race()
@@ -285,7 +304,9 @@ def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int) ->
                             (day, race_id, horizon, snap.sha, ev.motif, iso_utc()))
                 continue
             ed = compute_edition(ev, params, n_sims=n_sims)
-            storage.insert_edition(con, _edition_row(eid, ev, ed, snap.sha, "mesure", params))
+            row = _edition_row(eid, ev, ed, snap.sha, "mesure", params)
+            row["repetition"] = int(repetition)
+            storage.insert_edition(con, row)
             n += 1
         con.commit()
     finally:
@@ -317,13 +338,14 @@ def _score_course(con, scon, course: dict, stats: dict) -> None:
             hits = score_edition(ladders[f"top{m}"], placed)
             k3 = ladders[f"top{m}"]["3"]
             prior = con.execute("select 1 from bases_results where race_id=? and top_m=? and horizon=?", (race_id, m, ed["horizon"])).fetchone()
+            rep = int(bool(ed.get("repetition")) or storage.is_repetition(con, ed["date"]))
             con.execute("""insert or replace into bases_results(race_id, result_version, arrivee_json, top_m, hit_k1, hit_k2, hit_k3, hit_k4, hit_2of3,
-                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut)
-                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut, repetition)
+                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                         (race_id, version, json.dumps(arrivee), m, hits["hit_k1"], hits["hit_k2"], hits["hit_k3"], hits["hit_k4"], hits["hit_2of3"],
                          iso_utc(), "RESULTATS_JSON", 1 if check else 0, ed["edition_id"], json.dumps(hits),
                          ed["solidite"] if m == ed["top_m"] else None, k3.get("p_calibree"), ed["horizon"],
-                         (course.get("statut") or {}).get("code")))
+                         (course.get("statut") or {}).get("code"), rep))
             if m == ed["top_m"] and ed["horizon"] == "T_MATIN":
                 if prior:
                     stats["renotees"] += 1
@@ -333,10 +355,10 @@ def _score_course(con, scon, course: dict, stats: dict) -> None:
                     stats["notees"] += 1
 
 
-def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None) -> str:
+def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None, repetition=False) -> str:
     d = datetime.strptime(day, "%Y-%m-%d")
     today = pal.get("par_jour", {}).get(day, {})
-    L = [f"🌙 BASES — bilan du {d:%d/%m} : {today.get('n', 0)} courses notées"
+    L = [f"🌙 BASES — bilan du {d:%d/%m}" + (" · RÉPÉTITION (repetition = 1) : hors palmarès et hors verdict" if repetition else "") + f" : {today.get('n', 0)} courses notées"
          + (f" · 3/3 : {today.get('k3', 0)} ({100 * today.get('taux_k3', 0):.0f} %) · 2/3 : {today.get('k2of3', 0)} ({100 * today.get('taux_2of3', 0):.0f} %)" if today.get("n") else "")
          + f" · corrections : {stats['corrections']}"]
     if today.get("par_solidite"):

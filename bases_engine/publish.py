@@ -96,8 +96,9 @@ def _rates(rows: list[dict]) -> dict:
 
 
 def palmares_and_fiabilite(con, horizon: str = "T_MATIN") -> tuple[dict, dict]:
-    rows = [r for r in storage.latest_results(con, horizon) if r["ed_mode"] in ("shadow", "live") and r["top_m"] == r["ed_top_m"]]
-    depuis = storage.shadow_start_date(con)
+    rows = [r for r in storage.latest_results(con, horizon)
+            if r["ed_mode"] in ("shadow", "live") and r["top_m"] == r["ed_top_m"] and not r["repetition"] and not r["ed_repetition"]]
+    depuis = storage.protocol_start_date(con)
     par_jour = defaultdict(list)
     par_sol = defaultdict(list)
     par_m = defaultdict(list)
@@ -105,10 +106,13 @@ def palmares_and_fiabilite(con, horizon: str = "T_MATIN") -> tuple[dict, dict]:
         par_jour[r["date"]].append(r)
         par_sol[r["ed_solidite"] or "?"].append(r)
         par_m[str(r["top_m"])].append(r)
-    n_abst = con.execute("select count(*) from abstentions where horizon=?", (horizon,)).fetchone()[0]
-    n_editions = con.execute("select count(*) from bases_editions where horizon=? and superseded_by is null and mode in ('shadow','live')", (horizon,)).fetchone()[0]
+    n_abst = con.execute("select count(*) from abstentions where horizon=? and date >= ?", (horizon, depuis or "9999")).fetchone()[0]
+    n_editions = con.execute("select count(*) from bases_editions where horizon=? and superseded_by is null and mode in ('shadow','live') and repetition=0", (horizon,)).fetchone()[0]
+    n_rep = con.execute("select count(*) from bases_editions where horizon=? and repetition=1", (horizon,)).fetchone()[0]
     pal = {
-        "genere_le_utc": iso_utc(), "horizon": horizon, "depuis": depuis, "note": "Compteurs glissants depuis le début du mode ombre. Aucun chiffre retouché ni filtré.",
+        "genere_le_utc": iso_utc(), "horizon": horizon, "depuis": depuis,
+        "note": "Compteurs glissants depuis le début du protocole (premier matin planifié). Les répétitions manuelles antérieures sont exclues. Aucun chiffre retouché ni filtré.",
+        "repetitions_exclues": n_rep,
         "editions_publiees": n_editions, "abstentions": n_abst, "global": _rates(rows),
         "par_solidite": {s: _rates(v) for s, v in sorted(par_sol.items())},
         "par_cible": {f"top{m}": _rates(v) for m, v in sorted(par_m.items())},

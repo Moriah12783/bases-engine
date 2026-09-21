@@ -11,7 +11,11 @@ from pathlib import Path
 from . import config
 from .util import now_utc
 
-JOURNAL_DIR = config.RAPPORTS_DIR / "journal"
+JOURNAL_DIR = None      # résolu à l'appel : config.RAPPORTS_DIR / "journal" (surchargeable dans les tests)
+
+
+def journal_dir():
+    return JOURNAL_DIR or (config.RAPPORTS_DIR / "journal")
 
 
 def channels() -> list[str]:
@@ -30,17 +34,18 @@ def _summary(title: str, body: str) -> None:
 
 
 def _journal(kind: str, title: str, body: str, date: str | None) -> Path:
-    JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
+    jd = journal_dir()
+    jd.mkdir(parents=True, exist_ok=True)
     stamp = now_utc().strftime("%Y-%m-%dT%H:%M:%SZ")
     if kind == "alerte":
-        path = JOURNAL_DIR / "ALERTES.md"
+        path = jd / "ALERTES.md"
         if not path.exists():
             path.write_text("# Alertes bases-engine (une ligne par incident)\n\n", encoding="utf-8")
         with path.open("a", encoding="utf-8") as f:
             f.write(f"- {stamp} — {title} — {body.strip().splitlines()[0] if body.strip() else ''}\n")
         return path
     day = date or now_utc().strftime("%Y-%m-%d")
-    path = JOURNAL_DIR / f"{day}.md"
+    path = jd / f"{day}.md"
     if not path.exists():
         path.write_text(f"# Journal bases-engine — {day}\n\n", encoding="utf-8")
     with path.open("a", encoding="utf-8") as f:

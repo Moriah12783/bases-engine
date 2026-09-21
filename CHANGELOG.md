@@ -2,6 +2,14 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Décisions du mentor avant activation des crons
+
+- **Date de début du protocole** : champ « à renseigner par la première exécution planifiée » dans `PROTOCOLE_PREENREGISTRE.md` ; fixée par le premier `matin` déclenché par le cron (`GITHUB_EVENT_NAME = schedule`), écrite dans `bases.db` (`meta.protocole_debut`) et dans le fichier (jamais réécrite).
+- **Répétitions** : toute exécution de `matin`/`soir` portant sur un jour antérieur au début du protocole (ou avant qu'il soit fixé : exécutions manuelles, `workflow_dispatch`, locales, `--dry-run`) est marquée `repetition = 1` dans `bases_editions` et `bases_results` (migration 3), exclue du palmarès, de la fiabilité, de la recalibration et du verdict ; le résumé de job et le journal l'indiquent (« RÉPÉTITION »). `palmares.json` expose `repetitions_exclues`.
+- **`hebdo` implémenté** (`bases_engine/hebdo.py`) : recalibration par (k, cible) sur l'ensemble noté hors répétitions → nouvelle version `AAAA-MM-JJ.N` de `params.json` (seuils de solidité et lambdas inchangés jusqu'au verdict), ligne automatique dans ce CHANGELOG ; rapport `rapports/AAAA-Www.md` (échelle, solidité, baselines « 3 premiers du moteur » et « 3 plus courtes cotes » sur les mêmes courses, fiabilité, état des trois critères du protocole) ; rendement **non calculé** tant que `docs/rapports_mapping.md` n'est pas validé. Option `--sans-recalibration`.
+- `bases_results` : clé primaire étendue à l'horizon (migration 4) — la notation de l'édition publiée (T_MATIN) et celle de la mesure (T15) coexistent.
+- Ordre de mise en service mis à jour dans le README (pages-init → domaine → contract-check → une répétition `matin` manuelle un jour de courses → validation du rapport T_MATIN par le mentor → décommenter le bloc schedule et modifier une minute → début du protocole).
+
 ## 2026-09-21 — Compléments du mentor (sprint 2)
 
 - Workflow : commande `pages-init` (workflow_dispatch **uniquement**, refus explicite sinon) : `npx --yes wrangler@4 pages project create bases-elite-turf --production-branch=main` avec `CLOUDFLARE_API_TOKEN_BASES` / `CLOUDFLARE_ACCOUNT_ID` ; idempotente (projet déjà listé, ou réponse « already exists » → succès). Le rattachement du domaine reste manuel (tableau de bord Pages).

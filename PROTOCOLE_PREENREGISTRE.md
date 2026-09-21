@@ -7,8 +7,15 @@ que les éditions postérieures. Le palmarès n'est jamais retouché ni filtré.
 
 ## Période
 
-À partir du premier `matin` réussi (première ligne `journal_days` au statut `OK`), jusqu'à
-**28 jours** ou **800 courses éligibles notées**, la première des deux échéances atteinte.
+**Date de début : à renseigner par la première exécution planifiée.**
+
+La date est fixée par le premier `matin` déclenché par le cron (événement `schedule`), qui l'écrit
+ici et dans `bases.db` (clé `protocole_debut`). Elle n'est jamais réécrite. Fin : **28 jours** ou
+**800 courses éligibles notées** après cette date, la première des deux échéances atteinte.
+
+Toute exécution manuelle de `matin` ou `soir` avant cette date (répétitions, `workflow_dispatch`,
+exécutions locales, `--dry-run`) est marquée `repetition = 1` dans `bases_editions` et
+`bases_results`, exclue du palmarès et du verdict, et signalée comme telle dans le résumé de job.
 
 ## Objet jugé
 
@@ -50,5 +57,5 @@ T_MATIN, 339 courses (08/09 → 20/09/2026), commit moteur `f1677b62` : échelle
 20,1 / 9,1 % ; 3/3 trio joint 20,1 % vs 19,2 % (3 premiers moteur) vs 18,6 % (marché) ; terciles
 A / B / C → 3/3 = 33,6 / 15,9 / 10,6 %. Voir `rapports/backtest/2026-09-21_T_MATIN_since-2026-08-25.md`.
 
-_Gelé le 21/09/2026 — session développeur Bases. Première exécution ombre : non encore effectuée
-(dépôt dédié et secrets Cloudflare en attente)._
+_Gelé le 21/09/2026 — session développeur Bases. Seul le champ « Date de début » sera complété,
+automatiquement, par la première exécution planifiée._

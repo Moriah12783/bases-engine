@@ -16,47 +16,18 @@ Documents de référence : `BRIEF_SERVICE_BASES.md` (brief d'exécution), `CHART
 Dépôt dédié `Moriah12783/bases-engine` (extraction du sous-dossier `bases-engine/` d'`elite-turf` par
 `git subtree split`). Le workflow `.github/workflows/bases.yml` ne tourne qu'à la racine de ce dépôt.
 
-## Mise en service (sprint 2) — actions de Steph
+## Mise en service — ordre à respecter (décision mentor du 21/09/2026)
 
-1. Créer le dépôt privé `Moriah12783/bases-engine` et y pousser l'extraction ; activer « Watch → Custom → Actions » pour recevoir les échecs de workflow.
-2. Secrets : `CLOUDFLARE_API_TOKEN_BASES` (Pages : Edit), `CLOUDFLARE_ACCOUNT_ID`, `SHADOW_TOKEN` (32 caractères aléatoires). Variables : `PUBLICATION_MODE=shadow`, `NOTIFY_CHANNELS=summary,journal`.
-3. Lancer manuellement le workflow avec la commande `pages-init` (crée le projet Pages `bases-elite-turf`, idempotent), puis rattacher `bases.elite-turf.fr` dans le tableau de bord Pages.
-4. Lancer manuellement le workflow avec la commande `contract-check` (Actions → bases → Run workflow). Tant qu'il ne passe pas, les crons restent commentés dans `bases.yml`.
-5. Sur `contract-check` vert : décommenter le bloc `schedule` (décision écrite) et modifier soi-même une minute d'une ligne cron pour en devenir l'auteur (destinataire des notifications d'échec), puis premier `matin` en mode ombre.
-6. Consulter la page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
+1. Créer le dépôt privé `Moriah12783/bases-engine` (fait), activer « Watch → Custom → Actions » ; poser les secrets `CLOUDFLARE_API_TOKEN_BASES` (Pages : Edit), `CLOUDFLARE_ACCOUNT_ID`, `SHADOW_TOKEN` (32 caractères aléatoires) et les variables `PUBLICATION_MODE=shadow`, `NOTIFY_CHANNELS=summary,journal`.
+2. **`pages-init`** (Actions → bases → Run workflow) : crée le projet Pages `bases-elite-turf`, idempotent.
+3. **Domaine** : rattacher `bases.elite-turf.fr` au projet dans le tableau de bord Pages.
+4. **`contract-check` manuel** : premier test réseau complet (manifeste public inclus).
+5. **Une répétition `matin` manuelle, un jour de courses** : marquée `repetition = 1`, hors palmarès et verdict ; sert à vérifier le résumé de job, le journal et la page ombre.
+6. **Validation du rapport T_MATIN par le mentor** (`rapports/backtest/2026-09-21_T_MATIN_since-2026-08-25.md`, `params.json` v2026-09-21.2). Rien ne s'active avant ce retour.
+7. Steph **décommente le bloc `schedule`** de `bases.yml` et **modifie une minute** d'une ligne cron (il devient l'auteur des lignes cron, donc le destinataire des notifications d'échec).
+8. **Début du protocole** : fixé automatiquement par le premier `matin` planifié (date écrite dans `PROTOCOLE_PREENREGISTRE.md` et `bases.db`). `hebdo` tourne chaque lundi à partir de là.
 
-## Installation
-
-```bash
-cd bases-engine
-python3.11 -m pip install -r requirements.txt   # numpy, requests, pytest
-python -m pytest -q                              # tests hors réseau (fixtures/snapshot/, fixtures/resultats/)
-```
-
-## Commandes
-
-```bash
-python -m bases_engine contract-check [--date J] [--no-network]   # tests de contrat §4.4 (bloquants)
-python -m bases_engine backtest --since 2026-08-25 [--horizon T15|T_MATIN] [--until J] [--freeze-params]
-python -m bases_engine show --date J [--horizon T_MATIN] [--retro]  # aperçu console de l'édition
-python -m bases_engine matin [--date J] [--dry-run] [--no-network] [--shadow-token T] [--now ISO]
-python -m bases_engine soir  [--date J] [--no-network]
-python -m bases_engine hebdo                                       # sprint 3 (non implémenté)
-```
-
-Hors-ligne (`--no-network`) avec `BASES_RESULTS_LOCAL_DIR=fixtures/resultats`, le manifeste et les
-journées sont lus dans la fixture (format de production identique) au lieu de `prono.elite-turf.fr`.
-
-Options globales : `--sha <commit>` (défaut : `git ls-remote` de `main`), `--db <bases.db>`.
-
-Variables d'environnement utiles :
-
-| Variable | Rôle |
-|---|---|
-| `BASES_CACHE_DIR` | cache des instantanés `.cache/<sha>/` (défaut : `./.cache`) |
-| `BASES_LOCAL_SNAPSHOT_DIR` | instantané déjà rempli (tests, hors-ligne) — court-circuite le réseau |
-| `BASES_SOURCE_BASE_URL`, `BASES_DB_FILENAME` (`.gz` accepté), `BASES_REPORT_FILENAME` | source alternative (§12 : croissance de `turf_bench.db`) |
-| `BASES_RESULTS_BASE_URL` | base des JSON de résultats publics (`file://<dossier>` accepté pour une fixture) |
+Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
 ## Pipeline (résumé)
 

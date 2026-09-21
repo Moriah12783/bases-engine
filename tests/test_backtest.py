@@ -54,5 +54,8 @@ def test_cli_contract_check_offline(capsys):
     assert rc == 0 and "sauté" in out
 
 
-def test_cli_sprint3_command_is_stub(capsys):
-    assert cli.main(["hebdo"]) == 3
+def test_cli_hebdo_without_scored_races(capsys, tmp_path, monkeypatch):
+    from bases_engine import config
+    monkeypatch.setattr(config, "RAPPORTS_DIR", tmp_path)
+    assert cli.main(["--db", str(tmp_path / "b.db"), "hebdo", "--date", "2026-09-21", "--sans-recalibration"]) == 0
+    assert "aucune course notée" in (tmp_path / "2026-W39.md").read_text(encoding="utf-8")
