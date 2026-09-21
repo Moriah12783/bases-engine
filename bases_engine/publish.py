@@ -214,7 +214,7 @@ def render_index(contract: dict, pal: dict, fiab: dict, *, mode: str) -> str:
          f"<title>Elite Turf · Bases · {d:%d/%m/%Y}</title><style>{CSS}</style></head><body>",
          f"<header><h1>ELITE TURF · BASE DES BASES</h1><p>Édition du {d:%d/%m/%Y} · horizon matin · mode {html.escape(mode)}</p></header><main>",
          f"<p class='meta'>Source moteur commit <code>{(contract['source']['commit'] or '')[:10]}</code> · paramètres {html.escape(str(contract['parametres']['version']))} · généré le {contract['genere_le_utc']} · {len(courses)} courses éligibles · {len(contract['abstentions'])} abstentions. Heures en GMT (= Abidjan/Dakar) et Paris.</p>",
-         "<p class='legende'>Chaque pourcentage est la probabilité estimée (recalibrée sur l'historique) que les chevaux cités soient tous à l'arrivée dans les 4 ou 5 premiers selon le pari. Solidité : A = tiers supérieur des probabilités du trio, B = tiers médian, C = tiers inférieur (abstention sur bases fixes). Mode shadow : édition d'essai non diffusée aux abonnés, palmarès tenu à l'identique.</p>"]
+         "<p class='legende'>Tous à l'arrivée = les chevaux indiqués finissent tous dans les 4 (ou 5) premiers ; Tous sauf un = un seul d'entre eux peut manquer. Pourcentages estimés, recalibrés sur l'historique. Solidité : A = tiers supérieur des probabilités du trio, B = tiers médian, C = tiers inférieur (abstention sur bases fixes). Mode shadow : édition d'essai non diffusée aux abonnés, palmarès tenu à l'identique.</p>"]
     for c in courses:
         b, e, st = c["base_des_bases"], c["echelle"], c["structure_recommandee"]
         pin = " <span class='pin'>Quinté+ du jour</span>" if "QUINTE_PLUS" in (c.get("paris_offerts") or []) else ""
@@ -225,8 +225,8 @@ def render_index(contract: dict, pal: dict, fiab: dict, *, mode: str) -> str:
             H.append(f"<div class='sel'>Associés : {' - '.join(map(str, c['associes']))}</div>")
         H.append("<table><tr><th>Échelle</th><th>1 base</th><th>2 bases</th><th>3 bases</th><th>4 bases</th></tr>")
         H.append("<tr><td>Chevaux</td>" + "".join(f"<td>{' - '.join(map(str, e[k]['chevaux']))}</td>" for k in ("1", "2", "3", "4")) + "</tr>")
-        H.append("<tr><td>Tous à l'arrivée (k/k)</td>" + "".join(f"<td>{_pct(e[k]['p_calibree'])}</td>" for k in ("1", "2", "3", "4")) + "</tr>")
-        H.append("<tr><td>Un manquant au plus ((k−1)/k)</td>" + "".join(f"<td>{_pct(e[k]['p_k_moins_1'])}</td>" for k in ("1", "2", "3", "4")) + "</tr></table>")
+        H.append("<tr><td>Tous à l'arrivée</td>" + "".join(f"<td>{_pct(e[k]['p_calibree'])} ({k} sur {k})</td>" for k in ("1", "2", "3", "4")) + "</tr>")
+        H.append("<tr><td>Tous sauf un</td><td>—</td>" + "".join(f"<td>{_pct(e[k]['p_k_moins_1'])} ({int(k) - 1} sur {k})</td>" for k in ("2", "3", "4")) + "</tr></table>")
         H.append(f"<div class='struct'>Structure recommandée : {html.escape(st['texte'])} ({html.escape(st['motif'])}{', pari ' + html.escape(st['pari']) if st.get('pari') else ''})</div></section>")
     g = pal.get("global", {})
     H.append(f"<h2 style='font-weight:400;color:var(--gold);margin-top:28px'>Palmarès depuis le {pal.get('depuis') or '—'} (non retouché)</h2>")

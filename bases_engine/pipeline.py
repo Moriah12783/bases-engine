@@ -193,7 +193,8 @@ def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, 
         e = c["echelle"]; b = c["base_des_bases"]
         L.append(f"{c['libelle']} · {c['depart_affiche']} · {c['paris_libelle']} · {c['partants']} partants")
         L.append(f"Base des bases : {' - '.join(map(str, b['chevaux']))} · solidité {b['solidite']} · P(3/3) {100 * b['p_calibree_3sur3']:.0f} % · P(2/3) {100 * b['p_calibree_2sur3']:.0f} %")
-        L.append("Échelle : " + " · ".join(f"{k} base{'s' if int(k) > 1 else ''} {100 * e[k]['p_calibree']:.0f} %" for k in ("1", "2", "3", "4")))
+        L.append("Tous à l'arrivée : " + " · ".join(f"{100 * e[k]['p_calibree']:.0f} % ({k} sur {k})" for k in ("1", "2", "3", "4")))
+        L.append("Tous sauf un : — · " + " · ".join(f"{100 * e[k]['p_k_moins_1']:.0f} % ({int(k) - 1} sur {k})" for k in ("2", "3", "4")))
         L.append(f"Structure : {c['structure_recommandee']['texte']}")
         L.append("")
     if contract["abstentions"]:

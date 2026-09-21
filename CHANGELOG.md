@@ -2,6 +2,10 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Libellés de l'échelle (présentation uniquement)
+
+- Page et résumé de job : ligne « Tous à l'arrivée » avec cases « xx % (1 sur 1) · xx % (2 sur 2) · xx % (3 sur 3) · xx % (4 sur 4) » ; ligne « Tous sauf un » avec « — · xx % (1 sur 2) · xx % (2 sur 3) · xx % (3 sur 4) ». Plus aucune mention de k, (k/k) ni ((k−1)/k). Légende : « Tous à l'arrivée = les chevaux indiqués finissent tous dans les 4 (ou 5) premiers ; Tous sauf un = un seul d'entre eux peut manquer. »
+
 ## 2026-09-21 — Mesure intrajournée (demande du mentor, hors protocole)
 
 - `soir` : la mesure rétrospective couvre **T90, T30 et T15** (même calcul, même graine), éditions `mode = mesure` stockées par horizon dans `bases_editions`, notées par horizon dans `bases_results`, `repetition` selon la règle en vigueur. Jamais publiées.

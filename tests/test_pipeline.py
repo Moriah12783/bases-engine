@@ -243,7 +243,11 @@ def test_presentation_structure_and_order(env, results_client):
         if not any(x in c["paris_offerts"] for x in ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI")) and st["code"] != "ABSTENTION":
             assert st["barreau"] == 2 and len(st["bases"]) == 2
     html = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
-    assert "Tous à l'arrivée (k/k)" in html and "Un manquant au plus" in html and "Sélection moteur" in html and "Associés" in html
+    assert "Tous à l'arrivée</td>" in html and "Tous sauf un</td><td>—</td>" in html and "(3 sur 3)" in html and "(2 sur 3)" in html
+    assert "k/k" not in html and "k−1" not in html and "Sélection moteur" in html and "Associés" in html
+    assert "Tous sauf un = un seul d'entre eux peut manquer" in html
+    journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+    assert "Tous à l'arrivée : " in journal and "Tous sauf un : — · " in journal and "(1 sur 2)" in journal and "k/k" not in journal
     assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+ du jour" in html
     assert "Mode shadow" in html
 
