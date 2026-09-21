@@ -51,3 +51,40 @@ def structure_for(solid: str, top_m: int) -> dict:
     if solid == "C":
         return {"code": "ABSTENTION", "texte": "abstention sur bases fixes", "motif": "solidité C"}
     return {"code": "NON_QUALIFIE", "texte": "échelle seule (seuils non gelés)", "motif": "pas d'indice de solidité"}
+
+
+def pari_principal(paris: list[str]) -> str | None:
+    for code in config.PARIS_UTILES:
+        if code in paris:
+            return code
+    return None
+
+
+def structure_libelle(solid: str, top_m: int, paris: list[str], ladder: dict) -> dict:
+    """Libellé de la structure recommandée dans le pari réellement offert (décision mentor 21/09, présentation seule ;
+    le code stocké ne change pas). Retourne {code, texte, motif, pari, barreau, bases, associes_k}."""
+    base = structure_for(solid, top_m)
+    principal = pari_principal(paris)
+    lib = config.PARIS_LIBELLES.get(principal or "", None)
+    quarte_ou_multi = any(c in paris for c in ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI"))
+    if solid == "C":
+        return {**base, "texte": "abstention sur bases fixes", "pari": lib, "barreau": None, "bases": []}
+    if solid not in ("A", "B"):
+        return {**base, "pari": lib, "barreau": None, "bases": []}
+    k = 3 if solid == "A" else 2
+    if not quarte_ou_multi:                       # règle mentor : barreau 2 ; 2sur4 s'il est offert
+        k = 2
+        if "DEUX_SUR_QUATRE" in paris:
+            lib, texte = "2sur4", "2sur4 avec les 2 bases"
+        elif "TRIO" in paris:                     # cas rare (petits pelotons sans 2sur4) : seul pari à bases offert
+            lib, texte = "Trio", "Trio avec les 2 bases + X"
+        else:
+            lib, texte = None, "2 bases, aucun pari à bases offert sur cette course"
+    elif principal == "QUINTE_PLUS":
+        texte = "3 bases + XX avec les associés" if k == 3 else "2 bases + XXX avec les associés"
+    elif principal == "QUARTE_PLUS":
+        texte = "3 bases + X avec les associés" if k == 3 else "2 bases + XX avec les associés"
+    else:  # MULTI / MINI_MULTI
+        texte = f"{lib} en 5 ou 6 autour des {k} bases"
+    rung = ladder.get(str(k)) or ladder.get(k) or {}
+    return {**base, "texte": texte, "pari": lib, "barreau": k, "bases": list(rung.get("chevaux", []))}

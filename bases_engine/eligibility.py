@@ -35,6 +35,7 @@ class EligibleRace:
     priced_ratio: float | None
     flags: list[str] = field(default_factory=list)
     market_probs: dict[int, float] | None = None
+    paris_offerts: list[str] = field(default_factory=list)   # codes bets_json utiles, dans l'ordre de priorité
 
 
 @dataclass
@@ -144,6 +145,7 @@ def evaluate_race(con, race_id: str, horizon: str, log: dict | None, *, mode: st
         top_m, cible = 5, "QUINTE_PLUS"
     else:
         top_m, cible = 4, "QUARTE_PLUS" if "QUARTE_PLUS" in codes else ("MULTI" if "MULTI" in codes else "TOP4")
+    paris = [c for c in config.PARIS_UTILES if c in codes]
 
     market = con.execute("select probabilities_json from predictions where race_id = ? and engine_name = ? and horizon = ?",
                          (race_id, config.MARKET_ENGINE, horizon)).fetchone()
@@ -160,4 +162,4 @@ def evaluate_race(con, race_id: str, horizon: str, log: dict | None, *, mode: st
         discipline=race["discipline"], declared_runners=declared, active_runners=len(probs),
         engine8=engine8, candidates=candidates, probs=probs, prediction_hash=pred["prediction_hash"],
         lock_time_utc=pred["lock_time_utc"], confidence_stars=pred["confidence_stars"],
-        priced_ratio=pred["priced_ratio"], flags=flags, market_probs=market_probs)
+        priced_ratio=pred["priced_ratio"], flags=flags, market_probs=market_probs, paris_offerts=paris)

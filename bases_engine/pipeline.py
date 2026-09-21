@@ -173,7 +173,7 @@ def _edition_row(eid: str, ev: EligibleRace, ed: dict, sha: str, mode: str, para
         "ladder_json": json.dumps({"cible": target, "top4": ladders["4"], "top5": ladders["5"]}),
         "trios_json": json.dumps(ed["ladders"][ev.top_m]["trios"]),
         "solidite": ed["solidite"], "structure_code": ed["structure"]["code"],
-        "flags_json": json.dumps(ed["flags"] + [f"pari_cible:{ev.pari_cible}", f"partants:{ev.active_runners}",
+        "flags_json": json.dumps(ed["flags"] + [f"pari_cible:{ev.pari_cible}", f"paris:{'|'.join(ev.paris_offerts)}", f"partants:{ev.active_runners}",
                                                 f"etoiles:{ev.confidence_stars}", f"depart:{ev.scheduled_start_time}",
                                                 f"depart_utc:{ev.start_time_utc}", f"discipline:{ev.discipline}"]),
         "params_version": params.get("version"), "mode": mode, "published_at_utc": None, "superseded_by": None,
@@ -185,16 +185,16 @@ def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, 
     L = [f"🏇 BASES — {d:%d/%m} — édition du matin ({mode})" + (" · RÉPÉTITION (repetition = 1) : hors palmarès et hors verdict" if repetition else ""),
          f"Source moteur commit {sha[:7]} · {n_seen} courses lues · {len(contract['courses'])} éligibles · {len(contract['abstentions'])} abstentions"
          + (" · rejeu idempotent (aucun doublon)" if replay else "") + (f" · {superseded} édition(s) remplacée(s)" if superseded else ""), ""]
-    order = {"A": 0, "B": 1, "C": 2}
-    for c in sorted(contract["courses"], key=lambda c: (order.get(c["base_des_bases"]["solidite"], 3), c["depart_utc"] or "")):
+    from .publish import sort_courses          # même ordre que la page : Quinté+ épinglé, puis A, B, C, puis heure
+    for c in sort_courses(contract["courses"]):
         e = c["echelle"]; b = c["base_des_bases"]
-        L.append(f"{c['libelle']} · {c['depart_affiche']} · {c['pari_cible']} · {c['partants']} partants")
+        L.append(f"{c['libelle']} · {c['depart_affiche']} · {c['paris_libelle']} · {c['partants']} partants")
         L.append(f"Base des bases : {' - '.join(map(str, b['chevaux']))} · solidité {b['solidite']} · P(3/3) {100 * b['p_calibree_3sur3']:.0f} % · P(2/3) {100 * b['p_calibree_2sur3']:.0f} %")
         L.append("Échelle : " + " · ".join(f"{k} base{'s' if int(k) > 1 else ''} {100 * e[k]['p_calibree']:.0f} %" for k in ("1", "2", "3", "4")))
         L.append(f"Structure : {c['structure_recommandee']['texte']}")
         L.append("")
     if contract["abstentions"]:
-        L.append("Abstentions : " + ", ".join(f"{race_label(a['course_id']).split(' - ')[1]} {race_label(a['course_id']).split(' - ')[0]} ({a['motif']})" for a in contract["abstentions"]))
+        L.append("Abstentions : " + ", ".join(f"{race_label(a['course_id']).split(' - ')[1]} {race_label(a['course_id']).split(' - ')[0]} ({a['motif_libelle']})" for a in contract["abstentions"]))
     if site_info:
         L.append(f"Site : {site_info}")
     return "\n".join(L)

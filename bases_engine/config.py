@@ -37,6 +37,11 @@ MAX_CANDIDATES = 8
 START_MARGIN_MIN = 20
 PROB_SUM_TOL = 0.01
 
+# Paris utiles pour la structure de ticket (ordre de priorité d'affichage) et libellés français
+PARIS_UTILES = ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI", "DEUX_SUR_QUATRE", "TRIO", "COUPLE_PLACE")
+PARIS_LIBELLES = {"QUINTE_PLUS": "Quinté+", "QUARTE_PLUS": "Quarté+", "MULTI": "Multi", "MINI_MULTI": "Mini Multi",
+                  "DEUX_SUR_QUATRE": "2sur4", "TRIO": "Trio", "COUPLE_PLACE": "Couplé placé"}
+
 # --- Calcul (§4.3) ------------------------------------------------------------------------
 N_SIMS = 40_000
 DEFAULT_LAMBDAS = (1.0, 0.81, 0.65, 0.55, 0.50)

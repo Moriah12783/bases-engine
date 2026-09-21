@@ -194,3 +194,38 @@ def test_hebdo_recalibrates_and_reports(env, results_client, snapshot, tmp_path,
     assert "Baselines" in md and "3 premiers du moteur" in md and "Critères du protocole" in md and "Non calculé" in md
     assert "trio publié diffère des 3 premiers du moteur" in md and "Courses concernées" in md
     assert "2026-09-21.1" in (tmp_path / "CHANGELOG.md").read_text(encoding="utf-8") if (tmp_path / "CHANGELOG.md").exists() else True
+
+
+def test_presentation_structure_and_order(env, results_client):
+    from bases_engine.params import structure_libelle
+    from bases_engine.publish import sort_courses
+    lad = {"2": {"chevaux": [1, 2]}, "3": {"chevaux": [1, 2, 3]}}
+    assert structure_libelle("A", 5, ["QUINTE_PLUS", "QUARTE_PLUS"], lad)["texte"] == "3 bases + XX avec les associés"
+    assert structure_libelle("A", 4, ["QUARTE_PLUS", "MULTI"], lad)["texte"] == "3 bases + X avec les associés"
+    m = structure_libelle("A", 4, ["MULTI", "DEUX_SUR_QUATRE"], lad)
+    assert m["texte"] == "Multi en 5 ou 6 autour des 3 bases" and m["bases"] == [1, 2, 3]
+    d = structure_libelle("A", 4, ["DEUX_SUR_QUATRE"], lad)
+    assert d["texte"] == "2sur4 avec les 2 bases" and d["bases"] == [1, 2] and d["barreau"] == 2
+    t = structure_libelle("A", 4, ["TRIO", "COUPLE_PLACE"], lad)
+    assert t["texte"].startswith("Trio avec les 2 bases") and t["barreau"] == 2
+    b = structure_libelle("B", 5, ["QUINTE_PLUS"], lad)
+    assert b["texte"] == "2 bases + XXX avec les associés" and b["bases"] == [1, 2] and b["code"] == "2B_XXX"
+    assert structure_libelle("C", 4, ["QUARTE_PLUS"], lad)["code"] == "ABSTENTION"
+    run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
+    day = json.loads((env["site"] / "shadow" / ("t" * 32) / "bases" / "2026-09-21.json").read_text(encoding="utf-8"))
+    cs = sort_courses(day["courses"])
+    assert "QUINTE_PLUS" in cs[0]["paris_offerts"] and cs[0]["course_id"] == "R1C1_21092026_LA CAPELLE"
+    sols = [c["base_des_bases"]["solidite"] for c in cs[1:]]
+    assert sols == sorted(sols)
+    for c in cs:
+        st = c["structure_recommandee"]
+        assert st["code"] in ("3B_XX", "3B_X", "2B_XXX", "2B_XX", "ABSTENTION")
+        if st["bases"]:
+            assert set(c["associes"]) == set(c["moteur"]["selection_8"]) - set(st["bases"])
+        assert c["paris_libelle"] != "paris non renseignés"
+        if not any(x in c["paris_offerts"] for x in ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI")) and st["code"] != "ABSTENTION":
+            assert st["barreau"] == 2 and len(st["bases"]) == 2
+    html = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
+    assert "Tous à l'arrivée (k/k)" in html and "Un manquant au plus" in html and "Sélection moteur" in html and "Associés" in html
+    assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+ du jour" in html
+    assert "Mode shadow" in html

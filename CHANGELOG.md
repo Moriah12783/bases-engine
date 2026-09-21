@@ -2,6 +2,16 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-21 — Présentation (retour du mentor sur la répétition matin ; hors protocole)
+
+- Pari et structure : l'étiquette « TOP4 » disparaît au profit des paris réellement offerts (`bets_json` : Quinté+, Quarté+, Multi, Mini Multi, 2sur4 ; drapeau `paris:` stocké dans `flags_json`). Structure formulée dans le pari principal : Quinté+ → « 3 bases + XX avec les associés », Quarté+ → « 3 bases + X avec les associés », Multi → « Multi en 5 ou 6 autour des 3 bases », course sans Quarté+/Multi → barreau 2, « 2sur4 avec les 2 bases » ; solidité B → variantes à 2 bases ; C → abstention. **Les codes de structure stockés ne changent pas.**
+- Cartes : lignes « Sélection moteur : … » (les 8) et « Associés : … » (les 8 moins les bases du barreau recommandé). Le contrat JSON gagne `paris_offerts`, `paris_libelle`, `pari_principal`, `associes`, `structure_recommandee.{pari, barreau, bases}` (ajouts, `contract_version` inchangée).
+- Ordre de page : Quinté+ du jour épinglé en tête, puis A, B, C ; par heure de départ dans un groupe.
+- Libellés : « Tous à l'arrivée (k/k) » et « Un manquant au plus ((k−1)/k) ».
+- Bloc « Abstentions du jour » en bas de page, motifs en français ; légende d'une ligne sous l'en-tête (probabilité, lettres A/B/C, mention shadow).
+- Éditions antérieures à ce changement (répétition du 21/09) : drapeau `paris:` absent → « paris non renseignés » ; régénérées à la prochaine édition.
+- Aucune modification de `params.json`, du calcul ni du protocole.
+
 ## 2026-09-21 — Corrections après le contract-check #2 (commit moteur `71f79f42d2`)
 
 - `publication_reason` : `PRICED_RATIO_LOW` ajouté à l'ensemble connu. Nouvelle règle : une valeur inconnue avec `publishable = false` est un **avertissement** (compté, listé dans le résumé, journalisé dans `ALERTES.md`, non bloquant) ; une valeur inconnue avec `publishable = true` reste **bloquante**. Le drapeau `publishable` est l'autorité, la raison est informative.
