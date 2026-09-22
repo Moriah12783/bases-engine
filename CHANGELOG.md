@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Mini-sprint « Métronome », commit C (après recette)
+
+- Recette verte : run `contract-check · metronome` à 13:30 UTC, 36 s. Ligne de recette retirée de `COMMANDES` (`worker.js`) et son cron de `wrangler.toml`.
+- Correction : Cloudflare numérote les jours 1 = dimanche … 7 = samedi ; `28 7 * * 1` remplacé par `28 7 * * MON` dans `wrangler.toml` **et** dans `COMMANDES` (égalité stricte de chaîne avec `controller.cron`).
+- `docs/RUNBOOK.md` : jeton GitHub créé le 22/09/2026, expire le mercredi 22 septembre 2027, rappel agenda au 7 septembre 2027.
+- À faire par Steph : relancer « Métronome · déploiement » pour appliquer les crons.
+
 ## 2026-09-22 — Mini-sprint « Métronome », commit B (Worker Cloudflare)
 
 - `metronome/worker.js` (frappe `workflow_dispatch` de `bases.yml` avec `source = metronome`, un nouvel essai après 60 s, erreur visible dans Metrics → Errors), `metronome/wrangler.toml` (crons `5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * 1` hebdo, sans URL publique, journaux activés), `.github/workflows/metronome.yml` (déploiement en un clic : `wrangler deploy` puis pose du secret `GH_DISPATCH_TOKEN`).

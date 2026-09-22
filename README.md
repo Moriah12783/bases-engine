@@ -33,7 +33,7 @@ Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
 Les crons GitHub sont servis « au mieux » (retards de plusieurs heures, occurrences sautées). Un Worker
 Cloudflare `bases-metronome` (`metronome/`) frappe `workflow_dispatch` de `bases.yml` à la minute :
-`5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * 1` hebdo (UTC), deux minutes avant les crons GitHub qui
+`5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * MON` hebdo (UTC), deux minutes avant les crons GitHub qui
 restent le filet. Déploiement : Actions → « Métronome · déploiement » (secrets `CLOUDFLARE_API_TOKEN_METRONOME`,
 `CLOUDFLARE_ACCOUNT_ID`, `METRONOME_GH_TOKEN`). Exploitation : `docs/RUNBOOK.md`.
 

@@ -8,8 +8,7 @@ const INPUT_COMMANDE = "command";   // nom exact de l'input de commande dans bas
 const COMMANDES = {
   "5 9 * * *":  "matin",
   "3 22 * * *": "soir",
-  "28 7 * * 1": "hebdo",
-  "30 13 * * *": "contract-check",   // ligne de RECETTE : à retirer après le test (§5 du brief), avec son cron dans wrangler.toml
+  "28 7 * * MON": "hebdo",   // Cloudflare numérote les jours 1 = dimanche … 7 = samedi : le nom du jour lève l'ambiguïté
 };
 
 async function dispatch(env, commande) {
