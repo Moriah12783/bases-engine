@@ -7,9 +7,9 @@ que les éditions postérieures. Le palmarès n'est jamais retouché ni filtré.
 
 ## Période
 
-**Date de début : à renseigner par la première exécution planifiée.**
+**Date de début : 2026-09-22** (fixée par le premier `matin` planifié, run `matin-2026-09-22-e4606b`).
 
-**Commit du dépôt `bases-engine` à l'activation : à renseigner par la première exécution planifiée.**
+**Commit du dépôt `bases-engine` à l'activation : `e284c28319e15ffe7848cc5847114d9886d8da59`.**
 
 Paramètres gelés : `params.json` **version 2026-09-21.2** (validée par le mentor le 21/09/2026 après
 vérification que les seuils de solidité sont calculés sur la P(3/3) **recalibrée**, la quantité comparée
