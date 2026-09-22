@@ -15,7 +15,8 @@ from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot, ls_remote
 from .notify import alert, notify
 from .params import load_params
 from .protocol import set_start_date
-from .publish import build_day_contract, build_site, palmares_and_fiabilite, write_day_contract
+from .publish import build_day_contract, palmares_and_fiabilite
+from .site import build_site
 from .scoring import arrival_top, course_is_scorable, cross_check_sqlite, placed_from_course_json, score_edition
 from .util import iso_utc, now_utc, race_label, race_slug
 
@@ -139,9 +140,7 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
                         (published_at, day, horizon, snap.sha))
             con.commit()
         contract = build_day_contract(con, day, horizon, snap.sha, params, mode=_mode())
-        pal, fiab = palmares_and_fiabilite(con)
-        site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"),
-                               con=con, dry_run=dry_run)
+        site_info = build_site(con, day, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=dry_run)
         con.execute("insert or replace into journal_days(date, horizon, snapshot_commit, run_id, published_at_utc, mode, status) values (?,?,?,?,?,?,?)",
                     (day, horizon, snap.sha, run_id, published_at, mode, "DRY_RUN" if dry_run else "OK"))
         con.commit()
@@ -246,6 +245,7 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             storage.finish_run(con, run_id, "MANIFEST_FAILED", error=str(e), duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, str(e))
         journees = manifest.get("journees") or {}
+        unchecked = storage.unchecked_days(con)
         scon = snap.connect()
         try:
             for back in range(lookback, -1, -1):
@@ -254,27 +254,26 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
                 if not entry:
                     continue
                 fp = entry.get("empreinte_sha256")
-                if fp and fp == storage.manifest_fingerprint(con, d):
-                    continue                                   # empreinte inchangée : rien à relire
+                if fp and fp == storage.manifest_fingerprint(con, d) and d not in unchecked:
+                    continue                                   # empreinte inchangée et tout contrôlé : rien à relire
                 if not con.execute("select 1 from bases_editions where date=? limit 1", (d,)).fetchone():
                     storage.set_manifest_fingerprint(con, d, fp or "", entry.get("nb_courses"), iso_utc(), None)
                     continue                                   # aucune édition ce jour-là : rien à noter
                 data = client.day(d, expected_fingerprint=fp)
                 stats["jours_relus"].append(d)
                 for course in data.get("courses") or []:
+                    storage.upsert_course_statut(con, course, d)
                     _score_course(con, scon, course, stats)
                 storage.set_manifest_fingerprint(con, d, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
                 con.commit()
         finally:
             scon.close()
 
-        # 3. Palmarès, fiabilité, site
+        # 3. Palmarès, fiabilité, site (la page d'accueil reste sur la dernière édition publiée)
         params = load_params()
-        pal, fiab = palmares_and_fiabilite(con)
-        # la page d'accueil reste sur la dernière édition publiée (le soir ne recalcule jamais une édition du matin)
+        pal, _ = palmares_and_fiabilite(con)
         last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
-        contract = build_day_contract(con, last, "T_MATIN", None, params, mode=_mode())
-        site_info = build_site(contract, pal, fiab, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), con=con, dry_run=False)
+        site_info = build_site(con, last, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=False)
         body = soir_message(day, stats, pal, n_mesure, site_info, repetition=repetition)
         notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         if stats["divergences"]:
@@ -318,12 +317,12 @@ def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int, *,
     return n
 
 
-def _score_course(con, scon, course: dict, stats: dict) -> None:
+def _score_course(con, scon, course: dict, stats: dict, *, allow_provisoire: bool = False) -> None:
     race_id = course.get("course_id")
     eds = [dict(r) for r in con.execute("select * from bases_editions where race_id=? and superseded_by is null", (race_id,))]
     if not eds:
         return
-    ok, why = course_is_scorable(course)
+    ok, why = course_is_scorable(course, allow_provisoire=allow_provisoire)
     if not ok:
         stats["ignorees"][why] = stats["ignorees"].get(why, 0) + 1
         return
@@ -332,10 +331,12 @@ def _score_course(con, scon, course: dict, stats: dict) -> None:
     for ed in eds:
         ladders = json.loads(ed["ladder_json"])
         for m in (4, 5):
-            if storage.result_already_scored(con, race_id, version, m, ed["horizon"]):
-                continue
+            prev = con.execute("select statut, checked_against_sqlite from bases_results where race_id=? and result_version=? and top_m=? and horizon=?",
+                               (race_id, version, m, ed["horizon"])).fetchone()
+            if prev and prev["statut"] == (course.get("statut") or {}).get("code") and (prev["checked_against_sqlite"] or scon is None):
+                continue                                       # déjà notée à l'identique
             placed, arrivee = placed_from_course_json(course, m)
-            check, detail = cross_check_sqlite(scon, race_id, arrivee, m)
+            check, detail = cross_check_sqlite(scon, race_id, arrivee, m) if scon is not None else (None, "PASSE_HORAIRE")
             if check is False:
                 stats["divergences"].append(f"{race_id} (m={m}) : {detail}")
                 continue
@@ -345,12 +346,12 @@ def _score_course(con, scon, course: dict, stats: dict) -> None:
             rep = int(bool(ed.get("repetition")) or storage.is_repetition(con, ed["date"]))
             nps = sorted(int(x["num"]) for x in course.get("non_partants") or [])
             con.execute("""insert or replace into bases_results(race_id, result_version, arrivee_json, top_m, hit_k1, hit_k2, hit_k3, hit_k4, hit_2of3,
-                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut, repetition, non_partants_json)
-                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                           scored_at_utc, source, checked_against_sqlite, edition_id, hits_json, solidite, p_calibree_k3, horizon, statut, repetition, non_partants_json, finalite)
+                           values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                         (race_id, version, json.dumps(arrivee), m, hits["hit_k1"], hits["hit_k2"], hits["hit_k3"], hits["hit_k4"], hits["hit_2of3"],
                          iso_utc(), "RESULTATS_JSON", 1 if check else 0, ed["edition_id"], json.dumps(hits),
                          ed["solidite"] if m == ed["top_m"] else None, k3.get("p_calibree"), ed["horizon"],
-                         (course.get("statut") or {}).get("code"), rep, json.dumps(nps)))
+                         (course.get("statut") or {}).get("code"), rep, json.dumps(nps), (course.get("statut") or {}).get("finalite")))
             if m == ed["top_m"] and ed["horizon"] == "T_MATIN":
                 if prior:
                     stats["renotees"] += 1
@@ -379,3 +380,63 @@ def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None
     if site_info:
         L.append(f"Site : {site_info}")
     return "\n".join(L)
+
+
+# ----------------------------------------------------------------------------
+# RESULTATS (passe horaire, sprint 4)
+# ----------------------------------------------------------------------------
+
+def run_resultats(*, day: str | None = None, network: bool = True, results_client: ResultsClient | None = None, db_path=config.DB_PATH,
+                  shadow_token: str | None = None) -> int:
+    """Lit index.json ; relit la journée seulement si l'empreinte a changé ; note DEFINITIVE et PROVISOIRE (statut affiché tel quel,
+    palmarès inchangé : DEFINITIVE + VERIFIEE_PMU seulement) ; régénère la page du jour. Aucun instantané moteur téléchargé
+    (budget), donc pas de contrôle croisé : `soir` relira et contrôlera ces journées."""
+    day = day or _date.today().isoformat()
+    run_id = f"resultats-{day}-{uuid.uuid4().hex[:6]}"
+    t0 = time.time()
+    con = storage.connect(db_path)
+    storage.start_run(con, run_id, "resultats", None, _mode())
+    client = results_client or ResultsClient()
+    try:
+        try:
+            manifest = client.manifest()
+        except FetchError as e:
+            alert("arrêt : manifeste des résultats injoignable (resultats)", str(e), date=day)
+            storage.finish_run(con, run_id, "MANIFEST_FAILED", error=str(e), duration_s=round(time.time() - t0, 1))
+            raise PipelineStop(2, str(e))
+        entry = (manifest.get("journees") or {}).get(day)
+        stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0}
+        relu = False
+        if entry:
+            fp = entry.get("empreinte_sha256")
+            if not (fp and fp == storage.manifest_fingerprint(con, day)):
+                data = client.day(day, expected_fingerprint=fp)
+                relu = True
+                for course in data.get("courses") or []:
+                    storage.upsert_course_statut(con, course, day)
+                    _score_course(con, None, course, stats, allow_provisoire=True)
+                storage.set_manifest_fingerprint(con, day, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
+                con.commit()
+        params = load_params()
+        last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
+        site_info = build_site(con, last, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=False)
+        res = storage.display_results_for_day(con, day)
+        n_def = sum(1 for r in res.values() if r.get("statut") == "DEFINITIVE")
+        n_prov = sum(1 for r in res.values() if r.get("statut") == "PROVISOIRE")
+        n3 = sum(1 for r in res.values() if r.get("hit_k3"))
+        body = (f"⏱ BASES — {datetime.strptime(day, '%Y-%m-%d'):%d/%m} — passe horaire : "
+                + ("journée relue (empreinte modifiée)" if relu else ("journée absente du manifeste" if not entry else "empreinte inchangée, rien à relire"))
+                + f" · notées {n_def} définitives + {n_prov} provisoires · 3/3 : {n3}"
+                + (" · " + ", ".join(f"{k} = {v}" for k, v in stats["ignorees"].items()) if stats["ignorees"] else "")
+                + f"\nSite : {site_info}")
+        notify("resultats", f"⏱ BASES — {day} — passe horaire résultats", body, date=day)
+        storage.finish_run(con, run_id, "OK", races_seen=len(res), races_published=0, duration_s=round(time.time() - t0, 1))
+        return 0
+    except PipelineStop:
+        raise
+    except Exception as e:  # noqa: BLE001
+        storage.finish_run(con, run_id, "FAILED", error=repr(e), duration_s=round(time.time() - t0, 1))
+        alert("arrêt : erreur inattendue dans resultats", repr(e), date=day)
+        raise
+    finally:
+        con.close()

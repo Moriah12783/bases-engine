@@ -183,13 +183,17 @@ def placed_from_course_json(course: dict, top_m: int) -> tuple[set[int], list[in
     return placed, [num for _, num in ranked]
 
 
-def course_is_scorable(course: dict) -> tuple[bool, str]:
+def course_is_scorable(course: dict, *, allow_provisoire: bool = False) -> tuple[bool, str]:
+    """Notable = DEFINITIVE + VERIFIEE_PMU (référence, palmarès) ; la passe horaire accepte aussi PROVISOIRE
+    (statut affiché tel quel, jamais compté au palmarès)."""
     st = course.get("statut") or {}
     if st.get("annulee") or st.get("code") == "ANNULEE":
         return False, "ANNULEE"
-    if not st.get("definitive"):
+    if st.get("code") == "PROVISOIRE" and allow_provisoire:
+        pass
+    elif not st.get("definitive"):
         return False, f"NON_DEFINITIVE:{st.get('code')}"
-    if st.get("finalite") != "VERIFIEE_PMU":
+    elif st.get("finalite") != "VERIFIEE_PMU":
         return False, f"FINALITE:{st.get('finalite')}"
     if len(course.get("classement") or []) < 4:
         return False, "CLASSEMENT_TROP_COURT"

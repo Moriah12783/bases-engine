@@ -32,3 +32,8 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - contract-check #2 en Actions (moteur `71f79f42d2`) : échec sur `PRICED_RATIO_LOW` puis `git add site` ; trois corrections du mentor appliquées (raison inconnue non publiable = avertissement, commit des chemins existants en always(), résumé de secours conditionné à un marqueur). Relance par workflow_dispatch faite par la session.
 - Présentation (retour mentor sur la répétition du 21/09) : paris réels, structure dans le pari, sélection moteur + associés, ordre Quinté+ puis A/B/C, libellés k/k, bloc abstentions FR, légende. Ajout au-delà de la règle (à signaler) : courses sans Quarté+/Multi **ni 2sur4** (petits pelotons, Trio + Couplé placé seulement) → remplacé sur retour mentor par une échelle cible top 3 (`echelle_top3`, brute) et le libellé « Trio ou Couplé placé : 2 bases + X · P(les 2 bases dans les 3 premiers) = xx % ».
 - Mesure intrajournée : soir étendu à T90/T30/T15 (mode mesure, repetition selon règle), non_partants stockés (migration 5), section « Évolution intrajournée » dans hebdo. Hors protocole.
+
+## 2026-09-22 — Session 2 (sprint 4)
+
+- Incident nocturne analysé (run #6 : cron soir servi à 00:36, pris pour un matin) → dérivation de la commande par `github.event.schedule`, veille pour soir/resultats avant 06:00 UTC. **Ligne cron `resultats` ajoutée commentée dans le bloc schedule (signalé au mentor, lignes existantes intactes).**
+- Sprint 4 livré : `site.py` (details/summary, résultats, compteur, navigation, archives, palmarès, recherche), `resultats` (passe horaire, provisoires), migration 6, 50 tests.

@@ -37,7 +37,7 @@ Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 4. `compute.py` + `core.py` — simulateur d'ordre à discount (lambdas littérature), échelles k = 1..4 pour m = 4 **et** m = 5, 5 meilleurs trios, recalibration post-sélection par (k, m), solidité par terciles gelés, structure v1. Graine fixée par (date, race_id).
 5. `scoring.py` / `report.py` — back-test rétrospectif (rapport Markdown + JSON dans `rapports/backtest/`), calibrateurs, seuils.
 6. `storage.py` — `bases.db` (runs, bases_editions, bases_results, calibration, params, results_manifest, abstentions, journal_days) ; `params.json` = export lisible de la version courante.
-7. `pipeline.py` — `matin` / `soir` (§4, §7) ; `publish.py` — site, JSON contrat, palmarès, fiabilité ; `notify.py` — résumé de job, journal, Telegram inactif.
+7. `pipeline.py` — `matin` / `soir` / `resultats` (§4, §7, sprint 4) ; `publish.py` — JSON contrat, palmarès, fiabilité ; `site.py` — pages (jour, journées, archives, palmarès) ; `notify.py` — résumé de job, journal, Telegram inactif.
 
 ## Paramètres gelés (`params.json`, version 2026-09-21.2)
 

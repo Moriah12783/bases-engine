@@ -23,6 +23,7 @@ def env(tmp_path, monkeypatch, fixtures_dir):
     monkeypatch.setattr(notify, "JOURNAL_DIR", tmp_path / "rapports" / "journal")
     import bases_engine.publish as publish
     monkeypatch.setattr(publish, "SITE_DIR", tmp_path / "site")
+    monkeypatch.setattr(config, "SITE_DIR", tmp_path / "site")          # lu à l'appel par site.build_site
     return {"db": tmp_path / "bases.db", "site": tmp_path / "site", "rapports": tmp_path / "rapports"}
 
 
@@ -244,11 +245,12 @@ def test_presentation_structure_and_order(env, results_client):
             assert st["barreau"] == 2 and len(st["bases"]) == 2
     html = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
     assert "Tous à l'arrivée</td>" in html and "Tous sauf un</td><td>—</td>" in html and "(3 sur 3)" in html and "(2 sur 3)" in html
+    assert "<details class='course'" in html and "<summary>" in html and "en attente" in html
     assert "k/k" not in html and "k−1" not in html and "Sélection moteur" in html and "Associés" in html
     assert "Tous sauf un = un seul d'entre eux peut manquer" in html
     journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
     assert "Tous à l'arrivée : " in journal and "Tous sauf un : — · " in journal and "(1 sur 2)" in journal and "k/k" not in journal
-    assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+ du jour" in html
+    assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+" in html
     assert "Mode shadow" in html
 
 
@@ -273,3 +275,107 @@ def test_trio_only_race_gets_top3_ladder(env, results_client):
     assert "echelle_top3" not in by_id["R1C1_21092026_LA CAPELLE"]
     html = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
     assert "dans les 3 premiers" in html
+
+
+# ----------------------------------------------------------------------------
+# Sprint 4 : passe horaire, résultats partiels, journée annulée, navigation
+# ----------------------------------------------------------------------------
+
+def _results_dir_with(tmp_path, fixtures_dir, mutate):
+    """Copie de la fixture résultats avec une journée 2026-09-20 modifiée (empreintes recalculées)."""
+    import shutil
+    from bases_engine.util import sha256_json_compact
+    d = tmp_path / "resultats"
+    shutil.copytree(fixtures_dir / "resultats", d)
+    day = json.loads((d / "2026-09-20.json").read_text(encoding="utf-8"))
+    mutate(day["courses"])
+    day["empreinte_sha256"] = sha256_json_compact(day["courses"])
+    (d / "2026-09-20.json").write_text(json.dumps(day, ensure_ascii=False), encoding="utf-8")
+    man = json.loads((d / "index.json").read_text(encoding="utf-8"))
+    man["journees"]["2026-09-20"]["empreinte_sha256"] = day["empreinte_sha256"]
+    (d / "index.json").write_text(json.dumps(man, ensure_ascii=False), encoding="utf-8")
+    from bases_engine.fetch import ResultsClient
+    return ResultsClient(base_url=f"file://{d}")
+
+
+def _seed_published_day(env, snapshot, day="2026-09-20"):
+    """Éditions T_MATIN rétrospectives du 20/09 marquées publiées (mode shadow) pour tester l'affichage des résultats."""
+    import bases_engine.pipeline as pl
+    con = storage.connect(env["db"])
+    storage.set_meta(con, "protocole_debut", day)
+    n = pl._mesure_horizon(con, snapshot, day, "T_MATIN", N_SIMS)
+    con.execute("update bases_editions set mode='shadow', repetition=0")
+    con.execute("insert or replace into journal_days(date, horizon, snapshot_commit, run_id, published_at_utc, mode, status) values (?,?,?,?,?,?,?)",
+                (day, "T_MATIN", snapshot.sha, "test", "2026-09-20T09:00:00Z", "shadow", "OK"))
+    con.commit(); con.close()
+    return n
+
+
+def test_resultats_partial_day_provisoire_and_annulee(env, snapshot, tmp_path, fixtures_dir):
+    from bases_engine.pipeline import run_resultats
+    n = _seed_published_day(env, snapshot)
+    ids = []
+
+    def mutate(courses):
+        eds = [c for c in courses]
+        # 1re course : provisoire ; 2e : annulée ; 3e : en attente (pas de classement) ; reste : définitives
+        for i, c in enumerate(eds):
+            if i == 0:
+                c["statut"] = {"code": "PROVISOIRE", "definitive": False, "finalite": None, "annulee": False, "pmu_statut": "ARRIVEE_PROVISOIRE"}
+            elif i == 1:
+                c["statut"] = {"code": "ANNULEE", "definitive": False, "finalite": None, "annulee": True, "pmu_statut": "COURSE_ANNULEE"}
+                c["classement"], c["arrivee"] = [], []
+            elif i == 2:
+                c["statut"] = {"code": "EN_ATTENTE", "definitive": False, "finalite": None, "annulee": False, "pmu_statut": "PROGRAMMEE"}
+                c["classement"], c["arrivee"] = [], []
+            ids.append(c["course_id"])
+    client = _results_dir_with(tmp_path, fixtures_dir, mutate)
+    assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
+    con = storage.connect(env["db"])
+    st = storage.course_statuts_for_day(con, "2026-09-20")
+    assert st[ids[0]]["statut"] == "PROVISOIRE" and st[ids[1]]["annulee"] == 1 and st[ids[2]]["statut"] == "EN_ATTENTE"
+    res = storage.display_results_for_day(con, "2026-09-20")
+    assert all(r["checked_against_sqlite"] == 0 for r in res.values())          # passe horaire : pas de contrôle croisé
+    assert ids[1] not in res and ids[2] not in res
+    statuts = {r["statut"] for r in res.values()}
+    assert "DEFINITIVE" in statuts
+    # le palmarès ne compte que DEFINITIVE + VERIFIEE_PMU
+    from bases_engine.publish import palmares_and_fiabilite
+    pal, _ = palmares_and_fiabilite(con)
+    n_def = sum(1 for r in res.values() if r["statut"] == "DEFINITIVE" and r["finalite"] == "VERIFIEE_PMU")
+    assert pal["global"]["n"] == n_def and n_def < len(res) + 2
+    # page du jour : badges, compteur, résultats, statut provisoire affiché tel quel
+    content = env["site"] / "shadow" / ("t" * 32)
+    page = (content / "jours" / "2026-09-20.html").read_text(encoding="utf-8")
+    assert "annulée" in page and "en attente" in page and "(provisoire)" in page and "3/3 réussis sur" in page
+    assert "Résultat — DEFINITIVE" in page and "Arrivée (top" in page and "arrivée</li>" in page and "Structure recommandée : " in page
+    assert "provisoires</span>" in page
+    # second passage : empreinte inchangée → rien relu, aucune nouvelle ligne
+    before = con.execute("select count(*) from bases_results").fetchone()[0]
+    reqs = client.requests_made
+    assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
+    assert client.requests_made == reqs + 1 and con.execute("select count(*) from bases_results").fetchone()[0] == before
+    # le soir relit la journée (notations non contrôlées) et contrôle avec SQLite
+    assert run_soir(day="2026-09-20", results_client=client, db_path=env["db"], n_sims=N_SIMS) == 0
+    res2 = storage.display_results_for_day(con, "2026-09-20")
+    assert all(r["checked_against_sqlite"] == 1 for r in res2.values() if r["statut"] == "DEFINITIVE")
+    journal = (env["rapports"] / "journal" / "2026-09-20.md").read_text(encoding="utf-8")
+    assert "passe horaire" in journal and "provisoires" in journal
+
+
+def test_navigation_archive_palmares_pages(env, snapshot, results_client):
+    from bases_engine.pipeline import run_resultats
+    _seed_published_day(env, snapshot)
+    assert run_resultats(day="2026-09-20", results_client=results_client, db_path=env["db"]) == 0
+    run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
+    content = env["site"] / "shadow" / ("t" * 32)
+    index = (content / "index.html").read_text(encoding="utf-8")
+    assert "Édition du 21/09/2026" in index and "href='jours/2026-09-20.html'" in index and "href='jours/2026-09-21.html'" in index
+    assert "aujourd'hui" in index and "hier" in index and "id='q'" in index and "palmares.html" in index and "archive/2026-09.html" in index
+    j20 = (content / "jours" / "2026-09-20.html").read_text(encoding="utf-8")
+    assert "href='../jours/2026-09-21.html'" in j20 and "href='../palmares.html'" in j20 and "3/3 réussis sur" in j20
+    arch = (content / "archive" / "2026-09.html").read_text(encoding="utf-8")
+    assert "jours/2026-09-20.html" in arch and "jours/2026-09-21.html" in arch and "<th>3/3</th>" in arch
+    pal = (content / "palmares.html").read_text(encoding="utf-8")
+    assert "Par barreau" in pal and "Par solidité" in pal and "Répétitions manuelles exclues" in pal and "Par journée" in pal
+    assert (content / "bases" / "2026-09-20.json").exists() and (content / "bases" / "2026-09-21.json").exists()

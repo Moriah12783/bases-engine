@@ -11,10 +11,11 @@ on:
     - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
     - cron: '5 22 * * *'    # soir : notation J et J-7..J-1, mesure T15, palmarès, déploiement
     - cron: '30 7 * * 1'    # lundi : recalibration + rapport hebdomadaire (sprint 3)
+    # - cron: '20 11-21 * * *'  # resultats : passe horaire (sprint 4) — à décommenter par Steph
   workflow_dispatch:
     inputs:
       command:
-        description: "matin | soir | hebdo | backtest | contract-check | pages-init (création du projet Pages, dispatch uniquement)"
+        description: "matin | soir | resultats | hebdo | backtest | contract-check | pages-init (création du projet Pages, dispatch uniquement)"
         default: "contract-check"
         required: true
       date:
@@ -59,9 +60,18 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             CMD="${{ github.event.inputs.command }}"; DATE="${{ github.event.inputs.date }}"
           else
-            H=$(date -u +%H); DOW=$(date -u +%u)
-            if [ "$H" = "07" ] && [ "$DOW" = "1" ]; then CMD=hebdo; elif [ "$H" = "22" ]; then CMD=soir; else CMD=matin; fi
+            # Commande dérivée de l'expression cron déclenchante (jamais de l'heure courante : un cron peut être servi
+            # avec plusieurs heures de retard — le soir du 21/09 a tourné à 00:36 UTC le 22/09).
+            case "${{ github.event.schedule }}" in
+              "5 22 * * *")      CMD=soir ;;
+              "30 7 * * 1")      CMD=hebdo ;;
+              "20 11-21 * * *")  CMD=resultats ;;
+              *)                 CMD=matin ;;
+            esac
             DATE=""
+            H=$(date -u +%H)
+            # soir / resultats servis après minuit UTC : la journée visée est la veille
+            if { [ "$CMD" = "soir" ] || [ "$CMD" = "resultats" ]; } && [ "$H" -lt 6 ]; then DATE=$(date -u -d yesterday +%F); fi
           fi
           echo "cmd=$CMD" >> "$GITHUB_OUTPUT"; echo "date=$DATE" >> "$GITHUB_OUTPUT"
           echo "Commande : $CMD ${DATE:+--date $DATE}"
@@ -101,7 +111,7 @@ jobs:
           ARGS=""
           case "${{ steps.cmd.outputs.cmd }}" in
             backtest) ARGS="--since 2026-08-25 --horizon T_MATIN" ;;
-            matin|soir|contract-check|show) [ -n "${{ steps.cmd.outputs.date }}" ] && ARGS="--date ${{ steps.cmd.outputs.date }}" ;;
+            matin|soir|resultats|contract-check|show) [ -n "${{ steps.cmd.outputs.date }}" ] && ARGS="--date ${{ steps.cmd.outputs.date }}" ;;
           esac
           if [ "${{ steps.cmd.outputs.cmd }}" = "matin" ] && [ -z "${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}" ]; then ARGS="$ARGS --dry-run"; fi
           python -m bases_engine ${{ steps.cmd.outputs.cmd }} $ARGS

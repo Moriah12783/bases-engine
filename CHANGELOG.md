@@ -2,6 +2,16 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Sprint 4 : consultation et résultats (présentation et publication ; aucun changement des éditions, du calcul, de params.json ni du protocole)
+
+- **Lignes dépliables** (`bases_engine/site.py`) : chaque course est un `<details>` natif ; le `<summary>` montre hippodrome-numéro, heure GMT (Paris), pari, base des bases, solidité, structure courte et le résultat (« en attente », « 3/3 ✓ », « 2/3 », « 1/3 », « 0/3 », « annulée », suffixe « (provisoire) »). Contenu déplié = fiche complète + bloc résultat (arrivée top 4/5, statut PMU, verdict par barreau « 3 bases : 2 sur 3 à l'arrivée », verdict de la structure recommandée). Quinté+ épinglé, puis A, B, C. Recherche hippodrome/réunion/numéro par mini-script inline (facultatif, la page fonctionne sans).
+- **Passe horaire `resultats`** : nouvelle commande ; cron `'20 11-21 * * *'` ajouté **commenté** dans le bloc `schedule` (Steph le décommentera — signalé). Lit `index.json`, relit la journée seulement si l'empreinte a changé, note DEFINITIVE et PROVISOIRE (statut affiché tel quel), régénère et déploie la page. Aucun instantané moteur téléchargé (budget) donc pas de contrôle croisé : `soir` relit d'office les journées ayant des notations non contrôlées et reste la consolidation de référence. Le palmarès ne compte que DEFINITIVE + VERIFIEE_PMU (`bases_results.finalite`, migration 6) ; table `course_statuts` pour l'affichage des courses sans notation (en attente / annulée).
+- **En tête de page** : compteur du jour (3/3 et ≥ 2/3 sur n courses notées, provisoires comptées à part), courses éligibles, abstentions.
+- **Historique** : pastilles aujourd'hui / hier / 14 jours avec le nombre de courses, une page par journée `jours/AAAA-MM-JJ.html` (régénérée par `matin`, `resultats`, `soir`), archives mensuelles `archive/AAAA-MM.html`, `palmares.html` (par barreau, par solidité, par cible, par journée ; répétitions exclues et comptées).
+- Tout reste sous `site/shadow/<jeton>/` tant que `PUBLICATION_MODE = shadow`.
+- **Incident du 22/09 00:36 UTC** : le cron `soir` de 22:05 a été servi par GitHub avec 2 h 30 de retard ; la commande était déduite de l'heure courante et l'exécution a été prise pour un `matin` du 22/09 (échec de contrat, aucune publication). Correction : commande déduite de l'expression cron déclenchante (`github.event.schedule`) ; un `soir`/`resultats` servi avant 06:00 UTC vise la veille. `BEFORE_0630` ajouté aux raisons connues (vu ce matin-là, non publiable).
+- Tests : journée avec résultats partiels (définitives, provisoire, annulée, en attente), second passage sans relecture, relecture et contrôle croisé par `soir`, navigation entre jours, archive, palmarès.
+
 ## 2026-09-21 — Libellés de l'échelle (présentation uniquement)
 
 - Page et résumé de job : ligne « Tous à l'arrivée » avec cases « xx % (1 sur 1) · xx % (2 sur 2) · xx % (3 sur 3) · xx % (4 sur 4) » ; ligne « Tous sauf un » avec « — · xx % (1 sur 2) · xx % (2 sur 3) · xx % (3 sur 4) ». Plus aucune mention de k, (k/k) ni ((k−1)/k). Légende : « Tous à l'arrivée = les chevaux indiqués finissent tous dans les 4 (ou 5) premiers ; Tous sauf un = un seul d'entre eux peut manquer. »

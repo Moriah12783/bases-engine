@@ -85,6 +85,14 @@ MIGRATIONS: list[tuple[int, str]] = [
     -- Mesure intrajournée (T90/T30/T15) : non-partants au résultat pour compter les bases du matin devenues NP.
     ALTER TABLE bases_results ADD COLUMN non_partants_json TEXT;
     """),
+    (6, """
+    -- Sprint 4 : statut de chaque course du JSON public (pour l'affichage : en attente / provisoire / définitive / annulée)
+    -- et finalité des notations (le palmarès ne compte que DEFINITIVE + VERIFIEE_PMU).
+    ALTER TABLE bases_results ADD COLUMN finalite TEXT;
+    CREATE TABLE IF NOT EXISTS course_statuts (
+        race_id TEXT PRIMARY KEY, date TEXT NOT NULL, statut TEXT NOT NULL, finalite TEXT, annulee INTEGER NOT NULL DEFAULT 0,
+        pmu_statut TEXT, version INTEGER, arrivee_json TEXT, non_partants_json TEXT, updated_at_utc TEXT NOT NULL);
+    """),
 ]
 
 
@@ -203,10 +211,30 @@ def latest_results(con, horizon: str = "T_MATIN") -> list[dict]:
         select r.*, e.date, e.solidite as ed_solidite, e.ladder_json, e.top_m as ed_top_m, e.mode as ed_mode,
                e.engine8_json, e.repetition as ed_repetition
         from bases_results r join bases_editions e on e.edition_id = r.edition_id
-        where r.horizon = ? and r.result_version = (
+        where r.horizon = ? and r.statut = 'DEFINITIVE' and r.finalite = 'VERIFIEE_PMU' and r.result_version = (
             select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)
         order by e.date, r.race_id""", (horizon,))
     return [dict(r) for r in rows]
+
+
+def upsert_course_statut(con, course: dict, date: str) -> None:
+    from .util import iso_utc
+    st = course.get("statut") or {}
+    nps = [int(x["num"]) for x in course.get("non_partants") or []]
+    con.execute("""insert or replace into course_statuts(race_id, date, statut, finalite, annulee, pmu_statut, version, arrivee_json, non_partants_json, updated_at_utc)
+                   values (?,?,?,?,?,?,?,?,?,?)""",
+                (course.get("course_id"), date, st.get("code") or "EN_ATTENTE", st.get("finalite"), 1 if st.get("annulee") else 0, st.get("pmu_statut"),
+                 int((course.get("correction") or {}).get("version") or 0), json.dumps(course.get("arrivee") or []), json.dumps(nps), iso_utc()))
+
+
+def course_statuts_for_day(con, date: str) -> dict[str, dict]:
+    return {r["race_id"]: dict(r) for r in con.execute("select * from course_statuts where date=?", (date,))}
+
+
+def unchecked_days(con) -> set[str]:
+    """Journées ayant des notations non contrôlées avec SQLite (passe horaire) : le soir les relit même à empreinte inchangée."""
+    return {r[0] for r in con.execute("""select distinct e.date from bases_results r join bases_editions e on e.edition_id=r.edition_id
+                                          where r.checked_against_sqlite=0""")}
 
 
 def manifest_fingerprint(con, date: str) -> str | None:
@@ -244,3 +272,13 @@ def is_repetition(con, day: str) -> bool:
     """Toute exécution portant sur un jour antérieur au début du protocole (ou avant qu'il soit fixé) est une répétition."""
     start = protocol_start_date(con)
     return start is None or day < start
+
+
+def display_results_for_day(con, date: str, horizon: str = "T_MATIN") -> dict[str, dict]:
+    """Dernière notation (définitive ou provisoire) de chaque course de la journée, pour l'affichage."""
+    rows = con.execute("""
+        select r.*, e.top_m as ed_top_m from bases_results r join bases_editions e on e.edition_id = r.edition_id
+        where e.date = ? and r.horizon = ? and e.superseded_by is null and r.top_m = e.top_m
+          and r.result_version = (select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)""",
+        (date, horizon))
+    return {r["race_id"]: dict(r) for r in rows}

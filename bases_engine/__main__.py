@@ -154,6 +154,16 @@ def cmd_soir(args) -> int:
         return e.code
 
 
+def cmd_resultats(args) -> int:
+    from .pipeline import PipelineStop, run_resultats
+    try:
+        return run_resultats(day=args.date, network=not args.no_network, results_client=_results_client(args.no_network),
+                             db_path=args.db, shadow_token=args.shadow_token)
+    except PipelineStop as e:
+        print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
+        return e.code
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="bases_engine", description="Service Bases Elite Turf (lecture seule du moteur).")
     p.add_argument("--sha", help="commit turf-engine à utiliser (défaut : ls-remote main)")
@@ -191,6 +201,10 @@ def main(argv=None) -> int:
     s.add_argument("--date"); s.add_argument("--no-network", action="store_true"); s.add_argument("--shadow-token")
     s.add_argument("--n-sims", type=int, default=config.N_SIMS)
     s.set_defaults(fn=cmd_soir)
+
+    s = sub.add_parser("resultats", help="passe horaire : relit la journée si l'empreinte a changé, note définitives et provisoires, régénère la page")
+    s.add_argument("--date"); s.add_argument("--no-network", action="store_true"); s.add_argument("--shadow-token")
+    s.set_defaults(fn=cmd_resultats)
 
     s = sub.add_parser("hebdo", help="lundi : recalibration (k, cible) hors répétitions, rapport hebdomadaire rapports/AAAA-Www.md")
     s.add_argument("--date"); s.add_argument("--sans-recalibration", action="store_true")
