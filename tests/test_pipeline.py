@@ -379,3 +379,21 @@ def test_navigation_archive_palmares_pages(env, snapshot, results_client):
     pal = (content / "palmares.html").read_text(encoding="utf-8")
     assert "Par barreau" in pal and "Par solidité" in pal and "Répétitions manuelles exclues" in pal and "Par journée" in pal
     assert (content / "bases" / "2026-09-20.json").exists() and (content / "bases" / "2026-09-21.json").exists()
+
+
+def test_soir_self_heals_previous_days(env, snapshot, results_client):
+    """Le 20/09 a une édition du matin mais ni notation ni mesure (soir manqué) : le soir du 21/09 rattrape tout, idempotent."""
+    _seed_published_day(env, snapshot, "2026-09-20")
+    assert run_soir(day="2026-09-21", results_client=results_client, db_path=env["db"], n_sims=N_SIMS) == 0
+    con = storage.connect(env["db"])
+    assert storage.results_count(con, "2026-09-20") > 40 and storage.unchecked_count(con, "2026-09-20") == 0
+    assert con.execute("select count(*) from bases_editions where date='2026-09-20' and mode='mesure' and horizon='T90'").fetchone()[0] > 20
+    journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+    assert "Rattrapage — journée du 20/09 : mesure intrajournée complétée" in journal and "notation complétée (notation non faite" in journal
+    n_res, n_eds = storage.results_count(con, "2026-09-20"), con.execute("select count(*) from bases_editions").fetchone()[0]
+    reqs = results_client.requests_made
+    assert run_soir(day="2026-09-21", results_client=results_client, db_path=env["db"], n_sims=N_SIMS) == 0
+    assert storage.results_count(con, "2026-09-20") == n_res and con.execute("select count(*) from bases_editions").fetchone()[0] == n_eds
+    assert results_client.requests_made == reqs + 2          # contrat + manifeste : aucune journée relue
+    journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+    assert "Rattrapage : rien à compléter" in journal

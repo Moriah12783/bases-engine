@@ -2,6 +2,14 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Complément sprint 4 : `soir` auto-réparateur (hors protocole)
+
+- `soir` traite J puis J-1 à J-7 et complète, de façon idempotente, tout ce qui manque : mesure intrajournée T90/T30/T15 absente (pour J toujours ; pour J-1..J-7 si une édition du matin existe), notation non faite (journée jamais notée alors que le manifeste annonce des arrivées définitives), contrôle croisé SQLite absent (notations de la passe horaire), empreinte modifiée. Un `soir` manqué ou servi en retard est rattrapé au suivant sans intervention.
+- Résumé de job et journal : lignes « Rattrapage — journée du JJ/MM : mesure intrajournée complétée (…) ; notation complétée (motif : n notation(s) ajoutée(s), n contrôlée(s)) », ou « Rattrapage : rien à compléter sur J-1..J-7 ».
+- Workflow : ligne cron **commentée** `'40 23 * * *'` (soir de rattrapage, idempotent) ajoutée sous les lignes existantes, intactes ; `timeout-minutes` porté de 10 à 20 (jusqu'à 8 journées relues à ≤ 1 requête/minute).
+- Budget Actions estimé et noté dans le README : 20 à 25 min/jour, 600 à 750 min/mois (30 à 38 % du forfait privé).
+- Fixture : `fixtures/resultats/2026-09-21.json` (journée en attente, 32 courses) ajoutée pour la cohérence avec le manifeste.
+
 ## 2026-09-22 — Sprint 4 : consultation et résultats (présentation et publication ; aucun changement des éditions, du calcul, de params.json ni du protocole)
 
 - **Lignes dépliables** (`bases_engine/site.py`) : chaque course est un `<details>` natif ; le `<summary>` montre hippodrome-numéro, heure GMT (Paris), pari, base des bases, solidité, structure courte et le résultat (« en attente », « 3/3 ✓ », « 2/3 », « 1/3 », « 0/3 », « annulée », suffixe « (provisoire) »). Contenu déplié = fiche complète + bloc résultat (arrivée top 4/5, statut PMU, verdict par barreau « 3 bases : 2 sur 3 à l'arrivée », verdict de la structure recommandée). Quinté+ épinglé, puis A, B, C. Recherche hippodrome/réunion/numéro par mini-script inline (facultatif, la page fonctionne sans).

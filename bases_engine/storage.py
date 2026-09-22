@@ -282,3 +282,21 @@ def display_results_for_day(con, date: str, horizon: str = "T_MATIN") -> dict[st
           and r.result_version = (select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)""",
         (date, horizon))
     return {r["race_id"]: dict(r) for r in rows}
+
+
+def day_has_editions(con, date: str, horizon: str = "T_MATIN") -> bool:
+    return con.execute("select 1 from bases_editions where date=? and horizon=? limit 1", (date, horizon)).fetchone() is not None
+
+
+def day_scored_at(con, date: str) -> str | None:
+    r = con.execute("select scored_at_utc from results_manifest where date=?", (date,)).fetchone()
+    return r[0] if r else None
+
+
+def unchecked_count(con, date: str) -> int:
+    return con.execute("""select count(*) from bases_results r join bases_editions e on e.edition_id=r.edition_id
+                          where e.date=? and r.checked_against_sqlite=0""", (date,)).fetchone()[0]
+
+
+def results_count(con, date: str) -> int:
+    return con.execute("""select count(*) from bases_results r join bases_editions e on e.edition_id=r.edition_id where e.date=?""", (date,)).fetchone()[0]

@@ -232,12 +232,9 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
 
-        repetition = storage.is_repetition(con, day)
-        # 1. Mesure intrajournée (éditions rétrospectives T90 / T30 / T15, jamais publiées) pour la journée J
-        n_mesure = sum(_mesure_horizon(con, snap, day, h, n_sims, repetition=repetition) for h in mesure_horizons)
-
-        # 2. Notation J-lookback..J sur le JSON public (source de vérité), contrôle croisé SQLite
-        stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0}
+        # 1 + 2. Auto-rattrapage (complément mentor 22/09) : J puis J-1..J-7, de façon idempotente —
+        #   mesure intrajournée T90/T30/T15 absente, notation non faite, contrôle croisé absent, empreinte modifiée.
+        stats = {"jours_relus": [], "notees": 0, "renotees": 0, "ignorees": {}, "divergences": [], "corrections": 0, "rattrapage": {}}
         try:
             manifest = client.manifest()
         except FetchError as e:
@@ -245,27 +242,42 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             storage.finish_run(con, run_id, "MANIFEST_FAILED", error=str(e), duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, str(e))
         journees = manifest.get("journees") or {}
-        unchecked = storage.unchecked_days(con)
+        n_mesure = 0
         scon = snap.connect()
         try:
-            for back in range(lookback, -1, -1):
+            for back in range(0, lookback + 1):
                 d = (datetime.strptime(day, "%Y-%m-%d") - timedelta(days=back)).strftime("%Y-%m-%d")
+                done: list[str] = []
+                # mesure intrajournée : toujours pour J ; pour J-1..J-7 seulement si une édition du matin existe (comparaison matin ↔ horizon)
+                if back == 0 or storage.day_has_editions(con, d, "T_MATIN"):
+                    rep_d = storage.is_repetition(con, d)
+                    n_new = sum(_mesure_horizon(con, snap, d, h, n_sims, repetition=rep_d) for h in mesure_horizons)
+                    n_mesure += n_new
+                    if n_new:
+                        done.append(f"mesure intrajournée complétée ({n_new} édition(s) T90/T30/T15)")
                 entry = journees.get(d)
-                if not entry:
-                    continue
-                fp = entry.get("empreinte_sha256")
-                if fp and fp == storage.manifest_fingerprint(con, d) and d not in unchecked:
-                    continue                                   # empreinte inchangée et tout contrôlé : rien à relire
-                if not con.execute("select 1 from bases_editions where date=? limit 1", (d,)).fetchone():
-                    storage.set_manifest_fingerprint(con, d, fp or "", entry.get("nb_courses"), iso_utc(), None)
-                    continue                                   # aucune édition ce jour-là : rien à noter
-                data = client.day(d, expected_fingerprint=fp)
-                stats["jours_relus"].append(d)
-                for course in data.get("courses") or []:
-                    storage.upsert_course_statut(con, course, d)
-                    _score_course(con, scon, course, stats)
-                storage.set_manifest_fingerprint(con, d, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
-                con.commit()
+                if entry:
+                    fp = entry.get("empreinte_sha256")
+                    never_scored = storage.day_scored_at(con, d) is None and (entry.get("compte_par_statut") or {}).get("DEFINITIVE", 0) > 0
+                    unchecked = storage.unchecked_count(con, d)
+                    changed = not (fp and fp == storage.manifest_fingerprint(con, d))
+                    has_eds = con.execute("select 1 from bases_editions where date=? limit 1", (d,)).fetchone() is not None
+                    if has_eds and (changed or never_scored or unchecked):
+                        before = storage.results_count(con, d)
+                        data = client.day(d, expected_fingerprint=fp)
+                        stats["jours_relus"].append(d)
+                        for course in data.get("courses") or []:
+                            storage.upsert_course_statut(con, course, d)
+                            _score_course(con, scon, course, stats)
+                        storage.set_manifest_fingerprint(con, d, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
+                        con.commit()
+                        added = storage.results_count(con, d) - before
+                        why = "notation non faite" if never_scored else ("contrôle croisé absent" if unchecked else "empreinte modifiée")
+                        done.append(f"notation complétée ({why} : {added} notation(s) ajoutée(s), {unchecked} contrôlée(s) avec SQLite)")
+                    elif not has_eds and changed:
+                        storage.set_manifest_fingerprint(con, d, fp or "", entry.get("nb_courses"), iso_utc(), None)   # aucune édition : rien à noter
+                if done and back > 0:
+                    stats["rattrapage"][d] = done
         finally:
             scon.close()
 
@@ -274,6 +286,7 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         pal, _ = palmares_and_fiabilite(con)
         last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
         site_info = build_site(con, last, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=False)
+        repetition = storage.is_repetition(con, day)
         body = soir_message(day, stats, pal, n_mesure, site_info, repetition=repetition)
         notify("soir", f"🌙 BASES — bilan du {datetime.strptime(day, '%Y-%m-%d'):%d/%m}" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         if stats["divergences"]:
@@ -373,6 +386,11 @@ def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None
     if g.get("n"):
         L.append(f"Palmarès depuis le {pal.get('depuis')} ({g['n']} courses) : 1 base {100 * g['taux_k1']:.0f} % · 2 bases {100 * g['taux_k2']:.0f} % · 3 bases {100 * g['taux_k3']:.0f} % · 4 bases {100 * g['taux_k4']:.0f} % · ≥ 2/3 {100 * g['taux_2of3']:.0f} % · abstentions {pal.get('abstentions', 0)}")
     L.append(f"Journées relues : {', '.join(stats['jours_relus']) or 'aucune (empreintes inchangées)'} · notées {stats['notees']} · re-notées {stats['renotees']} · mesure intrajournée T90/T30/T15 : {n_mesure} édition(s), jamais publiées")
+    if stats.get("rattrapage"):
+        for d2, done in sorted(stats["rattrapage"].items(), reverse=True):
+            L.append(f"Rattrapage — journée du {datetime.strptime(d2, '%Y-%m-%d'):%d/%m} : " + " ; ".join(done))
+    else:
+        L.append("Rattrapage : rien à compléter sur J-1..J-7")
     if stats["ignorees"]:
         L.append("Non notées : " + ", ".join(f"{k} = {v}" for k, v in stats["ignorees"].items()))
     if stats["divergences"]:

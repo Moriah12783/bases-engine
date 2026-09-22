@@ -37,3 +37,4 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 
 - Incident nocturne analysé (run #6 : cron soir servi à 00:36, pris pour un matin) → dérivation de la commande par `github.event.schedule`, veille pour soir/resultats avant 06:00 UTC. **Ligne cron `resultats` ajoutée commentée dans le bloc schedule (signalé au mentor, lignes existantes intactes).**
 - Sprint 4 livré : `site.py` (details/summary, résultats, compteur, navigation, archives, palmarès, recherche), `resultats` (passe horaire, provisoires), migration 6, 50 tests.
+- Complément sprint 4 : soir auto-réparateur (J puis J-1..J-7, idempotent, tracé dans le résumé), **ligne cron commentée `40 23 * * *` ajoutée (signalé ; lignes existantes intactes)**, timeout job 20 min, budget Actions estimé dans le README.

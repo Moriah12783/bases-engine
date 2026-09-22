@@ -29,6 +29,20 @@ Dépôt dédié `Moriah12783/bases-engine` (extraction du sous-dossier `bases-en
 
 Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
+## Budget GitHub Actions (estimation, dépôt privé : 2 000 minutes/mois)
+
+| Exécution | Par jour | Durée facturée (arrondie à la minute) | Minutes/jour |
+|---|---:|---:|---:|
+| `resultats` (passe horaire 11 h → 21 h UTC) | 11 | ≈ 1 min (checkout, pip en cache, lecture d'un JSON, régénération des pages) | 11 |
+| `matin` + rattrapage 09:35 | 2 | ≈ 2 min (téléchargement de l'instantané 30 Mo + 20 courses × 40 000 simulations) | 4 |
+| `soir` (+ rattrapage 23:40 si activé) | 1 à 2 | ≈ 3 à 5 min (instantané, mesure T90/T30/T15, relecture ≤ 1 requête/minute) | 5 à 10 |
+| `hebdo` (lundi) | 1/7 | ≈ 2 min | 0,3 |
+
+Total estimé : **20 à 25 minutes par jour, soit 600 à 750 minutes par mois**, entre 30 % et 38 % du forfait.
+Le premier `soir` après un arrêt prolongé peut monter à 10 minutes (jusqu'à 8 journées relues) ; le job est
+limité à 20 minutes. Les durées réelles se lisent dans l'onglet Actions ; à revoir si une exécution dépasse
+régulièrement l'estimation.
+
 ## Pipeline (résumé)
 
 1. `fetch.py` — SHA de `main` via `git ls-remote`, téléchargement **au SHA** (jamais `main` flottant), cache par SHA, budget 4 téléchargements/jour/fichier, client résultats ≤ 1 requête/minute avec vérification d'empreinte.
