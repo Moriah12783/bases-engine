@@ -11,8 +11,8 @@ on:
     - cron: '35 9 * * *'    # rattrapage idempotent (retard de cron GitHub ou instantané tardif)
     - cron: '5 22 * * *'    # soir : notation J et J-7..J-1, mesure T15, palmarès, déploiement
     - cron: '30 7 * * 1'    # lundi : recalibration + rapport hebdomadaire (sprint 3)
-    # - cron: '20 11-21 * * *'  # resultats : passe horaire (sprint 4) — à décommenter par Steph
-    # - cron: '40 23 * * *'     # soir (rattrapage idempotent, auto-réparateur) — à décommenter par Steph avec la ligne horaire
+    - cron: '20 11-21 * * *'  # resultats : passe horaire (sprint 4) — à décommenter par Steph
+    - cron: '40 23 * * *'     # soir (rattrapage idempotent, auto-réparateur) — à décommenter par Steph avec la ligne horaire
   workflow_dispatch:
     inputs:
       command:
