@@ -42,6 +42,15 @@ PARIS_UTILES = ("QUINTE_PLUS", "QUARTE_PLUS", "MULTI", "MINI_MULTI", "DEUX_SUR_Q
 PARIS_LIBELLES = {"QUINTE_PLUS": "Quinté+", "QUARTE_PLUS": "Quarté+", "MULTI": "Multi", "MINI_MULTI": "Mini Multi",
                   "DEUX_SUR_QUATRE": "2sur4", "TRIO": "Trio", "COUPLE_PLACE": "Couplé placé"}
 
+# --- Favicon (présentation) : fichiers copiés depuis assets/favicon/ à la racine de site/, balises du <head> commun ---
+FAVICON_DIR = ROOT / "assets" / "favicon"
+FAVICON_FILES = ("favicon.svg", "favicon.ico", "favicon-32.png", "apple-touch-icon.png", "favicon-512.png")
+FAVICON_HEAD = ('<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
+                '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">'
+                '<link rel="shortcut icon" href="/favicon.ico">'
+                '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">'
+                '<meta name="theme-color" content="#0A0A0A">')
+
 # --- Calcul (§4.3) ------------------------------------------------------------------------
 N_SIMS = 40_000
 DEFAULT_LAMBDAS = (1.0, 0.81, 0.65, 0.55, 0.50)

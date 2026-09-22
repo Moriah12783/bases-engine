@@ -50,6 +50,27 @@ LEGENDE = ("Tous à l'arrivée = les chevaux indiqués finissent tous dans les 4
            "le palmarès ne compte que les arrivées définitives vérifiées. Mode shadow : édition d'essai non diffusée aux abonnés.")
 
 
+HEAD_COMMON = "<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" + config.FAVICON_HEAD
+
+
+def _head(title: str, mode: str) -> str:
+    """Gabarit <head> commun à toutes les pages générées (favicon inclus)."""
+    return (f"<!doctype html><html lang='fr'><head>{HEAD_COMMON}" + ("<meta name='robots' content='noindex'>" if mode == "shadow" else "")
+            + f"<title>{html.escape(title)}</title><style>{CSS}</style></head>")
+
+
+def copy_favicons(site_dir: Path) -> int:
+    """Copie assets/favicon/* à la racine de site/ (jamais générés, toujours recopiés)."""
+    import shutil
+    n = 0
+    for name in config.FAVICON_FILES:
+        src = config.FAVICON_DIR / name
+        if src.exists():
+            shutil.copyfile(src, site_dir / name)
+            n += 1
+    return n
+
+
 def _pct(x) -> str:
     return "—" if x is None else f"{100 * x:.0f} %"
 
@@ -143,9 +164,7 @@ def render_day_page(day: str, contract: dict, results: dict, statuts: dict, nav:
                      f"<span class='bases'>{' - '.join(map(str, b['chevaux']))}</span><span class='sol {b['solidite']}'>solidité {b['solidite']}</span>"
                      f"<span class='struct'>{html.escape(st['texte'].split(' · ')[0].split(' : ')[-1])}</span><span class='res {r['classe']}'>{html.escape(r['badge'])}</span></summary>"
                      + _card_body(c, r) + "</details>")
-    H = ["<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>",
-         "<meta name='robots' content='noindex'>" if mode == "shadow" else "",
-         f"<title>Elite Turf · Bases · {_fr(day)}</title><style>{CSS}</style></head><body>",
+    H = [_head(f"Elite Turf · Bases · {_fr(day)}", mode) + "<body>",
          f"<header><h1>ELITE TURF · BASE DES BASES</h1><p>Édition du {_fr(day)} · horizon matin · mode {html.escape(mode)}</p></header><main>",
          f"<p class='legende'>{LEGENDE}</p>",
          _nav_html(nav, day, root),
@@ -187,8 +206,7 @@ def build_nav(con, today: str, days: int = 14) -> list[dict]:
 
 def render_month_page(month: str, days: list[dict], *, mode: str) -> str:
     rows = "".join(f"<tr><td><a href='../jours/{d['date']}.html'>{_fr(d['date'])}</a></td><td>{d['n']}</td><td>{d['notees']}</td><td>{d['k3']}</td><td>{d['k2']}</td></tr>" for d in days)
-    return (f"<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>{'<meta name=robots content=noindex>' if mode == 'shadow' else ''}"
-            f"<title>Elite Turf · Bases · archive {month}</title><style>{CSS}</style></head><body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Archive {month} · mode {html.escape(mode)}</p></header><main>"
+    return (_head(f"Elite Turf · Bases · archive {month}", mode) + "<body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Archive {month} · mode {html.escape(mode)}</p></header><main>"
             f"<p class='meta'><a href='../index.html'>← édition du jour</a> · <a href='../palmares.html'>palmarès</a></p>"
             f"<table><tr><th>Journée</th><th>Courses</th><th>Notées (définitives)</th><th>3/3</th><th>≥ 2/3</th></tr>{rows or '<tr><td colspan=5>aucune journée</td></tr>'}</table>"
             f"</main><footer>Aucun chiffre retouché.</footer></body></html>")
@@ -196,8 +214,7 @@ def render_month_page(month: str, days: list[dict], *, mode: str) -> str:
 
 def render_palmares_page(pal: dict, fiab: dict, *, mode: str) -> str:
     g = pal.get("global", {})
-    H = [f"<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>{'<meta name=robots content=noindex>' if mode == 'shadow' else ''}",
-         f"<title>Elite Turf · Bases · palmarès</title><style>{CSS}</style></head><body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Palmarès depuis le {pal.get('depuis') or '—'} · mode {html.escape(mode)} · non retouché</p></header><main>",
+    H = [_head("Elite Turf · Bases · palmarès", mode) + "<body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Palmarès depuis le {pal.get('depuis') or '—'} · mode {html.escape(mode)} · non retouché</p></header><main>",
          "<p class='meta'><a href='index.html'>← édition du jour</a></p>",
          f"<p class='legende'>Compteurs depuis le début du protocole, arrivées définitives vérifiées uniquement. Répétitions manuelles exclues : {pal.get('repetitions_exclues', 0)} édition(s). Abstentions comptées : {pal.get('abstentions', 0)}.</p>",
          "<h2 class='sec'>Par barreau</h2><div class='pal'>" + "".join(f"<div><b>{_pct(g.get(f'taux_{k}'))}</b><span>{lbl} · n = {g.get('n', 0)}</span></div>" for k, lbl in (("k1", "1 base"), ("k2", "2 bases"), ("k3", "3 bases"), ("k4", "4 bases"), ("2of3", "≥ 2/3"))) + "</div>",
@@ -223,6 +240,7 @@ def build_site(con, day: str, params: dict, *, mode: str, shadow_token: str | No
     """Régénère tout le contenu : index (dernière journée publiée), jours/*.html, archive/*.html, palmares.html, JSON."""
     site_dir = site_dir or config.SITE_DIR
     site_dir.mkdir(parents=True, exist_ok=True)
+    copy_favicons(site_dir)
     if mode == "shadow":
         (site_dir / "index.html").write_text(NEUTRAL_HTML, encoding="utf-8")
         if not shadow_token:

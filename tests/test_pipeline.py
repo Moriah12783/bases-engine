@@ -397,3 +397,20 @@ def test_soir_self_heals_previous_days(env, snapshot, results_client):
     assert results_client.requests_made == reqs + 2          # contrat + manifeste : aucune journée relue
     journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
     assert "Rattrapage : rien à compléter" in journal
+
+
+def test_favicon_copied_and_linked_on_every_page(env, snapshot, results_client):
+    from bases_engine.pipeline import run_resultats
+    _seed_published_day(env, snapshot)
+    run_resultats(day="2026-09-20", results_client=results_client, db_path=env["db"])
+    run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
+    site = env["site"]
+    for name in ("favicon.svg", "favicon.ico", "favicon-32.png", "apple-touch-icon.png", "favicon-512.png"):
+        assert (site / name).exists() and (site / name).stat().st_size > 0
+    content = site / "shadow" / ("t" * 32)
+    pages = [site / "index.html", content / "index.html", content / "jours" / "2026-09-20.html", content / "archive" / "2026-09.html", content / "palmares.html"]
+    for p in pages:
+        t = p.read_text(encoding="utf-8")
+        for tag in ('href="/favicon.svg"', 'sizes="32x32" href="/favicon-32.png"', 'rel="shortcut icon" href="/favicon.ico"',
+                    'rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"', '<meta name="theme-color" content="#0A0A0A">'):
+            assert tag in t, (p, tag)

@@ -172,7 +172,7 @@ def palmares_and_fiabilite(con, horizon: str = "T_MATIN") -> tuple[dict, dict]:
 # ----------------------------------------------------------------------------
 
 NEUTRAL_HTML = """<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>Elite Turf — Bases</title>
+<meta name="robots" content="noindex"><title>Elite Turf — Bases</title>""" + config.FAVICON_HEAD + """
 <style>body{margin:0;background:#0b0b0d;color:#e8e1cf;font-family:Georgia,'Times New Roman',serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}
 h1{font-weight:400;letter-spacing:.08em;color:#c9a227}p{color:#9a9482}</style></head>
 <body><main><h1>ELITE TURF · BASES</h1><p>Service en préparation.</p></main></body></html>

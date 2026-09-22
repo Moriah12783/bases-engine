@@ -2,6 +2,10 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Favicon (présentation uniquement, hors protocole)
+
+- `assets/favicon/` (favicon.svg, favicon.ico, favicon-32.png, apple-touch-icon.png, favicon-512.png) copié à la racine de `site/` à chaque régénération ; les cinq balises du kit ajoutées au gabarit `<head>` commun (page neutre, pages ombre, journées, archives, palmarès). Aucun autre changement.
+
 ## 2026-09-22 — Complément sprint 4 : `soir` auto-réparateur (hors protocole)
 
 - `soir` traite J puis J-1 à J-7 et complète, de façon idempotente, tout ce qui manque : mesure intrajournée T90/T30/T15 absente (pour J toujours ; pour J-1..J-7 si une édition du matin existe), notation non faite (journée jamais notée alors que le manifeste annonce des arrivées définitives), contrôle croisé SQLite absent (notations de la passe horaire), empreinte modifiée. Un `soir` manqué ou servi en retard est rattrapé au suivant sans intervention.
