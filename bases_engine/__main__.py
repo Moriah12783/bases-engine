@@ -138,7 +138,7 @@ def cmd_matin(args) -> int:
     try:
         return run_matin(day=args.date, horizon=args.horizon, dry_run=args.dry_run, sha=args.sha, network=not args.no_network,
                          results_client=_results_client(args.no_network), now=now, db_path=args.db, shadow_token=args.shadow_token,
-                         n_sims=args.n_sims, max_wait=0 if args.no_wait else 3)
+                         n_sims=args.n_sims, max_wait=0 if args.no_wait else 3, declencheur=args.declencheur)
     except PipelineStop as e:
         print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
         return e.code
@@ -148,7 +148,7 @@ def cmd_soir(args) -> int:
     from .pipeline import PipelineStop, run_soir
     try:
         return run_soir(day=args.date, sha=args.sha, network=not args.no_network, results_client=_results_client(args.no_network),
-                        db_path=args.db, shadow_token=args.shadow_token, n_sims=args.n_sims)
+                        db_path=args.db, shadow_token=args.shadow_token, n_sims=args.n_sims, declencheur=args.declencheur)
     except PipelineStop as e:
         print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
         return e.code
@@ -158,7 +158,7 @@ def cmd_resultats(args) -> int:
     from .pipeline import PipelineStop, run_resultats
     try:
         return run_resultats(day=args.date, network=not args.no_network, results_client=_results_client(args.no_network),
-                             db_path=args.db, shadow_token=args.shadow_token)
+                             db_path=args.db, shadow_token=args.shadow_token, declencheur=args.declencheur)
     except PipelineStop as e:
         print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
         return e.code
@@ -168,6 +168,8 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="bases_engine", description="Service Bases Elite Turf (lecture seule du moteur).")
     p.add_argument("--sha", help="commit turf-engine à utiliser (défaut : ls-remote main)")
     p.add_argument("--db", default=str(config.DB_PATH), help="chemin de bases.db")
+    p.add_argument("--declencheur", choices=["manuel", "cron", "metronome"], default=None,
+                   help="origine de la passe (défaut : cron si GITHUB_EVENT_NAME=schedule, sinon manuel) ; cron et metronome = passe planifiée")
     sub = p.add_subparsers(dest="command", required=True)
 
     s = sub.add_parser("contract-check", help="tests de contrat §4.4")
@@ -208,7 +210,7 @@ def main(argv=None) -> int:
 
     s = sub.add_parser("hebdo", help="lundi : recalibration (k, cible) hors répétitions, rapport hebdomadaire rapports/AAAA-Www.md")
     s.add_argument("--date"); s.add_argument("--sans-recalibration", action="store_true")
-    s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, sha=a.sha, db_path=a.db, recalibrer=not a.sans_recalibration))
+    s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, sha=a.sha, db_path=a.db, recalibrer=not a.sans_recalibration, declencheur=a.declencheur))
 
     args = p.parse_args(argv)
     try:

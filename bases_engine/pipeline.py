@@ -28,9 +28,38 @@ class PipelineStop(RuntimeError):
         self.code = code
 
 
+def default_declencheur() -> str:
+    """manuel | cron | metronome — déduit de l'environnement GitHub quand le CLI ne le précise pas."""
+    return "cron" if os.environ.get("GITHUB_EVENT_NAME") == "schedule" else "manuel"
+
+
+def is_planned(declencheur: str) -> bool:
+    """Passe planifiée (cron GitHub ou frappe du métronome) — seule habilitée à fixer la date de début du protocole."""
+    return declencheur in storage.PLANIFIES
+
+
 def is_scheduled() -> bool:
-    """Exécution planifiée (cron GitHub) — seule habilitée à fixer la date de début du protocole."""
-    return os.environ.get("GITHUB_EVENT_NAME") == "schedule"
+    return is_planned(default_declencheur())
+
+
+def _repetition_rapide(con, run_id: str, command: str, day: str, declencheur: str, served: dict, t0: float) -> int:
+    """Passe déjà servie : sortie en quelques secondes, sans téléchargement, sans toucher la page ni le protocole."""
+    body = (f"Passe {command} du {day} déjà servie par le run {served['run_id']} ({served['declencheur']}, {served['started_at_utc']}). "
+            f"Ce run ({declencheur}) sort en répétition : aucune édition, aucune publication, protocole inchangé.")
+    notify("info", f"🔁 BASES — {day} — {command} · répétition (déjà servie)", body, date=day)
+    con.execute("update runs set mode='repetition' where run_id=?", (run_id,))
+    storage.finish_run(con, run_id, "OK", races_seen=0, races_published=0, duration_s=round(time.time() - t0, 1))
+    return 0
+
+
+def _garde_fou_metronome(con, command: str, day: str, declencheur: str) -> None:
+    """Run cron (filet) alors qu'aucune frappe du métronome n'a servi la passe : on informe, sans échec."""
+    if declencheur != "cron" or storage.served_run(con, command, day, planned_only=True) and any(
+            r[0] == "metronome" for r in con.execute("select declencheur from runs where command=? and day=? and status='OK'", (command, day))):
+        return
+    msg = f"{command} {day} servie par le filet GitHub"
+    print(f"::warning title=Métronome silencieux::{msg}")
+    notify("info", f"⚠️ BASES — METRONOME_SILENCIEUX — {msg}", f"METRONOME_SILENCIEUX : {msg} (aucune frappe du métronome constatée pour cette passe).", date=day)
 
 
 def _mode() -> str:
@@ -63,16 +92,23 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
               network: bool = True, results_client: ResultsClient | None = None, now: datetime | None = None,
               db_path=config.DB_PATH, shadow_token: str | None = None, wait_s: float = 300.0, max_wait: int = 3,
               sleep=time.sleep, n_sims: int = config.N_SIMS, scheduled: bool | None = None,
-              protocol_path=None) -> int:
+              protocol_path=None, declencheur: str | None = None) -> int:
     day = day or _date.today().isoformat()
     now = now or now_utc()
     mode = "dry-run" if dry_run else _mode()
-    scheduled = is_scheduled() if scheduled is None else scheduled
+    declencheur = declencheur or ("cron" if scheduled else None) or default_declencheur()
+    scheduled = is_planned(declencheur) if scheduled is None else scheduled
     run_id = f"matin-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
-    storage.start_run(con, run_id, "matin", None, mode)
+    storage.start_run(con, run_id, "matin", None, mode, declencheur=declencheur, day=day)
     try:
+        # 0. Passe planifiée et journée déjà servie (par n'importe quel déclencheur) : sortie rapide, avant tout téléchargement.
+        #    Une passe manuelle recalcule toujours (relance volontaire, remplacement si nouveau commit moteur).
+        if scheduled and not dry_run:
+            served = storage.served_run(con, "matin", day, planned_only=False)
+            if served:
+                return _repetition_rapide(con, run_id, "matin", day, declencheur, served, t0)
         # 1. Instantané
         try:
             snap, state = _snapshot_for_day(day, sha, wait_s=wait_s, max_wait=max_wait, sleep=sleep)
@@ -95,13 +131,9 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=name, duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {name}")
 
-        # 3. Début du protocole (premier matin planifié) et statut de répétition
-        if scheduled and not dry_run and storage.protocol_start_date(con) is None:
-            storage.set_meta(con, "protocole_debut", day)
-            storage.set_meta(con, "protocole_debut_run", run_id)
-            set_start_date(day, run_id, protocol_path)
-            notify("info", f"📌 BASES — début du protocole pré-enregistré fixé au {day}", f"Premier matin planifié (run {run_id}). Fin : 28 jours ou 800 courses notées.", date=day)
-        repetition = dry_run or storage.is_repetition(con, day)
+        # 3. Statut de répétition : une passe planifiée qui va fixer la date de début n'est pas une répétition
+        fixera_debut = scheduled and not dry_run and storage.protocol_start_date(con) is None
+        repetition = dry_run or (not fixera_debut and storage.is_repetition(con, day))
 
         # Idempotence : (date, horizon, snapshot_commit)
         replay = storage.editions_exist(con, day, horizon, snap.sha)
@@ -126,12 +158,22 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
                 ed = compute_edition(ev, params, n_sims=n_sims)
                 row = _edition_row(eid, ev, ed, snap.sha, mode if mode != "dry-run" else _mode(), params)
                 row["repetition"] = int(repetition)
+                row["declencheur"] = declencheur
                 storage.insert_edition(con, row)
                 editions.append((ev, ed["ladders"], row))
             con.commit()
         finally:
             scon.close()
         n_sup = storage.supersede(con, day, horizon, snap.sha)
+        # Début du protocole : fixé par la première passe planifiée (cron ou métronome) qui produit réellement une édition
+        if fixera_debut and editions and not replay:
+            storage.set_meta(con, "protocole_debut", day)
+            storage.set_meta(con, "protocole_debut_run", run_id)
+            set_start_date(day, run_id, protocol_path)
+            notify("info", f"📌 BASES — début du protocole pré-enregistré fixé au {day}",
+                   f"Première passe matin planifiée ({declencheur}, run {run_id}) ayant produit une édition. Fin : 28 jours ou 800 courses notées.", date=day)
+        elif fixera_debut and not editions:
+            repetition = storage.is_repetition(con, day)     # aucune course : la date reste à fixer
 
         # 4. Publication (JSON contrat, site, palmarès) — le déploiement est l'affaire du workflow
         published_at = None if dry_run else iso_utc()
@@ -141,14 +183,16 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
             con.commit()
         contract = build_day_contract(con, day, horizon, snap.sha, params, mode=_mode())
         site_info = build_site(con, day, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=dry_run)
-        con.execute("insert or replace into journal_days(date, horizon, snapshot_commit, run_id, published_at_utc, mode, status) values (?,?,?,?,?,?,?)",
-                    (day, horizon, snap.sha, run_id, published_at, mode, "DRY_RUN" if dry_run else "OK"))
+        con.execute("insert or replace into journal_days(date, horizon, snapshot_commit, run_id, published_at_utc, mode, status, declencheur) values (?,?,?,?,?,?,?,?)",
+                    (day, horizon, snap.sha, run_id, published_at, mode, "DRY_RUN" if dry_run else "OK", declencheur))
         con.commit()
+        storage.finish_run(con, run_id, "OK", races_seen=len(race_ids), races_published=len(editions), duration_s=round(time.time() - t0, 1))
+        if not dry_run:
+            _garde_fou_metronome(con, "matin", day, declencheur)
 
         # 5. Notification (annexe E)
         body = matin_message(day, snap.sha, contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info, repetition=repetition)
-        notify("matin", f"🏇 BASES — {day} — édition du matin ({mode})" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
-        storage.finish_run(con, run_id, "OK", races_seen=len(race_ids), races_published=len(editions), duration_s=round(time.time() - t0, 1))
+        notify("matin", f"🏇 BASES — {day} — édition du matin ({mode} · {declencheur})" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         return 0
     except PipelineStop:
         raise
@@ -209,15 +253,20 @@ def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, 
 
 def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = True, results_client: ResultsClient | None = None,
              db_path=config.DB_PATH, shadow_token: str | None = None, lookback: int = 7, n_sims: int = config.N_SIMS,
-             mesure_horizons: tuple[str, ...] = ("T90", "T30", "T15")) -> int:
+             mesure_horizons: tuple[str, ...] = ("T90", "T30", "T15"), declencheur: str | None = None) -> int:
     day = day or _date.today().isoformat()
-    
+    declencheur = declencheur or default_declencheur()
     run_id = f"soir-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
-    storage.start_run(con, run_id, "soir", None, _mode())
+    storage.start_run(con, run_id, "soir", None, _mode(), declencheur=declencheur, day=day)
     client = results_client or ResultsClient()
     try:
+        # passe planifiée déjà servie aujourd'hui par une passe planifiée : sortie rapide (le rattrapage 23:40 après un soir réussi)
+        if is_planned(declencheur):
+            served = storage.served_run(con, "soir", day, planned_only=True)
+            if served:
+                return _repetition_rapide(con, run_id, "soir", day, declencheur, served, t0)
         try:
             snap = get_snapshot(sha)
         except FetchError as e:
@@ -292,6 +341,7 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         if stats["divergences"]:
             alert("divergence JSON public ↔ SQLite (courses non notées)", "\n".join(stats["divergences"]), date=day)
         storage.finish_run(con, run_id, "OK", races_seen=stats["notees"] + stats["renotees"], races_published=n_mesure, duration_s=round(time.time() - t0, 1))
+        _garde_fou_metronome(con, "soir", day, declencheur)
         return 0
     except PipelineStop:
         raise
@@ -405,7 +455,7 @@ def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None
 # ----------------------------------------------------------------------------
 
 def run_resultats(*, day: str | None = None, network: bool = True, results_client: ResultsClient | None = None, db_path=config.DB_PATH,
-                  shadow_token: str | None = None) -> int:
+                  shadow_token: str | None = None, declencheur: str | None = None) -> int:
     """Lit index.json ; relit la journée seulement si l'empreinte a changé ; note DEFINITIVE et PROVISOIRE (statut affiché tel quel,
     palmarès inchangé : DEFINITIVE + VERIFIEE_PMU seulement) ; régénère la page du jour. Aucun instantané moteur téléchargé
     (budget), donc pas de contrôle croisé : `soir` relira et contrôlera ces journées."""
@@ -413,7 +463,7 @@ def run_resultats(*, day: str | None = None, network: bool = True, results_clien
     run_id = f"resultats-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
-    storage.start_run(con, run_id, "resultats", None, _mode())
+    storage.start_run(con, run_id, "resultats", None, _mode(), declencheur=declencheur or default_declencheur(), day=day)
     client = results_client or ResultsClient()
     try:
         try:

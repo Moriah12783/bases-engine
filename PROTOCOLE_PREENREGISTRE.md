@@ -17,8 +17,10 @@ aux seuils à l'exécution, et que le filtre `priced_ratio ≥ 0,9` du back-test
 quotidien). Back-test de référence : horizon T_MATIN, commit moteur **`f1677b6220a882baf8028e232d1a617f32b30d9d`**
 (`turf-engine`), 339 courses du 08/09 au 20/09/2026.
 
-La date est fixée par le premier `matin` déclenché par le cron (événement `schedule`), qui l'écrit
-ici et dans `bases.db` (clé `protocole_debut`). Elle n'est jamais réécrite. Fin : **28 jours** ou
+La date est fixée par la première passe `matin` **planifiée** qui produit réellement une édition : cron
+GitHub (événement `schedule`) ou frappe du métronome (`workflow_dispatch` avec `source = metronome`), qui
+compte comme planifiée au même titre. Elle est écrite ici et dans `bases.db` (clé `protocole_debut`) et
+n'est jamais réécrite. Une passe manuelle ne la fixe pas ; une répétition non plus. Fin : **28 jours** ou
 **800 courses éligibles notées** après cette date, la première des deux échéances atteinte.
 
 Toute exécution manuelle de `matin` ou `soir` avant cette date (répétitions, `workflow_dispatch`,

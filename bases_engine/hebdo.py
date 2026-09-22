@@ -142,7 +142,7 @@ def _pct(x):
     return "—" if x is None else f"{100 * x:.1f} %"
 
 
-def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str | None, n_rep: int, intraday: dict | None = None) -> str:
+def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str | None, n_rep: int, intraday: dict | None = None, metro: dict | None = None) -> str:
     d = datetime.strptime(day, "%Y-%m-%d")
     week = f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}"
     L = [f"# Rapport hebdomadaire bases-engine — {week} (généré le {day})", "",
@@ -177,18 +177,28 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
             L.append(f"| {h} | {v['n_communes']} | {v['n_differentes']} | {_pct(v['part'])} | {_pct(v['matin_3of3'])} | {_pct(v['horizon_3of3'])} | {_pct(v['matin_2of3'])} | {_pct(v['horizon_2of3'])} |")
         L.append("")
         L.append("_Taux calculés sur les seules courses où le trio de l'horizon diffère du trio du matin._")
+    if metro is not None:
+        L += ["", "## Métronome (7 derniers jours, passe matin)", "",
+              f"Métronome : **{metro['metronome']}** jour(s) servi(s) par le métronome, **{metro['filet']}** par le filet GitHub, **{metro['manques']}** manqué(s).",
+              "", "| Jour | Servi par |", "|---|---|"] + [f"| {d} | {how} |" for d, how in metro["jours"]]
     L += ["", "## Rendement des structures de ticket", "", "_Non calculé : le mapping des rapports (`docs/rapports_mapping.md`) n'est pas validé par Steph. Informatif et « non validé » le jour où il le sera._", "",
           "---", "_Aucun chiffre retouché. Les répétitions manuelles antérieures au début du protocole sont exclues._"]
     return "\n".join(L) + "\n"
 
 
-def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.DB_PATH, recalibrer: bool = True) -> int:
+def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.DB_PATH, recalibrer: bool = True, declencheur: str | None = None) -> int:
+    from .pipeline import _garde_fou_metronome, _repetition_rapide, default_declencheur, is_planned
     day = day or _date.today().isoformat()
+    declencheur = declencheur or default_declencheur()
     run_id = f"hebdo-{day}-{uuid.uuid4().hex[:6]}"
     t0 = time.time()
     con = storage.connect(db_path)
-    storage.start_run(con, run_id, "hebdo", None, "hebdo")
+    storage.start_run(con, run_id, "hebdo", None, "hebdo", declencheur=declencheur, day=day)
     try:
+        if is_planned(declencheur):
+            served = storage.served_run(con, "hebdo", day, planned_only=True)
+            if served:
+                return _repetition_rapide(con, run_id, "hebdo", day, declencheur, served, t0)
         snap = None
         try:
             snap = get_snapshot(sha)
@@ -201,7 +211,8 @@ def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.
         stats = weekly_stats(con, rows, snap)
         n_rep = con.execute("select count(*) from bases_editions where repetition=1").fetchone()[0]
         intraday = intraday_stats(con)
-        md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep, intraday)
+        metro = storage.metronome_counter(con, day)
+        md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep, intraday, metro)
         d = datetime.strptime(day, "%Y-%m-%d")
         path = config.RAPPORTS_DIR / f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}.md"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -210,6 +221,7 @@ def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.
             _append_changelog(day, new["version"], stats["n"])
         notify("hebdo", f"📅 BASES — rapport hebdomadaire {path.stem}", md, date=day)
         storage.finish_run(con, run_id, "OK", races_seen=stats["n"], races_published=0, duration_s=round(time.time() - t0, 1))
+        _garde_fou_metronome(con, "hebdo", day, declencheur)
         return 0
     except Exception as e:  # noqa: BLE001
         storage.finish_run(con, run_id, "FAILED", error=repr(e), duration_s=round(time.time() - t0, 1))

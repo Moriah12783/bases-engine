@@ -2,6 +2,15 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Mini-sprint « Métronome », commit A (workflow + sémantique des passes)
+
+- `bases.yml` : input `source` (`manuel` | `metronome`) sur `workflow_dispatch`, `run-name` lisible (`cron <expr>` ou `<commande> · <source>`), déclencheur transmis au Python (`--declencheur manuel|cron|metronome`) en plus de la commande dérivée de l'expression cron ; groupe de concurrence `bases-engine` sans annulation confirmé (déjà en place). Lignes cron intactes.
+- Passe planifiée = `cron` **ou** `metronome` : la première passe `matin` planifiée qui produit réellement une édition fixe la date de début du protocole ; `manuel` reste hors protocole. Déclencheur enregistré sur `runs`, `bases_editions`, `journal_days` (migration 7).
+- Répétition rapide : une passe planifiée qui trouve la journée déjà servie (matin : par n'importe quel déclencheur ; soir/hebdo : par une passe planifiée) sort en quelques secondes **avant tout téléchargement**, sans toucher la page ni le protocole (`runs.mode = repetition`). Une passe manuelle recalcule toujours (relance volontaire, remplacement si nouveau commit moteur).
+- Garde-fou « métronome silencieux » : un run `cron` qui sert `matin`, `soir` ou `hebdo` sans frappe du métronome le signale (annotation `::warning title=Métronome silencieux::…`, ligne `METRONOME_SILENCIEUX` dans le journal) sans échec de run. Compteur dans le rapport hebdomadaire : « Métronome : N jours servis par le métronome, N par le filet, N manqués » (passe matin, 7 derniers jours).
+- `PROTOCOLE_PREENREGISTRE.md` : une phrase (le métronome compte comme planifié ; une passe manuelle ou une répétition ne fixe pas la date). Critères et seuils inchangés. `docs/RUNBOOK.md` créé (exploitation du métronome, expiration du jeton à inscrire par Steph).
+- Constat du 22/09 : les crons GitHub `7 9` et `35 9` n'ont pas été servis du tout (aucun run dans l'onglet Actions), d'où ce sprint.
+
 ## 2026-09-22 — Favicon (présentation uniquement, hors protocole)
 
 - `assets/favicon/` (favicon.svg, favicon.ico, favicon-32.png, apple-touch-icon.png, favicon-512.png) copié à la racine de `site/` à chaque régénération ; les cinq balises du kit ajoutées au gabarit `<head>` commun (page neutre, pages ombre, journées, archives, palmarès). Aucun autre changement.

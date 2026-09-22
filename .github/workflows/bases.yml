@@ -2,6 +2,7 @@
 # ⚠️ Crons DÉSACTIVÉS jusqu'à ce que le premier `contract-check` complet (workflow_dispatch manuel) passe.
 #    Pour activer : décommenter le bloc `schedule` ci-dessous (décision écrite de Steph).
 name: bases
+run-name: ${{ github.event_name == 'schedule' && format('cron {0}', github.event.schedule) || format('{0} · {1}', inputs.command, inputs.source) }}
 
 on:
   # Propriété des lignes cron : la personne qui a modifié ces lignes en dernier reçoit les notifications
@@ -23,6 +24,11 @@ on:
         description: "Date J (AAAA-MM-JJ) ; vide = aujourd'hui (UTC)"
         default: ""
         required: false
+      source:
+        description: "Origine du déclenchement"
+        type: choice
+        options: [manuel, metronome]
+        default: manuel
 
 permissions:
   contents: write
@@ -60,7 +66,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             CMD="${{ github.event.inputs.command }}"; DATE="${{ github.event.inputs.date }}"
+            DECLENCHEUR="${{ github.event.inputs.source || 'manuel' }}"    # manuel | metronome
           else
+            DECLENCHEUR=cron
             # Commande dérivée de l'expression cron déclenchante (jamais de l'heure courante : un cron peut être servi
             # avec plusieurs heures de retard — le soir du 21/09 a tourné à 00:36 UTC le 22/09).
             case "${{ github.event.schedule }}" in
@@ -75,8 +83,8 @@ jobs:
             # soir / resultats servis après minuit UTC : la journée visée est la veille
             if { [ "$CMD" = "soir" ] || [ "$CMD" = "resultats" ]; } && [ "$H" -lt 6 ]; then DATE=$(date -u -d yesterday +%F); fi
           fi
-          echo "cmd=$CMD" >> "$GITHUB_OUTPUT"; echo "date=$DATE" >> "$GITHUB_OUTPUT"
-          echo "Commande : $CMD ${DATE:+--date $DATE}"
+          echo "cmd=$CMD" >> "$GITHUB_OUTPUT"; echo "date=$DATE" >> "$GITHUB_OUTPUT"; echo "declencheur=$DECLENCHEUR" >> "$GITHUB_OUTPUT"
+          echo "Commande : $CMD ${DATE:+--date $DATE} (déclencheur : $DECLENCHEUR)"
 
       - name: pages-init — création idempotente du projet Cloudflare Pages (workflow_dispatch uniquement)
         id: pages_init
@@ -116,7 +124,7 @@ jobs:
             matin|soir|resultats|contract-check|show) [ -n "${{ steps.cmd.outputs.date }}" ] && ARGS="--date ${{ steps.cmd.outputs.date }}" ;;
           esac
           if [ "${{ steps.cmd.outputs.cmd }}" = "matin" ] && [ -z "${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}" ]; then ARGS="$ARGS --dry-run"; fi
-          python -m bases_engine ${{ steps.cmd.outputs.cmd }} $ARGS
+          python -m bases_engine --declencheur "${{ steps.cmd.outputs.declencheur }}" ${{ steps.cmd.outputs.cmd }} $ARGS
 
       - name: Résumé de secours — seulement si l'exécution n'a écrit aucun résumé (marqueur .cache/summary_written absent)
         if: failure()

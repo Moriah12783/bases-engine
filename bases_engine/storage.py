@@ -93,6 +93,13 @@ MIGRATIONS: list[tuple[int, str]] = [
         race_id TEXT PRIMARY KEY, date TEXT NOT NULL, statut TEXT NOT NULL, finalite TEXT, annulee INTEGER NOT NULL DEFAULT 0,
         pmu_statut TEXT, version INTEGER, arrivee_json TEXT, non_partants_json TEXT, updated_at_utc TEXT NOT NULL);
     """),
+    (7, """
+    -- Métronome : déclencheur (manuel | cron | metronome) et journée visée, sur les runs, les éditions et le journal.
+    ALTER TABLE runs ADD COLUMN declencheur TEXT;
+    ALTER TABLE runs ADD COLUMN day TEXT;
+    ALTER TABLE bases_editions ADD COLUMN declencheur TEXT;
+    ALTER TABLE journal_days ADD COLUMN declencheur TEXT;
+    """),
 ]
 
 
@@ -118,11 +125,41 @@ def migrate(con: sqlite3.Connection) -> None:
 
 # --- runs -------------------------------------------------------------------------------------
 
-def start_run(con, run_id: str, command: str, snapshot_commit: str | None, mode: str) -> None:
+PLANIFIES = ("cron", "metronome")
+
+
+def start_run(con, run_id: str, command: str, snapshot_commit: str | None, mode: str, *, declencheur: str = "manuel", day: str | None = None) -> None:
     from .util import iso_utc
-    con.execute("""insert or replace into runs(run_id, started_at_utc, command, snapshot_commit, mode, status)
-                   values (?, ?, ?, ?, ?, 'RUNNING')""", (run_id, iso_utc(), command, snapshot_commit, mode))
+    con.execute("""insert or replace into runs(run_id, started_at_utc, command, snapshot_commit, mode, status, declencheur, day)
+                   values (?, ?, ?, ?, ?, 'RUNNING', ?, ?)""", (run_id, iso_utc(), command, snapshot_commit, mode, declencheur, day))
     con.commit()
+
+
+def served_run(con, command: str, day: str, *, planned_only: bool) -> dict | None:
+    """Run OK de la même commande pour la même journée (planifié seulement, ou n'importe quel déclencheur)."""
+    q = "select run_id, declencheur, started_at_utc from runs where command=? and day=? and status='OK' and mode <> 'repetition' and mode <> 'dry-run'"
+    if planned_only:
+        q += " and declencheur in ('cron','metronome')"
+    r = con.execute(q + " order by started_at_utc limit 1", (command, day)).fetchone()
+    return dict(r) if r else None
+
+
+def metronome_counter(con, until: str, days: int = 7) -> dict:
+    """Sur les `days` derniers jours (matin) : servis par le métronome, par le filet GitHub (cron), manqués."""
+    from datetime import datetime, timedelta
+    d0 = datetime.strptime(until, "%Y-%m-%d")
+    out = {"metronome": 0, "filet": 0, "manques": 0, "jours": []}
+    for i in range(days):
+        d = (d0 - timedelta(days=i)).strftime("%Y-%m-%d")
+        decl = {r[0] for r in con.execute("select declencheur from runs where command='matin' and day=? and status='OK' and mode not in ('repetition','dry-run')", (d,))}
+        if "metronome" in decl:
+            out["metronome"] += 1; out["jours"].append((d, "metronome"))
+        elif "cron" in decl:
+            out["filet"] += 1; out["jours"].append((d, "filet"))
+        else:
+            out["manques"] += 1; out["jours"].append((d, "manque"))
+    return out
+
 
 
 def finish_run(con, run_id: str, status: str, *, races_seen=None, races_published=None, error=None, duration_s=None):

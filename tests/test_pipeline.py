@@ -1,6 +1,7 @@
 """Bout-en-bout hors réseau : matin (dry-run puis ombre), idempotence, remplacement, soir (notation JSON)."""
 import json
 import os
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -414,3 +415,75 @@ def test_favicon_copied_and_linked_on_every_page(env, snapshot, results_client):
         for tag in ('href="/favicon.svg"', 'sizes="32x32" href="/favicon-32.png"', 'rel="shortcut icon" href="/favicon.ico"',
                     'rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"', '<meta name="theme-color" content="#0A0A0A">'):
             assert tag in t, (p, tag)
+
+
+# ----------------------------------------------------------------------------
+# Métronome : passes planifiées (cron | metronome), répétition rapide, garde-fou, compteur
+# ----------------------------------------------------------------------------
+
+def test_manual_then_metronome_is_fast_repetition(env, results_client, tmp_path, capsys):
+    from bases_engine.protocol import PLACEHOLDER, PLACEHOLDER_COMMIT
+    proto = tmp_path / "PROTOCOLE.md"; proto.write_text(f"{PLACEHOLDER}\n{PLACEHOLDER_COMMIT}\n", encoding="utf-8")
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="manuel", protocol_path=proto) == 0
+    con = storage.connect(env["db"])
+    n_ed = con.execute("select count(*) from bases_editions").fetchone()[0]
+    page_before = (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8")
+    t0 = time.time()
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome", protocol_path=proto) == 0
+    assert time.time() - t0 < 5
+    assert con.execute("select count(*) from bases_editions").fetchone()[0] == n_ed
+    assert storage.protocol_start_date(con) is None and "à renseigner" in proto.read_text(encoding="utf-8")
+    assert (env["site"] / "shadow" / ("t" * 32) / "index.html").read_text(encoding="utf-8") == page_before
+    runs = con.execute("select declencheur, mode, status from runs where command='matin' order by started_at_utc").fetchall()
+    assert [tuple(r) for r in runs] == [("manuel", "shadow", "OK"), ("metronome", "repetition", "OK")]
+    journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+    assert "répétition (déjà servie)" in journal and "run matin-2026-09-21" in journal
+    assert "Métronome silencieux" not in capsys.readouterr().out
+
+
+def test_metronome_first_fixes_start_then_cron_is_repetition_without_warning(env, results_client, tmp_path, capsys):
+    from bases_engine.protocol import PLACEHOLDER, PLACEHOLDER_COMMIT, start_date_in_file
+    proto = tmp_path / "PROTOCOLE.md"; proto.write_text(f"{PLACEHOLDER}\n{PLACEHOLDER_COMMIT}\n", encoding="utf-8")
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome", protocol_path=proto) == 0
+    con = storage.connect(env["db"])
+    assert storage.protocol_start_date(con) == "2026-09-21" and start_date_in_file(proto) == "2026-09-21"
+    assert all(r[0] == 0 and r[1] == "metronome" for r in con.execute("select repetition, declencheur from bases_editions"))
+    capsys.readouterr()
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="cron", protocol_path=proto) == 0
+    out = capsys.readouterr().out
+    assert "Métronome silencieux" not in out
+    assert con.execute("select mode from runs where declencheur='cron'").fetchone()[0] == "repetition"
+
+
+def test_cron_without_metronome_serves_and_warns(env, results_client, tmp_path, capsys):
+    from bases_engine.protocol import PLACEHOLDER, PLACEHOLDER_COMMIT
+    proto = tmp_path / "PROTOCOLE.md"; proto.write_text(f"{PLACEHOLDER}\n{PLACEHOLDER_COMMIT}\n", encoding="utf-8")
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="cron", protocol_path=proto) == 0
+    out = capsys.readouterr().out
+    assert "::warning title=Métronome silencieux::matin 2026-09-21 servie par le filet GitHub" in out
+    con = storage.connect(env["db"])
+    assert storage.protocol_start_date(con) == "2026-09-21"           # le filet fait le travail utile
+    journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
+    assert "METRONOME_SILENCIEUX" in journal
+    assert con.execute("select count(*) from bases_editions where repetition=0").fetchone()[0] == 20
+
+
+def test_planned_soir_twice_is_fast_repetition_and_hebdo_counts_metronome(env, snapshot, results_client, tmp_path, monkeypatch):
+    from bases_engine import config
+    from bases_engine.hebdo import run_hebdo
+    monkeypatch.setattr(config, "PARAMS_PATH", tmp_path / "params.json"); monkeypatch.setattr(config, "ROOT", tmp_path)
+    _seed_published_day(env, snapshot, "2026-09-20")
+    assert run_soir(day="2026-09-20", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome") == 0
+    t0 = time.time()
+    assert run_soir(day="2026-09-20", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="cron") == 0
+    assert time.time() - t0 < 5
+    con = storage.connect(env["db"])
+    assert [tuple(r) for r in con.execute("select declencheur, mode from runs where command='soir' order by started_at_utc")] == [("metronome", "shadow"), ("cron", "repetition")]
+    # un soir manuel ne bloque pas le soir planifié suivant
+    assert run_soir(day="2026-09-21", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="manuel") == 0
+    assert run_soir(day="2026-09-21", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome") == 0
+    assert con.execute("select mode from runs where command='soir' and day='2026-09-21' and declencheur='metronome'").fetchone()[0] == "shadow"
+    run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome")
+    assert run_hebdo(day="2026-09-21", db_path=env["db"], declencheur="cron") == 0
+    md = (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
+    assert "Métronome : **1** jour(s) servi(s) par le métronome, **0** par le filet GitHub, **6** manqué(s)." in md
