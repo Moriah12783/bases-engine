@@ -2,6 +2,12 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-22 — Mini-sprint « Métronome », commit B (Worker Cloudflare)
+
+- `metronome/worker.js` (frappe `workflow_dispatch` de `bases.yml` avec `source = metronome`, un nouvel essai après 60 s, erreur visible dans Metrics → Errors), `metronome/wrangler.toml` (crons `5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * 1` hebdo, sans URL publique, journaux activés), `.github/workflows/metronome.yml` (déploiement en un clic : `wrangler deploy` puis pose du secret `GH_DISPATCH_TOKEN`).
+- Ligne de **recette** active : cron `30 13 * * *` UTC → `contract-check` (sans effet sur le protocole ni la page). À retirer au commit C après le test, avec son cron.
+- Secrets GitHub attendus : `CLOUDFLARE_API_TOKEN_METRONOME`, `CLOUDFLARE_ACCOUNT_ID`, `METRONOME_GH_TOKEN`.
+
 ## 2026-09-22 — Mini-sprint « Métronome », commit A (workflow + sémantique des passes)
 
 - `bases.yml` : input `source` (`manuel` | `metronome`) sur `workflow_dispatch`, `run-name` lisible (`cron <expr>` ou `<commande> · <source>`), déclencheur transmis au Python (`--declencheur manuel|cron|metronome`) en plus de la commande dérivée de l'expression cron ; groupe de concurrence `bases-engine` sans annulation confirmé (déjà en place). Lignes cron intactes.

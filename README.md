@@ -29,6 +29,14 @@ Dépôt dédié `Moriah12783/bases-engine` (extraction du sous-dossier `bases-en
 
 Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
+## Métronome (déclencheur primaire, Worker Cloudflare)
+
+Les crons GitHub sont servis « au mieux » (retards de plusieurs heures, occurrences sautées). Un Worker
+Cloudflare `bases-metronome` (`metronome/`) frappe `workflow_dispatch` de `bases.yml` à la minute :
+`5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * 1` hebdo (UTC), deux minutes avant les crons GitHub qui
+restent le filet. Déploiement : Actions → « Métronome · déploiement » (secrets `CLOUDFLARE_API_TOKEN_METRONOME`,
+`CLOUDFLARE_ACCOUNT_ID`, `METRONOME_GH_TOKEN`). Exploitation : `docs/RUNBOOK.md`.
+
 ## Budget GitHub Actions (estimation, dépôt privé : 2 000 minutes/mois)
 
 | Exécution | Par jour | Durée facturée (arrondie à la minute) | Minutes/jour |
