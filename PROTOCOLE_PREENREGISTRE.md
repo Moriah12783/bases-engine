@@ -71,3 +71,11 @@ A / B / C → 3/3 = 33,6 / 15,9 / 10,6 %. Voir `rapports/backtest/2026-09-21_T_M
 
 _Gelé le 21/09/2026 — session développeur Bases. Seul le champ « Date de début » sera complété,
 automatiquement, par la première exécution planifiée._
+
+## Annexe factuelle — activation (ajoutée le 23/09/2026 sur décision du mentor ; critères et seuils inchangés)
+
+- **Jour 1 = 22 septembre 2026**, maintenu : la règle « jamais réécrite » prime.
+- Passe fondatrice : `matin` servie par le **filet cron GitHub** à **14:00:22 UTC** (cron `7 9 * * *` servi avec environ cinq heures de retard), run `matin-2026-09-22-e4606b`, commit du dépôt `e284c28`, **11 courses** éligibles publiées en mode ombre, annotation « Métronome silencieux » émise (le Worker n'était pas encore déployé). Le second cron du jour (14:09 UTC) est sorti en répétition.
+- Métronome **actif dès le jour 2** : passe `matin · metronome` du 23/09/2026 à 09:05:26 UTC, 24 courses, `repetition = 0`, sans répétition ni annotation.
+- Fenêtre d'observation : **du 22/09/2026 au 19/10/2026** (28 jours) ou 800 courses éligibles notées, la première échéance atteinte. **Verdict attendu le 20/10/2026.**
+- Note : l'en-tête du palmarès affichait un gabarit brut jusqu'au 23/09 (défaut de présentation corrigé, commit `366f78d`) ; `palmares.json` portait la bonne date dès la passe fondatrice.

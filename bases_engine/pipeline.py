@@ -315,9 +315,11 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
                         before = storage.results_count(con, d)
                         data, fp = _read_day_coherent(client, d, fp)
                         if data is None:
-                            done.append("journée désynchronisée du manifeste (deux tentatives) : relecture au prochain soir")
+                            _ecart_empreinte(con, d, passe="soir")
+                            done.append("journée désynchronisée du manifeste (deux tentatives, écart persistant signalé) : relecture au prochain soir")
                             stats["rattrapage"].setdefault(d, []).extend(done) if back > 0 else None
                             continue
+                        storage.ecart_empreinte_reset(con, d)
                         stats["jours_relus"].append(d)
                         for course in data.get("courses") or []:
                             storage.upsert_course_statut(con, course, d)
@@ -473,6 +475,24 @@ def _read_day_coherent(client: ResultsClient, d: str, fp: str | None) -> tuple[d
         return None, None
 
 
+ECART_PERSISTANT_SEUIL = 3      # passes horaires consécutives en écart → annotation, journal, compteur hebdo
+
+
+def _ecart_empreinte(con, day: str, *, passe: str) -> None:
+    """Écart manifeste ↔ journée constaté après deux tentatives : compté ; persistant (3 passes consécutives, ou constaté
+    par la passe soir) → annotation « Écart d'empreinte persistant », ligne de journal, incident compté dans l'hebdo."""
+    n = storage.ecart_empreinte_note(con, day)
+    persistant = passe == "soir" or n >= ECART_PERSISTANT_SEUIL
+    if persistant:
+        msg = f"journée {day} : manifeste et fichier désynchronisés sur {n} passe(s) consécutive(s)" + (" jusqu'à la passe soir" if passe == "soir" else "")
+        print(f"::warning title=Écart d'empreinte persistant::{msg}")
+        storage.add_incident(con, "ECART_EMPREINTE_PERSISTANT", day, msg)
+        notify("alerte", f"⚠️ BASES — ECART_EMPREINTE_PERSISTANT — {msg}", msg, date=day)
+    else:
+        notify("info", f"⚠️ BASES — {day} — passe horaire : manifeste et journée désynchronisés ({n}/{ECART_PERSISTANT_SEUIL})",
+               "Le producteur a régénéré la journée entre nos deux lectures (deux tentatives). Relecture à la prochaine passe, aucune notation modifiée.", date=day)
+
+
 # ----------------------------------------------------------------------------
 # RESULTATS (passe horaire, sprint 4)
 # ----------------------------------------------------------------------------
@@ -503,9 +523,9 @@ def run_resultats(*, day: str | None = None, network: bool = True, results_clien
             if not (fp and fp == storage.manifest_fingerprint(con, day)):
                 data, fp = _read_day_coherent(client, day, fp)
                 if data is None:
-                    notify("info", f"⚠️ BASES — {day} — passe horaire : manifeste et journée désynchronisés",
-                           "Le producteur a régénéré la journée entre nos deux lectures (deux tentatives). Relecture à la prochaine passe, aucune notation modifiée.", date=day)
+                    _ecart_empreinte(con, day, passe="resultats")
                 else:
+                    storage.ecart_empreinte_reset(con, day)
                     relu = True
                     for course in data.get("courses") or []:
                         storage.upsert_course_statut(con, course, day)

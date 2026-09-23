@@ -492,3 +492,36 @@ def test_planned_soir_twice_is_fast_repetition_and_hebdo_counts_metronome(env, s
     assert run_hebdo(day="2026-09-21", db_path=env["db"], declencheur="cron") == 0
     md = (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
     assert "Métronome : **1** jour(s) servi(s) par le métronome, **0** par le filet GitHub, **6** manqué(s)." in md
+
+
+def test_persistent_fingerprint_gap_is_reported(env, snapshot, tmp_path, fixtures_dir, capsys, monkeypatch):
+    """Écart manifeste ↔ journée persistant : silencieux 2 passes, annotation à la 3e ; le soir signale d'office ; compteur hebdo."""
+    import shutil
+    from bases_engine.fetch import ResultsClient
+    from bases_engine.pipeline import run_resultats
+    from bases_engine.hebdo import run_hebdo
+    from bases_engine import config
+    monkeypatch.setattr(config, "PARAMS_PATH", tmp_path / "params.json"); monkeypatch.setattr(config, "ROOT", tmp_path)
+    _seed_published_day(env, snapshot, "2026-09-20")
+    d = tmp_path / "res"; shutil.copytree(fixtures_dir / "resultats", d)
+    m = json.loads((d / "index.json").read_text(encoding="utf-8")); m["journees"]["2026-09-20"]["empreinte_sha256"] = "9" * 64
+    (d / "index.json").write_text(json.dumps(m), encoding="utf-8")            # manifeste durablement incohérent
+    client = ResultsClient(base_url=f"file://{d}")
+    for i in (1, 2):
+        assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
+        assert "Écart d'empreinte persistant" not in capsys.readouterr().out
+    assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
+    assert "::warning title=Écart d'empreinte persistant::journée 2026-09-20" in capsys.readouterr().out
+    con = storage.connect(env["db"])
+    assert storage.ecart_empreinte_consecutifs(con, "2026-09-20") == 3
+    assert con.execute("select count(*) from incidents where kind='ECART_EMPREINTE_PERSISTANT'").fetchone()[0] == 1
+    assert "ECART_EMPREINTE_PERSISTANT" in (env["rapports"] / "journal" / "ALERTES.md").read_text(encoding="utf-8")
+    assert run_soir(day="2026-09-20", results_client=client, db_path=env["db"], n_sims=N_SIMS) == 0
+    assert "jusqu'à la passe soir" in capsys.readouterr().out
+    assert con.execute("select count(*) from incidents where kind='ECART_EMPREINTE_PERSISTANT'").fetchone()[0] == 2
+    assert run_hebdo(day="2026-09-21", db_path=env["db"]) == 0
+    assert "Écarts d'empreinte persistants (manifeste ↔ journée, 7 derniers jours) : **2**." in (env["rapports"] / "2026-W39.md").read_text(encoding="utf-8")
+    # manifeste réparé : lecture réussie, compteur consécutif remis à zéro
+    shutil.copy(fixtures_dir / "resultats" / "index.json", d / "index.json")
+    assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
+    assert storage.ecart_empreinte_consecutifs(con, "2026-09-20") == 0

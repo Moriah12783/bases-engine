@@ -100,6 +100,15 @@ MIGRATIONS: list[tuple[int, str]] = [
     ALTER TABLE bases_editions ADD COLUMN declencheur TEXT;
     ALTER TABLE journal_days ADD COLUMN declencheur TEXT;
     """),
+    (8, """
+    -- Incidents d'exploitation comptés dans le rapport hebdomadaire (écart d'empreinte persistant, …) et
+    -- compteur d'écarts consécutifs manifeste ↔ journée par date.
+    CREATE TABLE IF NOT EXISTS incidents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL, date TEXT NOT NULL, at_utc TEXT NOT NULL, detail TEXT);
+    CREATE TABLE IF NOT EXISTS ecarts_empreinte (
+        date TEXT PRIMARY KEY, consecutifs INTEGER NOT NULL DEFAULT 0, total INTEGER NOT NULL DEFAULT 0,
+        premier_at_utc TEXT, dernier_at_utc TEXT);
+    """),
 ]
 
 
@@ -337,3 +346,42 @@ def unchecked_count(con, date: str) -> int:
 
 def results_count(con, date: str) -> int:
     return con.execute("""select count(*) from bases_results r join bases_editions e on e.edition_id=r.edition_id where e.date=?""", (date,)).fetchone()[0]
+
+
+# --- incidents / écarts d'empreinte ------------------------------------------------------------
+
+def add_incident(con, kind: str, date: str, detail: str) -> None:
+    from .util import iso_utc
+    con.execute("insert into incidents(kind, date, at_utc, detail) values (?,?,?,?)", (kind, date, iso_utc(), detail))
+    con.commit()
+
+
+def incidents_count(con, kind: str, until: str, days: int = 7) -> int:
+    from datetime import datetime, timedelta
+    since = (datetime.strptime(until, "%Y-%m-%d") - timedelta(days=days - 1)).strftime("%Y-%m-%d")
+    return con.execute("select count(*) from incidents where kind=? and date between ? and ?", (kind, since, until)).fetchone()[0]
+
+
+def ecart_empreinte_note(con, date: str) -> int:
+    """Un écart de plus pour cette date ; retourne le nombre d'écarts consécutifs."""
+    from .util import iso_utc
+    r = con.execute("select consecutifs, total, premier_at_utc from ecarts_empreinte where date=?", (date,)).fetchone()
+    now = iso_utc()
+    if r is None:
+        con.execute("insert into ecarts_empreinte(date, consecutifs, total, premier_at_utc, dernier_at_utc) values (?,1,1,?,?)", (date, now, now))
+        n = 1
+    else:
+        n = r[0] + 1
+        con.execute("update ecarts_empreinte set consecutifs=?, total=?, dernier_at_utc=? where date=?", (n, r[1] + 1, now, date))
+    con.commit()
+    return n
+
+
+def ecart_empreinte_reset(con, date: str) -> None:
+    con.execute("update ecarts_empreinte set consecutifs=0 where date=?", (date,))
+    con.commit()
+
+
+def ecart_empreinte_consecutifs(con, date: str) -> int:
+    r = con.execute("select consecutifs from ecarts_empreinte where date=?", (date,)).fetchone()
+    return r[0] if r else 0

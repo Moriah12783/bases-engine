@@ -45,3 +45,4 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 
 - Lecture mentor de la page du 23/09 : édition servie par le métronome (09:05:26 UTC) mais en-tête du palmarès brut. Cause : préfixe `f` perdu (favicon). Corrigé + tests anti-gabarit. Date de début réelle : 2026-09-22 (cron matin servi à 14:00 UTC, planifié) — non réécrite.
 - Course manifeste/journée (« empreinte ≠ manifeste ») : relecture cohérente une fois, sinon renoncement sans échec.
+- Décision mentor : jour 1 = 22/09 maintenu. Annexe factuelle au protocole ; écart d'empreinte persistant (3 passes ou soir) → annotation + ALERTES + compteur hebdo (migration 8).

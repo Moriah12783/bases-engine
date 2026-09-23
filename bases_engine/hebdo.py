@@ -181,6 +181,7 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
         L += ["", "## Métronome (7 derniers jours, passe matin)", "",
               f"Métronome : **{metro['metronome']}** jour(s) servi(s) par le métronome, **{metro['filet']}** par le filet GitHub, **{metro['manques']}** manqué(s).",
               "", "| Jour | Servi par |", "|---|---|"] + [f"| {d} | {how} |" for d, how in metro["jours"]]
+        L += ["", f"Écarts d'empreinte persistants (manifeste ↔ journée, 7 derniers jours) : **{metro.get('ecarts_empreinte', 0)}**."]
     L += ["", "## Rendement des structures de ticket", "", "_Non calculé : le mapping des rapports (`docs/rapports_mapping.md`) n'est pas validé par Steph. Informatif et « non validé » le jour où il le sera._", "",
           "---", "_Aucun chiffre retouché. Les répétitions manuelles antérieures au début du protocole sont exclues._"]
     return "\n".join(L) + "\n"
@@ -212,6 +213,7 @@ def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.
         n_rep = con.execute("select count(*) from bases_editions where repetition=1").fetchone()[0]
         intraday = intraday_stats(con)
         metro = storage.metronome_counter(con, day)
+        metro["ecarts_empreinte"] = storage.incidents_count(con, "ECART_EMPREINTE_PERSISTANT", day)
         md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep, intraday, metro)
         d = datetime.strptime(day, "%Y-%m-%d")
         path = config.RAPPORTS_DIR / f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}.md"

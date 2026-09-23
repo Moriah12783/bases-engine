@@ -2,6 +2,11 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-23 — Décision du mentor : jour 1 maintenu au 22/09, écart d'empreinte persistant
+
+- `PROTOCOLE_PREENREGISTRE.md` : annexe factuelle d'activation (passe fondatrice servie par le filet cron à 14:00:22 UTC, 11 courses, métronome silencieux le jour 1, actif dès le jour 2 ; fenêtre 22/09 → 19/10/2026, verdict attendu le 20/10/2026). Critères et seuils inchangés.
+- Écart manifeste ↔ journée : renoncement sans échec confirmé ; s'il persiste sur **3 passes horaires consécutives** ou **jusqu'à la passe soir**, annotation `::warning title=Écart d'empreinte persistant::…`, ligne `ECART_EMPREINTE_PERSISTANT` dans `ALERTES.md`, incident compté dans le rapport hebdomadaire (« Écarts d'empreinte persistants … : N »). Compteur consécutif remis à zéro à la première lecture réussie (tables `incidents`, `ecarts_empreinte`, migration 8).
+
 ## 2026-09-23 — Corrections après la lecture de la page du 23/09 (présentation ; protocole inchangé)
 
 - **En-tête du palmarès et des archives** : le préfixe `f` des deux chaînes avait sauté lors de l'ajout du favicon (gabarit brut `{pal.get('depuis') or '—'}` affiché). Corrigé ; test de non-régression : aucune accolade de gabarit dans aucune page, « Palmarès depuis le JJ/MM/AAAA » rendu.
