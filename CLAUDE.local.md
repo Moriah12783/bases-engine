@@ -40,3 +40,8 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Complément sprint 4 : soir auto-réparateur (J puis J-1..J-7, idempotent, tracé dans le résumé), **ligne cron commentée `40 23 * * *` ajoutée (signalé ; lignes existantes intactes)**, timeout job 20 min, budget Actions estimé dans le README.
 - Mini-sprint Métronome, commit A : input `source`, `run-name`, `--declencheur`, passe planifiée = cron ou métronome, répétition rapide avant téléchargement, garde-fou METRONOME_SILENCIEUX, compteur hebdo, phrase au protocole, RUNBOOK. Constat : crons 09:07/09:35 du 22/09 jamais servis par GitHub.
 - Métronome : recette verte (contract-check · metronome 13:30 UTC, 36 s). Commit C : recette retirée, `28 7 * * MON` (numérotation Cloudflare des jours), expiration du jeton au runbook (22/09/2027).
+
+## 2026-09-23 — Session 3
+
+- Lecture mentor de la page du 23/09 : édition servie par le métronome (09:05:26 UTC) mais en-tête du palmarès brut. Cause : préfixe `f` perdu (favicon). Corrigé + tests anti-gabarit. Date de début réelle : 2026-09-22 (cron matin servi à 14:00 UTC, planifié) — non réécrite.
+- Course manifeste/journée (« empreinte ≠ manifeste ») : relecture cohérente une fois, sinon renoncement sans échec.

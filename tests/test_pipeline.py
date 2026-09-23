@@ -251,7 +251,7 @@ def test_presentation_structure_and_order(env, results_client):
     assert "Tous sauf un = un seul d'entre eux peut manquer" in html
     journal = (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
     assert "Tous à l'arrivée : " in journal and "Tous sauf un : — · " in journal and "(1 sur 2)" in journal and "k/k" not in journal
-    assert "Abstentions du jour" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+" in html
+    assert "Courses écartées du jour (non éligibles)" in html and "moins de 8 partants" in html and "TOP4" not in html and "Quinté+" in html
     assert "Mode shadow" in html
 
 
@@ -379,6 +379,11 @@ def test_navigation_archive_palmares_pages(env, snapshot, results_client):
     assert "jours/2026-09-20.html" in arch and "jours/2026-09-21.html" in arch and "<th>3/3</th>" in arch
     pal = (content / "palmares.html").read_text(encoding="utf-8")
     assert "Par barreau" in pal and "Par solidité" in pal and "Répétitions manuelles exclues" in pal and "Par journée" in pal
+    assert "Palmarès depuis le 20/09/2026 · mode shadow" in pal
+    for page in (index, j20, arch, pal):
+        assert "{pal." not in page and "{html." not in page and "{month}" not in page and "{_fr(" not in page
+    assert "Archive 2026-09 · mode shadow" in arch
+    assert "Palmarès depuis le 20/09/2026" in index and "courses écartées (non éligibles)" in index and "abstention sur bases fixes" in index
     assert (content / "bases" / "2026-09-20.json").exists() and (content / "bases" / "2026-09-21.json").exists()
 
 

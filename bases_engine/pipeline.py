@@ -313,7 +313,11 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
                     has_eds = con.execute("select 1 from bases_editions where date=? limit 1", (d,)).fetchone() is not None
                     if has_eds and (changed or never_scored or unchecked):
                         before = storage.results_count(con, d)
-                        data = client.day(d, expected_fingerprint=fp)
+                        data, fp = _read_day_coherent(client, d, fp)
+                        if data is None:
+                            done.append("journée désynchronisée du manifeste (deux tentatives) : relecture au prochain soir")
+                            stats["rattrapage"].setdefault(d, []).extend(done) if back > 0 else None
+                            continue
                         stats["jours_relus"].append(d)
                         for course in data.get("courses") or []:
                             storage.upsert_course_statut(con, course, d)
@@ -450,6 +454,25 @@ def soir_message(day: str, stats: dict, pal: dict, n_mesure: int, site_info=None
     return "\n".join(L)
 
 
+def _read_day_coherent(client: ResultsClient, d: str, fp: str | None) -> tuple[dict | None, str | None]:
+    """Lit la journée en cohérence avec le manifeste. Le producteur régénère manifeste et journées toutes les 15 min :
+    entre nos deux lectures la journée peut avoir changé (« empreinte ≠ manifeste », vu le 22/09 à 19:46). On relit alors
+    le manifeste puis la journée, une fois ; si l'écart persiste, on renonce pour cette passe (None, motif) sans échec."""
+    try:
+        return client.day(d, expected_fingerprint=fp), fp
+    except FetchError as e:
+        if "≠ manifeste" not in str(e):
+            raise
+    man = client.manifest()
+    fp2 = ((man.get("journees") or {}).get(d) or {}).get("empreinte_sha256")
+    try:
+        return client.day(d, expected_fingerprint=fp2), fp2
+    except FetchError as e:
+        if "≠ manifeste" not in str(e):
+            raise
+        return None, None
+
+
 # ----------------------------------------------------------------------------
 # RESULTATS (passe horaire, sprint 4)
 # ----------------------------------------------------------------------------
@@ -478,13 +501,17 @@ def run_resultats(*, day: str | None = None, network: bool = True, results_clien
         if entry:
             fp = entry.get("empreinte_sha256")
             if not (fp and fp == storage.manifest_fingerprint(con, day)):
-                data = client.day(day, expected_fingerprint=fp)
-                relu = True
-                for course in data.get("courses") or []:
-                    storage.upsert_course_statut(con, course, day)
-                    _score_course(con, None, course, stats, allow_provisoire=True)
-                storage.set_manifest_fingerprint(con, day, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
-                con.commit()
+                data, fp = _read_day_coherent(client, day, fp)
+                if data is None:
+                    notify("info", f"⚠️ BASES — {day} — passe horaire : manifeste et journée désynchronisés",
+                           "Le producteur a régénéré la journée entre nos deux lectures (deux tentatives). Relecture à la prochaine passe, aucune notation modifiée.", date=day)
+                else:
+                    relu = True
+                    for course in data.get("courses") or []:
+                        storage.upsert_course_statut(con, course, day)
+                        _score_course(con, None, course, stats, allow_provisoire=True)
+                    storage.set_manifest_fingerprint(con, day, fp or data.get("empreinte_sha256") or "", data.get("nb_courses"), iso_utc(), iso_utc())
+                    con.commit()
         params = load_params()
         last = con.execute("select max(date) from journal_days where horizon='T_MATIN' and status='OK'").fetchone()[0] or day
         site_info = build_site(con, last, params, mode=_mode(), shadow_token=shadow_token or os.environ.get("SHADOW_TOKEN"), dry_run=False)

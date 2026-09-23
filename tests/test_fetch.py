@@ -81,3 +81,19 @@ def test_results_client_reads_local_fixture(fixtures_dir):
     assert day["nb_courses"] == 72 and day["courses"][0]["statut"]["definitive"]
     with pytest.raises(FetchError, match="≠ manifeste"):
         c.day("2026-09-19", expected_fingerprint="0" * 64)
+
+
+def test_day_read_recovers_from_manifest_race(tmp_path, fixtures_dir):
+    """Manifeste lu, puis journée régénérée par le producteur avant notre lecture : on relit le manifeste et la journée."""
+    import json, shutil
+    from bases_engine.pipeline import _read_day_coherent
+    d = tmp_path / "res"; shutil.copytree(fixtures_dir / "resultats", d)
+    c = ResultsClient(base_url=f"file://{d}")
+    man = c.manifest()
+    stale_fp = "0" * 64                                   # empreinte périmée (celle du manifeste lu avant la régénération)
+    data, fp = _read_day_coherent(c, "2026-09-20", stale_fp)
+    assert data is not None and fp == man["journees"]["2026-09-20"]["empreinte_sha256"] and data["nb_courses"] == 72
+    # écart persistant : on renonce sans lever
+    m = json.loads((d / "index.json").read_text(encoding="utf-8")); m["journees"]["2026-09-20"]["empreinte_sha256"] = "1" * 64
+    (d / "index.json").write_text(json.dumps(m), encoding="utf-8")
+    assert _read_day_coherent(c, "2026-09-20", "2" * 64) == (None, None)

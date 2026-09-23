@@ -2,6 +2,14 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-23 — Corrections après la lecture de la page du 23/09 (présentation ; protocole inchangé)
+
+- **En-tête du palmarès et des archives** : le préfixe `f` des deux chaînes avait sauté lors de l'ajout du favicon (gabarit brut `{pal.get('depuis') or '—'}` affiché). Corrigé ; test de non-régression : aucune accolade de gabarit dans aucune page, « Palmarès depuis le JJ/MM/AAAA » rendu.
+- La page du jour affiche désormais « Palmarès depuis le JJ/MM/AAAA » (lien vers le palmarès).
+- Compteurs du jour : « courses écartées (non éligibles) » distinguée de « solidité C · abstention sur bases fixes » ; bloc du bas renommé « Courses écartées du jour ».
+- Passe horaire / soir : quand la journée a été régénérée par le producteur entre la lecture du manifeste et celle du fichier (« empreinte ≠ manifeste », run `resultats` de 19:46 le 22/09), relecture cohérente une fois (manifeste puis journée) ; si l'écart persiste, la passe renonce sans échec et le note.
+- Constat : la date de début du protocole est **2026-09-22**, fixée à 14:00:22 UTC par le cron GitHub `matin` servi avec cinq heures de retard (déclencheur `cron`, donc passe planifiée), après le commit A ; annotation « Métronome silencieux » émise comme prévu. La passe `matin · metronome` du 23/09 (09:05:26 UTC, 24 courses, repetition = 0) n'a donc pas eu à la fixer. Le protocole interdit de réécrire la date.
+
 ## 2026-09-22 — Mini-sprint « Métronome », commit C (après recette)
 
 - Recette verte : run `contract-check · metronome` à 13:30 UTC, 36 s. Ligne de recette retirée de `COMMANDES` (`worker.js`) et son cron de `wrangler.toml`.
