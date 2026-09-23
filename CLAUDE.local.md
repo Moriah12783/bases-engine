@@ -47,3 +47,9 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Course manifeste/journée (« empreinte ≠ manifeste ») : relecture cohérente une fois, sinon renoncement sans échec.
 - Décision mentor : jour 1 = 22/09 maintenu. Annexe factuelle au protocole ; écart d'empreinte persistant (3 passes ou soir) → annotation + ALERTES + compteur hebdo (migration 8).
 - GO Steph : `resultats` sur le métronome (`18 11-21 * * *`, 4e trigger). Cause : cron GitHub horaire servi 1 fois sur 8 le 23/09.
+
+## 2026-09-23 (soir) — Incident « la page ne montre pas » : déploiement piloté par la commande, pas par la reconstruction
+
+- Faits (Actions, `bases.yml`) : run « cron 35 9 » servi à 14:23 UTC → matin déjà servi → répétition en 1 s (pas de `build_site`) → étape de déploiement **exécutée** (`success` 20 s) → `site/` = page neutre + favicons (`site/shadow/` ignoré par git) → pages shadow effacées en ligne. Même mécanique la nuit précédente (cron `40 23` servi à 01:46 après le soir métronome de 22:03). Les passes `resultats` (15:27 cron, 19:41 cron, 20:18 métronome) reconstruisaient la page mais l'étape de déploiement était `skipped` (condition `cmd == matin || soir`). Défaut du développeur Bases (Sprint 4 annonçait « régénère et déploie »).
+- Correction (commit ci-dessous, en attente de GO pour le push) : marqueur `.cache/site_built` écrit par `build_site` (hors dry-run, hors ombre sans jeton) ; déploiement ⇔ marqueur. 60 tests verts. Aucune ligne `cron` touchée.
+- Métronome `resultats` : frappe de 19:18 UTC absente des runs (première occurrence après le redéploiement de 18:29) ; frappe de 20:18 servie (run 35915024544). À surveiller à 21:18 et au contrôle de 22:20.

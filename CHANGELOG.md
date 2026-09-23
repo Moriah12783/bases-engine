@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-23 — Correctif : pages shadow effacées par les runs en répétition, jamais redéployées par `resultats`
+
+- Constat (Steph, 23/09 soir : « la page ne montre pas ») : l'étape « Déploiement Cloudflare Pages » ne dépendait que de la commande (`matin` ou `soir`). Deux effets. (1) Un run `matin`/`soir` sorti en **répétition** (cron `35 9` servi à 14:23 UTC après la passe fondatrice de 14:11 ; cron `40 23` servi après le soir du métronome) ne reconstruit pas `site/shadow/` (ignoré par git) et déployait donc un `site/` réduit à la page neutre et aux favicons : **les pages shadow en ligne étaient effacées**. (2) La passe horaire `resultats` reconstruisait la page mais ne la déployait jamais, contrairement à ce qu'annonçait l'entrée Sprint 4 ci-dessous (défaut du développeur Bases). Depuis 14:24 UTC le 23/09, la version en ligne ne contenait plus de contenu shadow ; le soir de 22:03 UTC l'aurait restaurée, puis le cron `40 23` l'aurait effacée de nouveau.
+- Correction : `build_site` écrit le marqueur `.cache/site_built` (horodatage · mode · journée) seulement quand il a régénéré le contenu (jamais en dry-run ni en ombre sans jeton ; effacé en début d'appel). L'étape de déploiement ne regarde plus la commande : elle déploie **si et seulement si** ce marqueur existe, sinon ligne « ⏭ Déploiement sauté » dans le résumé et version en ligne conservée. Toute commande qui reconstruit la page (matin, soir, resultats) est déployée ; toute sortie sans reconstruction (répétition, renoncement, contract-check, hebdo, show) ne touche plus la version en ligne.
+- Tests : `test_site_built_marker_only_when_content_regenerated` (dry-run, ombre, répétition, ombre sans jeton) et `tests/test_workflow.py` (garde textuelle sur `bases.yml`).
+- Aucune ligne `cron` touchée. Protocole inchangé (aucune édition ni notation concernée : seul l'affichage en ligne l'était).
+
 ## 2026-09-23 — `resultats` sur le métronome (GO Steph)
 
 - Constat : le cron GitHub `20 11-21 * * *` a été servi 3 fois sur 11 le 22/09 et 1 fois sur 8 le 23/09 (jusqu'à 18:18 UTC) : la page du jour restait figée sur l'état de 15:29 UTC.

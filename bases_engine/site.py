@@ -7,7 +7,7 @@ from __future__ import annotations
 import html
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import config, storage
@@ -238,10 +238,36 @@ def render_palmares_page(pal: dict, fiab: dict, *, mode: str) -> str:
 # Orchestration
 # ----------------------------------------------------------------------------
 
+
+def site_built_marker() -> Path:
+    """Marqueur lu par l'étape « Déploiement Cloudflare Pages » du workflow. Présent seulement si CE run a régénéré le contenu
+    (jamais en dry-run, ni en mode ombre sans jeton, ni en répétition / renoncement où build_site n'est pas appelé).
+    Sans lui, `site/` ne contient que la page neutre et les favicons (`site/shadow/` est ignoré par git) : le déployer
+    effacerait la version en ligne — c'est ce qui s'est produit le 23/09/2026 à 14:24 UTC (cron `35 9` servi en répétition)."""
+    return config.CACHE_DIR / "site_built"
+
+
+def _mark_site_built(mode: str, day: str) -> None:
+    try:
+        m = site_built_marker()
+        m.parent.mkdir(parents=True, exist_ok=True)
+        m.write_text(f"{datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')} {mode} {day}\n", encoding="utf-8")
+    except OSError:
+        pass
+
+
+def _unmark_site_built() -> None:
+    try:
+        site_built_marker().unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
 def build_site(con, day: str, params: dict, *, mode: str, shadow_token: str | None, dry_run: bool = False, site_dir: Path | None = None) -> str:
     """Régénère tout le contenu : index (dernière journée publiée), jours/*.html, archive/*.html, palmares.html, JSON."""
     site_dir = site_dir or config.SITE_DIR
     site_dir.mkdir(parents=True, exist_ok=True)
+    _unmark_site_built()                            # un marqueur ne vaut que pour l'appel qui l'écrit
     copy_favicons(site_dir)
     if mode == "shadow":
         (site_dir / "index.html").write_text(NEUTRAL_HTML, encoding="utf-8")
@@ -275,5 +301,7 @@ def build_site(con, day: str, params: dict, *, mode: str, shadow_token: str | No
     (content / "palmares.json").write_text(json.dumps(pal, ensure_ascii=False, indent=1), encoding="utf-8")
     (content / "fiabilite.json").write_text(json.dumps(fiab, ensure_ascii=False, indent=1), encoding="utf-8")
     _archive(content, con)
+    if not dry_run:
+        _mark_site_built(mode, day)                 # le workflow ne déploie que si ce marqueur existe
     where = "site/shadow/<jeton>/" if mode == "shadow" else "site/"
     return f"{where}index.html, jours/{day}.html, archive/{day[:7]}.html, palmares.html, bases/{day}.json" + (" (dry-run : déploiement sauté)" if dry_run else "")

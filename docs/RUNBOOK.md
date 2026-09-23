@@ -20,3 +20,10 @@
 | `manuel` | bouton Run workflow ou exécution locale | hors protocole (répétition) |
 
 Une passe planifiée qui trouve la journée déjà servie sort en répétition en quelques secondes, avant tout téléchargement (test sur `bases.db`).
+
+## Page shadow vide ou 404 alors que les runs sont verts
+
+- Règle : l'étape « Déploiement Cloudflare Pages » de `bases.yml` ne déploie que si le run a écrit `.cache/site_built` (écrit par `build_site`, jamais en dry-run). Un run en répétition ou en renoncement affiche « ⏭ Déploiement sauté » dans son résumé et laisse la version en ligne intacte.
+- Diagnostic : Actions → dernier run → étape de déploiement. « 🚀 Déploiement … site reconstruit par ce run (…) » = la version en ligne date de ce run. Si la page reste vide après un déploiement vert, ajouter `?v=<heure>` à l'URL (cache navigateur) avant toute autre hypothèse.
+- Restauration immédiate : Actions → « Bases » → Run workflow → commande `resultats` (source `manuel`) : reconstruit et déploie la page du jour sans créer d'édition (aucun effet sur le protocole).
+

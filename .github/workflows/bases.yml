@@ -149,10 +149,19 @@ jobs:
           done
           echo "⛔ push impossible après 3 tentatives (jamais de force-push)"; exit 1
 
-      - name: Déploiement Cloudflare Pages (sauté sans secrets ou en dry-run)
-        if: success() && (steps.cmd.outputs.cmd == 'matin' || steps.cmd.outputs.cmd == 'soir') && env.CLOUDFLARE_API_TOKEN_BASES != ''
+      - name: Déploiement Cloudflare Pages (seulement si CE run a reconstruit le site — marqueur .cache/site_built ; sauté sans secrets)
+        # La commande ne décide plus du déploiement : un run matin/soir sorti en répétition ne reconstruit pas site/shadow/
+        # (ignoré par git) et déployait une page neutre seule → pages shadow effacées en ligne (23/09/2026 14:24 UTC).
+        # À l'inverse, resultats reconstruit la page et doit être déployée. Le marqueur est écrit par build_site (jamais en dry-run).
+        if: success() && env.CLOUDFLARE_API_TOKEN_BASES != ''
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN_BASES: ${{ secrets.CLOUDFLARE_API_TOKEN_BASES }}
-        run: npx --yes wrangler@4 pages deploy site --project-name=bases-elite-turf --branch=main --commit-dirty=true
+        run: |
+          if [ ! -s .cache/site_built ]; then
+            echo "## ⏭ Déploiement sauté — ${{ steps.cmd.outputs.cmd }} n'a pas reconstruit le site (répétition, renoncement, dry-run ou commande sans page) : la version en ligne est conservée." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          npx --yes wrangler@4 pages deploy site --project-name=bases-elite-turf --branch=main --commit-dirty=true
+          echo "## 🚀 Déploiement Cloudflare Pages — site reconstruit par ce run ($(cat .cache/site_built))" >> "$GITHUB_STEP_SUMMARY"

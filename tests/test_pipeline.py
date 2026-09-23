@@ -525,3 +525,27 @@ def test_persistent_fingerprint_gap_is_reported(env, snapshot, tmp_path, fixture
     shutil.copy(fixtures_dir / "resultats" / "index.json", d / "index.json")
     assert run_resultats(day="2026-09-20", results_client=client, db_path=env["db"]) == 0
     assert storage.ecart_empreinte_consecutifs(con, "2026-09-20") == 0
+
+
+def test_site_built_marker_only_when_content_regenerated(env, results_client, tmp_path, monkeypatch):
+    """Le workflow ne déploie que si ce marqueur existe : jamais en dry-run, en répétition ni en ombre sans jeton
+    (sinon `site/` = page neutre seule → déploiement = effacement des pages shadow en ligne, incident du 23/09/2026)."""
+    from bases_engine.params import load_params
+    from bases_engine.protocol import PLACEHOLDER, PLACEHOLDER_COMMIT
+    from bases_engine.site import build_site, site_built_marker
+    proto = tmp_path / "PROTOCOLE.md"; proto.write_text(f"{PLACEHOLDER}\n{PLACEHOLDER_COMMIT}\n", encoding="utf-8")
+    marker = site_built_marker(); marker.unlink(missing_ok=True)
+    assert run_matin(day="2026-09-21", dry_run=True, now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, protocol_path=proto) == 0
+    assert not marker.exists()                                        # dry-run : rien à déployer
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="manuel", protocol_path=proto) == 0
+    assert marker.exists() and "shadow 2026-09-21" in marker.read_text(encoding="utf-8")
+    marker.unlink()
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome", protocol_path=proto) == 0
+    assert not marker.exists()                                        # répétition : site non reconstruit → pas de déploiement
+    con = storage.connect(env["db"])
+    assert con.execute("select mode from runs where command='matin' and declencheur='metronome'").fetchone()[0] == "repetition"
+    build_site(con, "2026-09-21", load_params(), mode="shadow", shadow_token=None)
+    assert not marker.exists()                                        # ombre sans jeton : page neutre seule, jamais déployée
+    build_site(con, "2026-09-21", load_params(), mode="shadow", shadow_token="t" * 32)
+    assert marker.exists()
+    con.close()
