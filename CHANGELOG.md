@@ -2,6 +2,11 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-23 — `resultats` sur le métronome (GO Steph)
+
+- Constat : le cron GitHub `20 11-21 * * *` a été servi 3 fois sur 11 le 22/09 et 1 fois sur 8 le 23/09 (jusqu'à 18:18 UTC) : la page du jour restait figée sur l'état de 15:29 UTC.
+- 4e Cron Trigger du Worker `bases-metronome` : `18 11-21 * * *` → `resultats` (deux minutes avant le cron GitHub, qui reste le filet). Quatre triggers sur cinq. Redéploiement à faire par Steph (« Métronome · déploiement »).
+
 ## 2026-09-23 — Décision du mentor : jour 1 maintenu au 22/09, écart d'empreinte persistant
 
 - `PROTOCOLE_PREENREGISTRE.md` : annexe factuelle d'activation (passe fondatrice servie par le filet cron à 14:00:22 UTC, 11 courses, métronome silencieux le jour 1, actif dès le jour 2 ; fenêtre 22/09 → 19/10/2026, verdict attendu le 20/10/2026). Critères et seuils inchangés.

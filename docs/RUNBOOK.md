@@ -2,7 +2,7 @@
 
 ## Métronome (Worker Cloudflare `bases-metronome`)
 
-- Rôle : déclencheur primaire des passes `matin` (`5 9 * * *` = 09:05 UTC), `soir` (`3 22 * * *` = 22:03 UTC), `hebdo` (`28 7 * * MON` = 07:28 UTC le lundi ; Cloudflare numérote 1 = dimanche … 7 = samedi, d'où le nom du jour), deux minutes avant les crons GitHub (`7 9`, `5 22`, `30 7 * * 1`), qui restent le filet.
+- Rôle : déclencheur primaire des passes `matin` (`5 9 * * *` = 09:05 UTC), `soir` (`3 22 * * *` = 22:03 UTC), `hebdo` (`28 7 * * MON` = 07:28 UTC le lundi ; Cloudflare numérote 1 = dimanche … 7 = samedi, d'où le nom du jour) et, depuis le 23/09 (GO Steph), `resultats` (`18 11-21 * * *`), deux minutes avant les crons GitHub (`7 9`, `5 22`, `30 7 * * 1`, `20 11-21`), qui restent le filet. Quatre Cron Triggers sur les cinq du plan gratuit.
 - Déploiement : Actions → « Métronome · déploiement » → Run workflow (`.github/workflows/metronome.yml`). Secrets : `CLOUDFLARE_API_TOKEN_METRONOME`, `CLOUDFLARE_ACCOUNT_ID`, `METRONOME_GH_TOKEN`.
 - **Jeton GitHub `metronome-bases` (fine-grained, dépôt `bases-engine`, Actions : lecture-écriture)** : créé le 22 septembre 2026 · **expire le mercredi 22 septembre 2027** · rappel agenda posé au 7 septembre 2027. Rotation : nouveau jeton → mettre à jour le secret `METRONOME_GH_TOKEN` → relancer « Métronome · déploiement ».
 - Recette du 22/09/2026 : run `contract-check · metronome` à 13:30 UTC, vert en 36 s.

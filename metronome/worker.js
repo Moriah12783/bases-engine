@@ -9,6 +9,7 @@ const COMMANDES = {
   "5 9 * * *":  "matin",
   "3 22 * * *": "soir",
   "28 7 * * MON": "hebdo",   // Cloudflare numérote les jours 1 = dimanche … 7 = samedi : le nom du jour lève l'ambiguïté
+  "18 11-21 * * *": "resultats",   // passe horaire, deux minutes avant le cron GitHub 20 11-21 (filet) — GO Steph 23/09
 };
 
 async function dispatch(env, commande) {
