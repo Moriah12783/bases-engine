@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-25 — Passe soir non bloquée par une journée sans prédiction du jour ; motif d'arrêt explicite
+
+- Constat : le soir appliquait le test de contrat et ne tolérait que l'absence de la date J dans `historical_logs`. Une journée sans aucune prédiction dans la base du moteur (25/09/2026 : matin en échec de contrat, aucune édition) aurait donc aussi arrêté le soir et ses deux filets cron : aucun rattrapage J-1..J-7, trois runs rouges, trois téléchargements de plus.
+- Correction : `ContractResult.jour_sans_predictions`. Au soir, le test « contract_version=2 (prédictions du jour) » n'est plus bloquant **quand il n'y a aucune prédiction du jour** : ligne d'information au journal, rattrapage et site effectués, soir compté comme servi (filets en répétition, sans téléchargement). Des prédictions du jour hors contrat v2 restent bloquantes. Le matin est inchangé (rien à calculer sans prédiction).
+- Motif explicite quand le rapport du moteur liste les courses du jour mais que sa base n'en contient aucune : « … alors que son rapport liste N course(s) … — base du moteur non rafraîchie, à signaler au développeur du moteur ».
+- Tests : soir sans prédiction du jour (rattrapage de J-2, filet cron en répétition), exception étroite (hors contrat v2 → arrêt), motif explicite. Protocole inchangé : aucune règle de notation, d'éligibilité ni de seuil touchée.
+
 ## 2026-09-25 — Correctif des pastilles de dates après le commit cbe4ade « Update site.py »
 
 - Le commit cbe4ade (25/09 08:07 UTC, hors session du développeur Bases) a changé le thème CSS (bleu/cyan, sans-serif) et modifié une ligne de `build_nav` : le compte par journée devenait la ligne SQLite entière ; les pastilles affichaient « hier ( ) » au lieu de « hier (23) » (déployé par `soir · manuel` à 08:21). Retour à un entier (`int(r[1])`) ; test `test_nav_pills_show_integer_counts`. Le thème CSS est conservé tel quel.

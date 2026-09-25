@@ -59,3 +59,9 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - 09:05 UTC `matin · metronome` → CONTRACT_FAILED : `turf_bench.db` du moteur (commit bcdd61d3c4) sans course du 25/09, `benchmark_report.json` en a 41. Contract-check manuel de 08:10 (commit moteur 3d66c4ef6c) idem. Reproduit localement (4e et dernier téléchargement du jour). HEAD moteur à 09:30 : 5750c516 (plus récent, contenu non vérifié). Côté moteur, pas côté Bases.
 - Commit cbe4ade « Update site.py » (Steph, 08:07) : thème CSS + régression `build_nav` (Row au lieu de l'entier). Corrigé + test. `soir · manuel` 08:15 a rejoué la journée du 24/09 (idempotent) et déployé le nouveau thème.
 - Run 41 (24/09 20:00, cron resultats) : 404 npm passager sur wrangler 4.139.0 ; sans suite.
+
+## 2026-09-25 (fin de matinée) — pastilles poussées et déployées ; correctif du soir préparé (GO attendu)
+
+- 7d9f87b poussé sur GO de Steph ; déployé par `resultats · manuel` à 09:24:13 UTC (wrangler 4.140.0, 20 fichiers).
+- Écart charte : mon diagnostic local du matin a fait 2 téléchargements (SHA complet puis SHA abrégé → second répertoire de cache). Avec les 3 runs CI (contract-check manuel, soir manuel, matin métronome), 5 téléchargements par fichier moteur aujourd'hui pour une limite de 4. Plus aucun téléchargement local aujourd'hui. Constat structurel : le compteur vit dans `.cache/` (runner éphémère), il n'est donc pas global en CI → décision mentor (compteur global dans bases.db ?).
+- Risque du soir 25/09 : test « prédictions du jour » bloquant au soir si la base moteur n'est pas rafraîchie → correctif local, 64 tests verts, en attente de GO avant 22:03 UTC.

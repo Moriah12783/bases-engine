@@ -563,3 +563,32 @@ def test_nav_pills_show_integer_counts(env, results_client):
     html = _nav_html(nav, "2026-09-22", "")
     assert "<small>(20)</small>" in html and "sqlite3.Row" not in html
     con.close()
+
+
+def test_soir_without_predictions_of_the_day_still_self_heals(env, snapshot, results_client):
+    """Incident du 25/09/2026 : la base du moteur n'a aucune prédiction du jour (matin en échec de contrat, aucune édition).
+    Le soir ne doit pas s'arrêter pour ce seul motif : rien à noter pour J, mais rattrapage J-1..J-7 et site. Les filets cron
+    sortent ensuite en répétition sans téléchargement."""
+    _seed_published_day(env, snapshot, "2026-09-20")
+    assert run_soir(day="2026-09-22", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="metronome") == 0
+    con = storage.connect(env["db"])
+    assert con.execute("select status from runs where command='soir' and day='2026-09-22'").fetchone()[0] == "OK"
+    assert storage.results_count(con, "2026-09-20") > 40                        # J-2 rattrapé malgré l'absence de prédictions pour J
+    journal = (env["rapports"] / "journal" / "2026-09-22.md").read_text(encoding="utf-8")
+    assert "soir sans prédiction du jour" in journal and "Rattrapage — journée du 20/09" in journal
+    assert run_soir(day="2026-09-22", results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur="cron") == 0
+    assert con.execute("select mode from runs where command='soir' and day='2026-09-22' and declencheur='cron'").fetchone()[0] == "repetition"
+    con.close()
+
+
+def test_soir_still_blocks_on_predictions_outside_contract(env, results_client, monkeypatch):
+    """L'exception du soir est étroite : des prédictions du jour présentes mais hors contrat v2 restent bloquantes."""
+    import bases_engine.pipeline as pipeline
+    from bases_engine.contract import CHECK_PREDICTIONS, ContractResult
+    monkeypatch.setattr(pipeline, "run_contract_checks",
+                        lambda *a, **k: ContractResult(failed=[(CHECK_PREDICTIONS, "3 ligne(s) hors contrat v2")], jour_sans_predictions=False))
+    with pytest.raises(PipelineStop):
+        run_soir(day="2026-09-22", results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
+    con = storage.connect(env["db"])
+    assert con.execute("select status from runs where command='soir'").fetchone()[0] == "CONTRACT_FAILED"
+    con.close()

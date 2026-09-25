@@ -27,12 +27,16 @@ REQUIRED_COLUMNS = {
 REQUIRED_LOG_KEYS = ["race_id", "date", "course", "publishable", "publication_reason", "editions_moteur"]
 
 
+CHECK_PREDICTIONS = "contract_version=2 (prédictions du jour)"
+
+
 @dataclass
 class ContractResult:
     passed: list[str] = field(default_factory=list)
     failed: list[tuple[str, str]] = field(default_factory=list)   # (nom du test, détail)
     skipped: list[tuple[str, str]] = field(default_factory=list)
     warnings: list[tuple[str, str]] = field(default_factory=list)  # non bloquants, comptés et journalisés
+    jour_sans_predictions: bool = False   # aucune prédiction du jour dans la base du moteur (le soir ne s'arrête pas pour ce seul motif)
 
     @property
     def ok(self) -> bool:
@@ -71,7 +75,8 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
         rows = con.execute("""select p.engine_name, p.horizon, p.contract_version from predictions p
                                join races r using(race_id) where r.date = ?""", (date,)).fetchall()
         bad = [(r["engine_name"], r["horizon"]) for r in rows if r["contract_version"] != config.CONTRACT_VERSION]
-        _check(res, "contract_version=2 (prédictions du jour)", bool(rows) and not bad,
+        res.jour_sans_predictions = not rows
+        _check(res, CHECK_PREDICTIONS, bool(rows) and not bad,
                "aucune prédiction du jour" if not rows else f"{len(bad)} ligne(s) hors contrat v2 : {sorted(set(bad))[:5]}")
 
         # 3. Somme des probabilités
@@ -98,6 +103,11 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
         return res
     today = [h for h in logs if h.get("date") == date]
     _check(res, "historical_logs contient la date J", bool(today), f"0 course pour {date}")
+    if res.jour_sans_predictions and today:
+        # incident du 25/09/2026 : rapport du moteur à jour (courses du jour listées), base SQLite du moteur non rafraîchie
+        detail = (f"aucune prédiction du jour dans la base du moteur alors que son rapport liste {len(today)} course(s) pour {date} "
+                  "— base du moteur non rafraîchie, à signaler au développeur du moteur")
+        res.failed = [(n, detail if n == CHECK_PREDICTIONS else d) for n, d in res.failed]
     missing_keys = sorted({k for h in today for k in REQUIRED_LOG_KEYS if k not in h})
     _check(res, "historical_logs : clés attendues", not missing_keys, f"clés absentes : {missing_keys}")
     # publication_reason : le drapeau `publishable` est l'autorité, la raison est informative.

@@ -9,7 +9,7 @@ from datetime import date as _date, datetime, timedelta, timezone
 
 from . import config, storage
 from .compute import compute_edition
-from .contract import run_contract_checks
+from .contract import CHECK_PREDICTIONS, run_contract_checks
 from .eligibility import Abstention, EligibleRace, evaluate_race
 from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot, ls_remote
 from .notify import alert, notify
@@ -274,12 +274,19 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             raise PipelineStop(2, str(e))
         con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
         res = run_contract_checks(snap, day, results_client=client, network=network or results_client is not None)
-        # le soir, l'absence de la date J dans historical_logs n'est pas bloquante (journée sans réunion) : on ne bloque que sur le reste
-        blocking = [(n, d) for n, d in res.failed if n != "historical_logs contient la date J"]
+        # Le soir, deux absences ne sont pas bloquantes : la date J absente de historical_logs (journée sans réunion) et aucune
+        # prédiction du jour dans la base du moteur (journée sans édition du matin, incident du 25/09/2026). Rien à noter pour J,
+        # mais le rattrapage J-1..J-7 et le site doivent tourner. Des prédictions du jour hors contrat v2 restent bloquantes.
+        blocking = [(n, d) for n, d in res.failed
+                    if n != "historical_logs contient la date J" and not (n == CHECK_PREDICTIONS and res.jour_sans_predictions)]
         if blocking:
             alert(f"arrêt : {blocking[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.", res.summary(), date=day)
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
+        if res.jour_sans_predictions:
+            motif = dict(res.failed).get(CHECK_PREDICTIONS, "aucune prédiction du jour")
+            notify("info", f"⚠️ BASES — {day} — soir sans prédiction du jour (commit moteur {snap.sha[:10]})",
+                   f"{motif}. Passe soir poursuivie : rien à noter ni à mesurer pour le {day}, rattrapage J-1..J-7 et site effectués.", date=day)
 
         # 1 + 2. Auto-rattrapage (complément mentor 22/09) : J puis J-1..J-7, de façon idempotente —
         #   mesure intrajournée T90/T30/T15 absente, notation non faite, contrôle croisé absent, empreinte modifiée.
