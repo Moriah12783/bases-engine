@@ -549,3 +549,17 @@ def test_site_built_marker_only_when_content_regenerated(env, results_client, tm
     build_site(con, "2026-09-21", load_params(), mode="shadow", shadow_token="t" * 32)
     assert marker.exists()
     con.close()
+
+
+def test_nav_pills_show_integer_counts(env, results_client):
+    """Régression du 25/09/2026 (commit cbe4ade « Update site.py ») : build_nav renvoyait la ligne SQLite entière au lieu du
+    nombre, la pastille affichait « hier ( ) ». Le compte doit être un entier et apparaître dans la pastille."""
+    from bases_engine.site import _nav_html, build_nav
+    assert run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS) == 0
+    con = storage.connect(env["db"])
+    nav = build_nav(con, "2026-09-22")
+    hier = next(n for n in nav if n["date"] == "2026-09-21")
+    assert isinstance(hier["n"], int) and hier["n"] == 20
+    html = _nav_html(nav, "2026-09-22", "")
+    assert "<small>(20)</small>" in html and "sqlite3.Row" not in html
+    con.close()

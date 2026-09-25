@@ -2,6 +2,11 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-25 — Correctif des pastilles de dates après le commit cbe4ade « Update site.py »
+
+- Le commit cbe4ade (25/09 08:07 UTC, hors session du développeur Bases) a changé le thème CSS (bleu/cyan, sans-serif) et modifié une ligne de `build_nav` : le compte par journée devenait la ligne SQLite entière ; les pastilles affichaient « hier ( ) » au lieu de « hier (23) » (déployé par `soir · manuel` à 08:21). Retour à un entier (`int(r[1])`) ; test `test_nav_pills_show_integer_counts`. Le thème CSS est conservé tel quel.
+- Constat du matin (pour mémoire, pas un défaut de bases-engine) : la passe `matin · metronome` de 09:05 UTC s'est arrêtée sur « contract_version=2 (prédictions du jour) — aucune prédiction du jour » : au commit moteur bcdd61d3c4, `turf_bench.db` ne contient aucune course du 25/09 (dernières prédictions créées le 24/09 06:30) alors que `benchmark_report.json` en liste 41. Aucune édition du 25/09 ; le filet cron GitHub (`7 9`, `35 9`) retentera si servi. Journée 4 du protocole à signaler dans l'hebdo.
+
 ## 2026-09-23 — Correctif : pages shadow effacées par les runs en répétition, jamais redéployées par `resultats`
 
 - Constat (Steph, 23/09 soir : « la page ne montre pas ») : l'étape « Déploiement Cloudflare Pages » ne dépendait que de la commande (`matin` ou `soir`). Deux effets. (1) Un run `matin`/`soir` sorti en **répétition** (cron `35 9` servi à 14:23 UTC après la passe fondatrice de 14:11 ; cron `40 23` servi après le soir du métronome) ne reconstruit pas `site/shadow/` (ignoré par git) et déployait donc un `site/` réduit à la page neutre et aux favicons : **les pages shadow en ligne étaient effacées**. (2) La passe horaire `resultats` reconstruisait la page mais ne la déployait jamais, contrairement à ce qu'annonçait l'entrée Sprint 4 ci-dessous (défaut du développeur Bases). Depuis 14:24 UTC le 23/09, la version en ligne ne contenait plus de contenu shadow ; le soir de 22:03 UTC l'aurait restaurée, puis le cron `40 23` l'aurait effacée de nouveau.

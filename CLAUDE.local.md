@@ -53,3 +53,9 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Faits (Actions, `bases.yml`) : run « cron 35 9 » servi à 14:23 UTC → matin déjà servi → répétition en 1 s (pas de `build_site`) → étape de déploiement **exécutée** (`success` 20 s) → `site/` = page neutre + favicons (`site/shadow/` ignoré par git) → pages shadow effacées en ligne. Même mécanique la nuit précédente (cron `40 23` servi à 01:46 après le soir métronome de 22:03). Les passes `resultats` (15:27 cron, 19:41 cron, 20:18 métronome) reconstruisaient la page mais l'étape de déploiement était `skipped` (condition `cmd == matin || soir`). Défaut du développeur Bases (Sprint 4 annonçait « régénère et déploie »).
 - Correction (commit ci-dessous, en attente de GO pour le push) : marqueur `.cache/site_built` écrit par `build_site` (hors dry-run, hors ombre sans jeton) ; déploiement ⇔ marqueur. 60 tests verts. Aucune ligne `cron` touchée.
 - Métronome `resultats` : frappe de 19:18 UTC absente des runs (première occurrence après le redéploiement de 18:29) ; frappe de 20:18 servie (run 35915024544). À surveiller à 21:18 et au contrôle de 22:20.
+
+## 2026-09-25 (matin) — Journée 4 sans édition ; commit externe sur site.py
+
+- 09:05 UTC `matin · metronome` → CONTRACT_FAILED : `turf_bench.db` du moteur (commit bcdd61d3c4) sans course du 25/09, `benchmark_report.json` en a 41. Contract-check manuel de 08:10 (commit moteur 3d66c4ef6c) idem. Reproduit localement (4e et dernier téléchargement du jour). HEAD moteur à 09:30 : 5750c516 (plus récent, contenu non vérifié). Côté moteur, pas côté Bases.
+- Commit cbe4ade « Update site.py » (Steph, 08:07) : thème CSS + régression `build_nav` (Row au lieu de l'entier). Corrigé + test. `soir · manuel` 08:15 a rejoué la journée du 24/09 (idempotent) et déployé le nouveau thème.
+- Run 41 (24/09 20:00, cron resultats) : 404 npm passager sur wrangler 4.139.0 ; sans suite.

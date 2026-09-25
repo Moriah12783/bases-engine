@@ -211,7 +211,7 @@ def _nav_html(nav: list[dict], current: str, root: str) -> str:
 
 
 def build_nav(con, today: str, days: int = 14) -> list[dict]:
-    counts = {r[0]: r for r in con.execute("select date, count(*) from bases_editions where horizon='T_MATIN' and mode in ('shadow','live') and superseded_by is null group by 1")}
+    counts = {r[0]: int(r[1]) for r in con.execute("select date, count(*) from bases_editions where horizon='T_MATIN' and mode in ('shadow','live') and superseded_by is null group by 1")}
     d0 = datetime.strptime(today, "%Y-%m-%d")
     return [{"date": (d0 - timedelta(days=i)).strftime("%Y-%m-%d"), "delta": i, "n": counts.get((d0 - timedelta(days=i)).strftime("%Y-%m-%d"), 0)} for i in range(days)]
 
