@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-25 — Porte divergente : comparaison quotidienne porte reconstituée ↔ publication du moteur
+
+- `bases_engine/porte.py` : verdict de porte par course, indépendant de l'heure (OK, RACE_CANCELLED, ODDS_DEFAULT, NO_T_MATIN), mêmes règles que l'éligibilité en mode matin (test de cohérence sur les 32 courses du 21/09).
+- Passe soir : comparaison à la publication réelle du moteur ; au premier écart, annotation « Porte divergente », ligne au journal du jour et dans `ALERTES.md`, incident `PORTE_DIVERGENTE` compté dans l'hebdo.
+- Source de la publication réelle : absente des deux sources du contrat de lecture (base R2, JSON de résultats). `porte.publications_moteur` renvoie None et le soir écrit « comparaison de porte non disponible » tant qu'elle n'est pas désignée.
+- Protocole : section « Changements externes de la porte de publication » (procédure d'alignement le jour même, tableau des changements).
+
 ## 2026-09-25 — Contrat de lecture accepté par la session moteur : colonnes nommées, GET unique
 
 - Lectures de la base du moteur par colonnes nommées (jamais `SELECT *`) ; colonnes et tables ajoutées ignorées. `REQUIRED_COLUMNS` = colonnes réellement lues (table `rapports` retirée, non lue). `contract-check` n'échoue plus que sur une colonne attendue absente ou renommée, ou un `contract_version` inattendu ; somme des probabilités et journée sans prédiction deviennent des avertissements (la garde de fraîcheur du matin décide de l'édition).

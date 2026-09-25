@@ -71,6 +71,34 @@ def _mode() -> str:
 # MATIN
 # ----------------------------------------------------------------------------
 
+def _comparer_porte(con, snap: Snapshot, day: str) -> None:
+    from . import porte
+    scon = snap.connect()
+    try:
+        bases = porte.verdicts_du_jour(scon, day)
+        moteur = porte.publications_moteur(scon, day)
+    finally:
+        scon.close()
+    if not bases:
+        return
+    if moteur is None:
+        notify("info", f"ℹ️ BASES — {day} — comparaison de porte non disponible",
+               f"Décision de publication du moteur absente des sources du contrat de lecture (base R2, JSON de résultats) : "
+               f"comparaison impossible pour {len(bases)} course(s). Source à désigner.", date=day)
+        return
+    ecarts = porte.comparer(bases, moteur)
+    if not ecarts:
+        notify("info", f"✅ BASES — {day} — porte alignée", f"Porte reconstituée = publication du moteur sur {len(bases)} course(s).", date=day)
+        return
+    detail = ", ".join(f"{rid} (Bases {v}, moteur {'publiée' if pub else 'non publiée' if pub is False else 'absente'})" for rid, v, pub in ecarts[:10])
+    msg = f"{len(ecarts)} écart(s) sur {len(bases)} course(s) le {day} : {detail}"
+    print(f"::warning title=Porte divergente::{msg}")
+    storage.add_incident(con, "PORTE_DIVERGENTE", day, msg)
+    suite = ". Alignement sur l'annexe du pont Radar à faire le jour même (changement externe au protocole)."
+    notify("porte", f"⚠️ BASES — {day} — porte divergente", msg + suite, date=day)          # ligne au journal du jour
+    notify("alerte", f"⚠️ BASES — {day} — porte divergente", msg + suite, date=day)         # et ligne dans ALERTES.md
+
+
 def _parse_utc(v) -> datetime | None:
     if v is None or v == "":
         return None
@@ -374,6 +402,9 @@ def run_soir(*, day: str | None = None, network: bool = True, results_client: Re
                     stats["rattrapage"][d] = done
         finally:
             scon.close()
+
+        # 2ter. Porte divergente (décision du mentor du 25/09/2026) : verdicts de la porte reconstituée vs publication du moteur
+        _comparer_porte(con, snap, day)
 
         # 2bis. Amendement n°1 : journée du protocole sans édition valide servie par une passe planifiée = journée perdue
         debut = storage.protocol_start_date(con)

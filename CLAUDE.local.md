@@ -78,3 +78,9 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Référence d'empreintes du 24/09 extraite du cache local (blob 653cc3c8 vérifié par git hash-object, 25 lignes créées 06:30:23 → 06:30:29 UTC).
 - Question ouverte au mentor : l'extrait de test `fixtures/snapshot/turf_bench.db` (Sprint 1) est une portion de la base du moteur ; conservé en exception explicite du test, à confirmer ou à remplacer.
 - Worker `elite-turf-bases-independent` : aucune trace dans mes dépôts ni dans l'historique de ma session.
+
+## 2026-09-25 (midi) — Décisions du mentor : fixture synthétique (après le 26/09), porte divergente
+
+- À FAIRE après le contrôle du 26/09 (sans urgence) : fixture synthétique générée par script, colonnes lues uniquement, cas limites (moins de 8 partants, no bet, T_MATIN absent, non-partant dans la sélection, cotes manquantes, ex-aequo) ; test de parité de la porte (21/09 : 20 éditions, 12 abstentions) déplacé dans une commande GitHub Actions lisant R2, lancée avec l'hebdo et à chaque modification du code de la porte ; puis suppression de l'exception `fixtures/snapshot/turf_bench.db` du test anti-base. Pas de réécriture d'historique (dépôt privé).
+- Fait : comparaison de porte au soir (module `porte.py`), incident PORTE_DIVERGENTE dans l'hebdo, section protocole « Changements externes ». Bloquant : source de la publication réelle du moteur à désigner (ni R2 ni JSON de résultats).
+- Worker elite-turf-bases-independent : Steph s'en occupe.

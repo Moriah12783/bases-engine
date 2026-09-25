@@ -97,3 +97,14 @@ automatiquement, par la première exécution planifiée._
 - Critères, seuils et paramètres gelés : **inchangés**.
 - Les journées perdues restent visibles dans l'archive (« journée perdue · source moteur indisponible »), et le palmarès affiche la fin de fenêtre repoussée.
 
+## Changements externes de la porte de publication (décision du mentor du 25/09/2026)
+
+- La porte de publication reconstituée par Bases copie la logique du moteur, dont le propriétaire est le développeur Radar ; elle doit évoluer après le 06/10/2026, pendant la fenêtre du protocole.
+- **Surveillance** : chaque passe soir compare les verdicts de la porte reconstituée du jour (OK, course annulée, cotes par défaut, pas de T_MATIN) à ce que le moteur a réellement publié. Au premier écart : annotation « Porte divergente », ligne au journal et dans `ALERTES.md`, incident compté dans le rapport hebdomadaire.
+- **Alignement** : toute ligne datée de l'annexe du pont Radar qui touche la porte, relayée par Steph, est appliquée par Bases le jour même et consignée ci-dessous comme changement externe (date, ligne relayée, commit Bases). Les paramètres gelés ne sont jamais touchés.
+- **Source de la publication réelle du moteur** : à désigner. Elle ne figure ni dans la base R2 ni dans les JSON publics de résultats. Tant qu'elle manque, le soir l'écrit au journal (« comparaison de porte non disponible »).
+
+| Date | Ligne relayée (annexe du pont Radar) | Commit Bases |
+|---|---|---|
+| — | aucune à ce jour | — |
+
