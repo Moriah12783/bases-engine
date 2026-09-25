@@ -84,3 +84,10 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - À FAIRE après le contrôle du 26/09 (sans urgence) : fixture synthétique générée par script, colonnes lues uniquement, cas limites (moins de 8 partants, no bet, T_MATIN absent, non-partant dans la sélection, cotes manquantes, ex-aequo) ; test de parité de la porte (21/09 : 20 éditions, 12 abstentions) déplacé dans une commande GitHub Actions lisant R2, lancée avec l'hebdo et à chaque modification du code de la porte ; puis suppression de l'exception `fixtures/snapshot/turf_bench.db` du test anti-base. Pas de réécriture d'historique (dépôt privé).
 - Fait : comparaison de porte au soir (module `porte.py`), incident PORTE_DIVERGENTE dans l'hebdo, section protocole « Changements externes ». Bloquant : source de la publication réelle du moteur à désigner (ni R2 ni JSON de résultats).
 - Worker elite-turf-bases-independent : Steph s'en occupe.
+
+## 2026-09-25 (midi, suite) — Source de la décision de publication
+
+- Demandée au développeur Radar : table en ajout seul dans la base R2 (proposition publication_decisions, une ligne par course et par horizon, gate_version). NE PAS coder avant la ligne datée donnant le nom définitif.
+- Le jour venu : éligibilité sur la décision T_MATIN enregistrée ; porte reconstituée en parallèle quelques jours (parité, écarts consignés) puis en retrait ; changement de gate_version → annotation + procédure « changements externes » ; basculement consigné au protocole ; paramètres gelés intacts.
+- Interdit en attendant : page d'accueil de prono (archive publique inutilisable : états finaux, arrêt au 03/09).
+- 25/09 : journée partielle, 15 éditions (frappe de 11:05). Aucune journée perdue ; verdict au 20/10.
