@@ -22,5 +22,6 @@ Précision d'hébergement (sprint 1) : la session ne dispose d'aucun droit de cr
 - Plus aucune lecture du dépôt `Moriah12783/turf-engine` (ni `git ls-remote`, ni fichiers bruts), aucun repli sur la copie Git figée.
 - Les clés R2 n'entrent jamais dans la session du développeur : tests avec un faux client S3, recette réelle par `contract-check` dans GitHub Actions.
 - La base du moteur n'est jamais committée dans `bases-engine` (`.gitignore` et test dédié).
+- Accepté par la session moteur : lecture par colonnes nommées (ajouts libres côté moteur, ignorés) ; métadonnées et contenu dans la même réponse GET, jusqu'à 3 nouvelles lectures à 30 s en cas d'écart d'empreinte, puis job rouge.
 - Le reste de la charte est inchangé.
 

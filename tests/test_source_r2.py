@@ -20,18 +20,19 @@ NOW = datetime(2026, 9, 21, 9, 5, tzinfo=timezone.utc)
 
 
 class FakeS3:
-    """head_object / get_object d'un seul objet ; mémorise chaque (Bucket, Key) demandé."""
+    """get_object d'un seul objet (métadonnées + contenu dans la même réponse) ; HEAD interdit.
+    `metas` : suite de métadonnées renvoyées lecture après lecture (la dernière est répétée)."""
 
-    def __init__(self, data: bytes, meta: dict):
-        self.data, self.meta, self.calls = data, meta, []
+    def __init__(self, data: bytes, meta: dict, *more_metas: dict):
+        self.data, self.metas, self.calls = data, [meta, *more_metas], []
 
     def head_object(self, Bucket, Key):
-        self.calls.append(("head", Bucket, Key))
-        return {"Metadata": dict(self.meta), "ContentLength": len(self.data)}
+        raise AssertionError("HEAD interdit : métadonnées et contenu se lisent dans la même réponse GET")
 
     def get_object(self, Bucket, Key):
         self.calls.append(("get", Bucket, Key))
-        return {"Metadata": dict(self.meta), "Body": io.BytesIO(self.data)}
+        meta = self.metas[min(len(self.calls) - 1, len(self.metas) - 1)]
+        return {"Metadata": dict(meta), "Body": io.BytesIO(self.data)}
 
 
 def _meta(data: bytes, **over) -> dict:
@@ -56,17 +57,26 @@ def test_r2_snapshot_is_verified_and_carries_its_header(r2):
     assert "r2:turf_bench.db" in (r2["cache"] / "downloads.log").read_text()
 
 
-def test_same_fingerprint_in_cache_is_reused_without_download(r2):
+def test_every_read_is_a_single_get_never_head(r2):
     cli = FakeS3(r2["data"], _meta(r2["data"]))
     get_snapshot(client=cli, cache_dir=r2["cache"]); get_snapshot(client=cli, cache_dir=r2["cache"])
-    assert [c[0] for c in cli.calls] == ["head", "get", "head"]
+    assert [c[0] for c in cli.calls] == ["get", "get"]
 
 
-def test_fingerprint_mismatch_is_fatal(r2):
+def test_fingerprint_gap_is_retried_three_times_at_30s_then_fatal(r2):
+    sleeps = []
     cli = FakeS3(r2["data"], _meta(r2["data"], sha256="0" * 64))
     with pytest.raises(FetchError, match="≠ métadonnée"):
-        get_snapshot(client=cli, cache_dir=r2["cache"])
+        get_snapshot(client=cli, cache_dir=r2["cache"], sleep=sleeps.append)
+    assert len(cli.calls) == 4 and sleeps == [30.0, 30.0, 30.0]
     assert not list((r2["cache"] / "r2").glob("*/turf_bench.db"))
+
+
+def test_fingerprint_gap_recovered_on_next_read(r2):
+    sleeps = []
+    cli = FakeS3(r2["data"], _meta(r2["data"], sha256="0" * 64), _meta(r2["data"]))
+    snap = get_snapshot(client=cli, cache_dir=r2["cache"], sleep=sleeps.append)
+    assert snap.sha == hashlib.sha256(r2["data"]).hexdigest() and len(cli.calls) == 2 and sleeps == [30.0]
 
 
 def test_missing_fingerprint_metadata_is_fatal(r2):
@@ -131,7 +141,7 @@ def _local(tmp_path, **meta) -> Path:
 def test_integrity_failure_in_matin_is_red_with_no_edition(tmp_path, monkeypatch, results_client, r2):
     from bases_engine.pipeline import PipelineStop, run_matin
     db = _env(tmp_path, monkeypatch)
-    monkeypatch.setattr(config, "CACHE_DIR", r2["cache"])
+    monkeypatch.setattr(config, "CACHE_DIR", r2["cache"]); monkeypatch.setattr(config, "R2_RETRY_DELAY_S", 0.0)
     cli = FakeS3(r2["data"], _meta(r2["data"], sha256="1" * 64))
     with pytest.raises(PipelineStop):
         run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=db, n_sims=2000, source_client=cli, declencheur="metronome")

@@ -13,6 +13,7 @@ R2_BUCKET = os.environ.get("BASES_R2_BUCKET", "turf-engine-data")
 R2_OBJECT = "turf_bench.db"                      # clé fixe : aucune autre clé du bucket n'est lue
 R2_ACCOUNT_ENV = "CLOUDFLARE_ACCOUNT_ID"         # point d'accès https://<compte>.r2.cloudflarestorage.com
 R2_KEY_ID_ENV, R2_SECRET_ENV = "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY"
+R2_MAX_RETRIES, R2_RETRY_DELAY_S = 3, 30.0      # écart d'empreinte : jusqu'à 3 nouvelles lectures à 30 s, puis job rouge
 SOURCE_STALE_WARN_S = 3600                      # pushed-at plus vieux qu'une heure : avertissement seulement
 LOCAL_SNAPSHOT_DIR = os.environ.get("BASES_LOCAL_SNAPSHOT_DIR")          # base + source.json déjà présents (tests, hors-ligne)
 DB_FILENAME = "turf_bench.db"

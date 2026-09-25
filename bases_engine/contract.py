@@ -10,21 +10,17 @@ from dataclasses import dataclass, field
 from . import config
 from .fetch import FetchError, ResultsClient, Snapshot
 
+# Colonnes effectivement lues par Bases, tables par table (contrat de lecture accepté par la session moteur le 25/09/2026).
+# Colonnes ou tables ajoutées : ignorées. Échec seulement sur une colonne attendue absente ou renommée, ou un
+# contract_version inattendu ; le reste (somme des probabilités, journée sans prédiction) est un avertissement.
 REQUIRED_COLUMNS = {
-    "predictions": ["race_id", "engine_name", "horizon", "selection_json", "bases_json", "outsider_num",
-                    "probabilities_json", "metadata_json", "odds_real", "priced_ratio", "confidence_stars",
-                    "confidence_label", "is_no_bet", "smart_tickets_json", "contract_version",
-                    "prediction_hash", "lock_time_utc", "created_at"],
-    "races": ["race_id", "date", "meeting_number", "race_number", "name", "hippodrome", "discipline",
-              "distance", "declared_runners", "start_time_utc", "scheduled_start_time", "pmu_statut",
-              "status", "bets_json"],
-    "runners": ["race_id", "num", "horse_name", "is_non_partant", "music", "driver_jockey", "trainer",
-                "shoeing", "blinkers", "morning_odds", "odds_t15", "final_odds", "odds_is_real"],
-    "race_results": ["race_id", "arrival_order_json", "ranking_json", "disqualified_json",
-                     "non_partants_json", "statut", "finalite", "version", "nb_corrections", "updated_at"],
-    "rapports": ["race_id", "bet_type", "combination", "dividend"],
+    "predictions": ["race_id", "engine_name", "horizon", "contract_version", "prediction_hash", "odds_real", "priced_ratio",
+                    "is_no_bet", "probabilities_json", "selection_json", "lock_time_utc", "confidence_stars"],
+    "races": ["race_id", "date", "meeting_number", "race_number", "status", "pmu_statut", "start_time_utc",
+              "scheduled_start_time", "discipline", "declared_runners", "bets_json"],
+    "runners": ["race_id", "num", "is_non_partant", "odds_is_real"],
+    "race_results": ["race_id", "statut", "finalite", "arrival_order_json", "non_partants_json"],
 }
-
 
 CHECK_PREDICTIONS = "contract_version=2 (prédictions du jour)"
 
@@ -70,34 +66,33 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
         if res.failed:
             return res
 
-        # 2. contract_version = 2 sur toutes les prédictions du jour
+        # 2. contract_version = 2 sur les prédictions du jour présentes (bloquant) ; aucune prédiction du jour = avertissement
         rows = con.execute("""select p.engine_name, p.horizon, p.contract_version from predictions p
                                join races r using(race_id) where r.date = ?""", (date,)).fetchall()
         bad = [(r["engine_name"], r["horizon"]) for r in rows if r["contract_version"] != config.CONTRACT_VERSION]
         res.jour_sans_predictions = not rows
-        _check(res, CHECK_PREDICTIONS, bool(rows) and not bad,
-               "aucune prédiction du jour" if not rows else f"{len(bad)} ligne(s) hors contrat v2 : {sorted(set(bad))[:5]}")
+        if rows:
+            _check(res, CHECK_PREDICTIONS, not bad, f"{len(bad)} ligne(s) hors contrat v2 : {sorted(set(bad))[:5]}")
 
-        # 3. Somme des probabilités
+        # 3. Somme des probabilités : avertissement (la course concernée est de toute façon écartée par l'éligibilité)
         bad_sum = []
-        for r in con.execute("""select p.race_id, p.engine_name, p.horizon, p.probabilities_json from predictions p
+        for r in con.execute("""select p.race_id, p.horizon, p.probabilities_json from predictions p
                                  join races r using(race_id) where r.date = ? and p.engine_name = ?""",
                              (date, config.ENGINE_NAME)):
             try:
                 probs = json.loads(r["probabilities_json"] or "{}")
-                s = sum(float(v) for v in probs.values())
+                s_ = sum(float(v) for v in probs.values())
             except (ValueError, TypeError):
-                s = float("nan")
-            if not probs or abs(s - 1.0) > config.PROB_SUM_TOL:
-                bad_sum.append((r["race_id"], r["horizon"], round(s, 4)))
-        _check(res, "probabilities_json somme à 1 ± 0,01", not bad_sum, f"{bad_sum[:5]}")
+                s_ = float("nan")
+            if not probs or abs(s_ - 1.0) > config.PROB_SUM_TOL:
+                bad_sum.append((r["race_id"], r["horizon"], round(s_, 4)))
+        if bad_sum:
+            res.warnings.append(("probabilities_json somme à 1 ± 0,01", f"{len(bad_sum)} ligne(s) : {bad_sum[:5]}"))
     finally:
         con.close()
 
     if res.jour_sans_predictions:
-        # depuis le 25/09/2026 la base lue est la base vivante R2 : l'absence de prédiction du jour se lit avec son en-tête
-        detail = f"aucune prédiction du jour dans la base du moteur lue ({snap.header()})"
-        res.failed = [(n, detail if n == CHECK_PREDICTIONS else d) for n, d in res.failed]
+        res.warnings.append(("prédictions du jour", f"aucune prédiction du jour dans la base du moteur lue ({snap.header()})"))
 
     # 4. Manifeste public
     if not network:

@@ -27,7 +27,7 @@ def hits(chevaux, arrivee_top: set[int]) -> int:
 
 def arrival_top(con, race_id: str) -> tuple[list[int] | None, str | None]:
     """Arrivée définitive vérifiée (numéros classés dans l'ordre), sinon (None, motif)."""
-    rr = con.execute("select * from race_results where race_id = ?", (race_id,)).fetchone()
+    rr = con.execute("select statut, finalite, arrival_order_json, non_partants_json from race_results where race_id = ?", (race_id,)).fetchone()
     if rr is None:
         return None, "NO_RESULT"
     if rr["statut"] != "DEFINITIVE":

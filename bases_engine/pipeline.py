@@ -316,7 +316,7 @@ def run_soir(*, day: str | None = None, network: bool = True, results_client: Re
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
         if res.jour_sans_predictions:
-            motif = dict(res.failed).get(CHECK_PREDICTIONS, "aucune prédiction du jour")
+            motif = dict(res.warnings).get("prédictions du jour", "aucune prédiction du jour")
             notify("info", f"⚠️ BASES — {day} — soir sans prédiction du jour (base {snap.sha[:12]})",
                    f"{motif}. Passe soir poursuivie : rien à noter ni à mesurer pour le {day}, rattrapage J-1..J-7 et site effectués.", date=day)
 

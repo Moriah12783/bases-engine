@@ -2,9 +2,15 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-25 — Contrat de lecture accepté par la session moteur : colonnes nommées, GET unique
+
+- Lectures de la base du moteur par colonnes nommées (jamais `SELECT *`) ; colonnes et tables ajoutées ignorées. `REQUIRED_COLUMNS` = colonnes réellement lues (table `rapports` retirée, non lue). `contract-check` n'échoue plus que sur une colonne attendue absente ou renommée, ou un `contract_version` inattendu ; somme des probabilités et journée sans prédiction deviennent des avertissements (la garde de fraîcheur du matin décide de l'édition).
+- Métadonnées et contenu lus dans la même réponse GET (plus de HEAD). Écart d'empreinte : jusqu'à 3 nouvelles lectures à 30 s d'intervalle, puis job rouge, aucune édition. Clé renommée = `NoSuchKey` = job rouge.
+- Recette réelle du 25/09 à 10:37 UTC (version précédente) : « Source moteur R2 · sha256 bcd85dbdac01 · poussée 2026-09-25T10:31:29Z · run 36124320221 · commit cf6e56f9 », empreinte et intégrité vérifiées, garde de fraîcheur verte.
+
 ## 2026-09-25 — Source moteur R2 (décisions du mentor validées par Steph) ; amendement n°1 au protocole
 
-- **Source** : base vivante `turf-engine-data/turf_bench.db` sur R2, lecture seule (`boto3`, jeton `bases-engine-ro`). Empreinte sha256 vérifiée contre la métadonnée du moteur puis `PRAGMA integrity_check` avant tout calcul ; échec = job rouge `SOURCE_INVALIDE`, aucune édition. Aucun repli sur la copie Git ; toute lecture du dépôt turf-engine supprimée (`git ls-remote`, fichiers bruts, `benchmark_report.json`). Cache par empreinte : aucun téléchargement si la base n'a pas changé.
+- **Source** : base vivante `turf-engine-data/turf_bench.db` sur R2, lecture seule (`boto3`, jeton `bases-engine-ro`). Empreinte sha256 vérifiée contre la métadonnée du moteur puis `PRAGMA integrity_check` avant tout calcul ; échec = job rouge `SOURCE_INVALIDE`, aucune édition. Aucun repli sur la copie Git ; toute lecture du dépôt turf-engine supprimée (`git ls-remote`, fichiers bruts, `benchmark_report.json`). Remplacé le même jour par une lecture GET unique (voir l'entrée suivante).
 - **Garde de fraîcheur** fondée sur le contenu : l'édition exige les T_MATIN du jour et un `pushed-at` postérieur à leur `lock_time_utc` ; sinon statut `SOURCE_SANS_MATIN`, annotation « Source sans matin du jour », aucune édition, passe non servie. Poussée de plus d'une heure : avertissement seulement.
 - **En-tête** « Source moteur R2 · sha256 <12 car.> · poussée · run · commit » stocké pour chaque édition et chaque run (`source_json`, migration 9), tolérant aux champs absents ; affiché sur la page, dans le journal et dans le contrat de journée (`source.entete`). Les éditions antérieures affichent « Source moteur copie Git · commit … ».
 - **Porte de publication** reconstituée sur la base, mêmes motifs : course annulée → RACE_CANCELLED ; cotes non réelles, ou pas de T_MATIN et aucune cote réelle chez les partants → ODDS_DEFAULT ; T_MATIN absente → pas d'édition du moteur ; départ proche → RACE_STARTED. Sélection moteur = `predictions.selection_json` (identique au rapport sur 574 courses sur 574). Instantané de test : mêmes 20 éditions et 12 abstentions le 21/09.

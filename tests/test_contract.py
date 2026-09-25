@@ -31,10 +31,38 @@ def test_contract_no_network_is_explicitly_skipped(snapshot):
     assert res.ok and res.skipped and "NON exécuté" in res.skipped[0][1]
 
 
-def test_contract_fails_on_unknown_date(snapshot):
+def test_day_without_predictions_is_a_warning_not_a_failure(snapshot):
+    """Contrat de lecture (25/09/2026) : échec seulement sur une colonne attendue absente ou renommée, ou un contract_version
+    inattendu. Une journée sans prédiction est un avertissement ; la garde de fraîcheur du matin décide de l'édition."""
     res = run_contract_checks(snapshot, "2030-01-01", network=False)
-    assert not res.ok
-    assert any("date J" in name or "contract_version" in name for name, _ in res.failed)
+    assert res.ok and res.jour_sans_predictions
+    assert any(n == "prédictions du jour" and "sha256 " in d for n, d in res.warnings)
+
+
+def test_added_columns_and_tables_are_ignored(snapshot, tmp_path):
+    import shutil
+    import sqlite3
+    from bases_engine.fetch import Snapshot
+    db = tmp_path / "turf_bench.db"; shutil.copy(snapshot.db_path, db)
+    con = sqlite3.connect(db)
+    con.execute("alter table predictions add column nouvelle_colonne TEXT"); con.execute("create table nouvelle_table (x INTEGER)")
+    con.execute("drop table rapports")                               # table non lue par Bases : sa disparition est sans effet
+    con.commit(); con.close()
+    res = run_contract_checks(Snapshot("ajout", tmp_path, db, {}), "2026-09-21", network=False)
+    assert res.ok, res.summary()
+
+
+def test_unexpected_contract_version_is_blocking(snapshot, tmp_path):
+    import shutil
+    import sqlite3
+    from bases_engine.contract import CHECK_PREDICTIONS
+    from bases_engine.fetch import Snapshot
+    db = tmp_path / "turf_bench.db"; shutil.copy(snapshot.db_path, db)
+    con = sqlite3.connect(db)
+    con.execute("update predictions set contract_version=3 where race_id in (select race_id from races where date='2026-09-21')")
+    con.commit(); con.close()
+    res = run_contract_checks(Snapshot("v3", tmp_path, db, {}), "2026-09-21", network=False)
+    assert not res.ok and res.failed[0][0] == CHECK_PREDICTIONS
 
 
 def test_contract_detects_schema_drift(snapshot, tmp_path):
@@ -58,11 +86,12 @@ def test_contract_passes_with_local_results_fixture(snapshot, fixtures_dir):
     assert res.ok and not res.skipped, res.summary()
 
 
-def test_day_without_predictions_is_explained_with_source_header(snapshot):
-    """Aucune prédiction du jour dans la base lue : le motif cite l'en-tête de la source (base R2, empreinte, poussée)."""
-    from bases_engine.contract import CHECK_PREDICTIONS
-    res = run_contract_checks(snapshot, "2026-09-22", network=False)
-    assert res.jour_sans_predictions
-    detail = dict(res.failed)[CHECK_PREDICTIONS]
-    assert "aucune prédiction du jour dans la base du moteur lue" in detail and "sha256 " in detail and "poussée 2026-09-21T09:00:00Z" in detail
-    assert "copie Git" not in detail and "développeur du moteur" not in detail
+
+
+def test_every_column_read_is_an_expected_column():
+    """Les colonnes lues nommément (éligibilité, notation) sont exactement couvertes par REQUIRED_COLUMNS."""
+    from bases_engine.contract import REQUIRED_COLUMNS
+    from bases_engine.eligibility import PRED_COLS, RACE_COLS
+    assert {c.strip() for c in RACE_COLS.split(",")} <= set(REQUIRED_COLUMNS["races"])
+    assert {c.strip() for c in PRED_COLS.split(",")} <= set(REQUIRED_COLUMNS["predictions"])
+    assert {"statut", "finalite", "arrival_order_json", "non_partants_json"} <= set(REQUIRED_COLUMNS["race_results"])

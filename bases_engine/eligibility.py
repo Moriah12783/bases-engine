@@ -42,6 +42,12 @@ class EligibleRace:
     paris_offerts: list[str] = field(default_factory=list)   # codes bets_json utiles, dans l'ordre de priorité
 
 
+# Colonnes lues nommément dans la base du moteur (jamais SELECT *) : l'ajout de colonnes ou de tables est libre côté moteur.
+RACE_COLS = "race_id, date, status, pmu_statut, start_time_utc, scheduled_start_time, discipline, declared_runners, bets_json"
+PRED_COLS = ("contract_version, prediction_hash, odds_real, priced_ratio, is_no_bet, probabilities_json, selection_json, "
+             "lock_time_utc, confidence_stars")
+
+
 @dataclass
 class Abstention:
     race_id: str
@@ -63,7 +69,7 @@ def _parse_dt(s: str | None) -> datetime | None:
 def evaluate_race(con, race_id: str, horizon: str, *, mode: str = "matin",
                   now: datetime | None = None) -> EligibleRace | Abstention:
     """Applique §4.1 puis §4.2 à une course. `con` = connexion à la base du moteur (lecture seule)."""
-    race = con.execute("select * from races where race_id = ?", (race_id,)).fetchone()
+    race = con.execute(f"select {RACE_COLS} from races where race_id = ?", (race_id,)).fetchone()
     if race is None:
         return Abstention(race_id, "?", "RACE_UNKNOWN")
     date = race["date"]
@@ -74,7 +80,7 @@ def evaluate_race(con, race_id: str, horizon: str, *, mode: str = "matin",
         return Abstention(race_id, date, "NON_PUBLISHABLE:RACE_CANCELLED")
 
     # 2. Prédiction du moteur à l'horizon
-    pred = con.execute("select * from predictions where race_id = ? and engine_name = ? and horizon = ?",
+    pred = con.execute(f"select {PRED_COLS} from predictions where race_id = ? and engine_name = ? and horizon = ?",
                        (race_id, config.ENGINE_NAME, horizon)).fetchone()
     if pred is None:
         if mode == "matin":

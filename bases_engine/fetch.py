@@ -3,7 +3,8 @@
 Contrat de lecture (décision du mentor du 25/09/2026) : l'objet `turf_bench.db` du bucket `turf-engine-data`
 uniquement, empreinte sha256 vérifiée contre la métadonnée posée par le moteur, `PRAGMA integrity_check`
 avant tout calcul ; aucun repli sur la copie Git, aucune lecture du dépôt turf-engine. Au plus 4
-téléchargements par jour ; une base déjà en cache avec la même empreinte est réutilisée sans téléchargement.
+téléchargements par jour. Métadonnées et contenu lus dans la même réponse GET ; écart d'empreinte : jusqu'à
+3 nouvelles lectures à 30 s, puis job rouge.
 Résultats publics à ≤ 1 requête par minute ; aucun HTML.
 """
 from __future__ import annotations
@@ -130,7 +131,7 @@ def r2_client():
                         config=Config(retries={"max_attempts": 3, "mode": "standard"}, connect_timeout=15, read_timeout=300))
 
 
-def get_snapshot(*, client=None, cache_dir: Path | None = None, local_dir: str | Path | None = None) -> Snapshot:
+def get_snapshot(*, client=None, cache_dir: Path | None = None, local_dir: str | Path | None = None, sleep=time.sleep) -> Snapshot:
     """Base vivante du moteur (R2), vérifiée ; ou répertoire local (`local_dir` / BASES_LOCAL_SNAPSHOT_DIR : tests, hors-ligne).
 
     Un répertoire local contient `turf_bench.db` et `source.json` (mêmes clés que les métadonnées R2) ; la même
@@ -147,37 +148,35 @@ def get_snapshot(*, client=None, cache_dir: Path | None = None, local_dir: str |
         meta = _norm_meta(json.loads(src.read_text(encoding="utf-8")))
         sha = _verify(db, meta["sha256"], where="base locale")
         return Snapshot(sha, d, db, {"origine": "local", **meta, "sha256": sha})
-    try:
-        client = client or r2_client()
-        head = client.head_object(Bucket=config.R2_BUCKET, Key=config.R2_OBJECT)
-    except FetchError:
-        raise
-    except Exception as e:  # noqa: BLE001 — erreurs botocore : message sans secret
-        raise FetchError(f"R2 injoignable ({config.R2_BUCKET}/{config.R2_OBJECT}) : {type(e).__name__}: {e}") from e
-    meta = _norm_meta(head.get("Metadata"))
-    if meta["sha256"]:                                              # même empreinte déjà en cache : aucun téléchargement
-        cached = cache_dir / "r2" / meta["sha256"] / config.DB_FILENAME
-        if cached.exists():
-            sha = _verify(cached, meta["sha256"], where="base R2 (cache)")
-            return Snapshot(sha, cached.parent, cached, {"origine": "r2", **meta, "sha256": sha})
+    client = client or r2_client()
     label = f"r2:{config.R2_OBJECT}"
-    if _downloads_today(cache_dir, label) >= config.DOWNLOAD_BUDGET_PER_DAY:
-        raise FetchError(f"budget de téléchargement épuisé aujourd'hui pour {label} ({config.DOWNLOAD_BUDGET_PER_DAY}/jour)")
     tmp = cache_dir / "r2" / (config.DB_FILENAME + ".part")
     tmp.parent.mkdir(parents=True, exist_ok=True)
+    tentative = 0
+    while True:
+        # Métadonnées et contenu dans la même réponse GET (jamais HEAD puis GET : un push entre les deux créerait un faux écart).
+        if _downloads_today(cache_dir, label) >= config.DOWNLOAD_BUDGET_PER_DAY:
+            raise FetchError(f"budget de téléchargement épuisé aujourd'hui pour {label} ({config.DOWNLOAD_BUDGET_PER_DAY}/jour)")
+        try:
+            obj = client.get_object(Bucket=config.R2_BUCKET, Key=config.R2_OBJECT)
+            meta = _norm_meta(obj.get("Metadata"))
+            body = obj["Body"]
+            with tmp.open("wb") as f:
+                for chunk in iter(lambda: body.read(1 << 20), b""):
+                    f.write(chunk)
+        except Exception as e:  # noqa: BLE001 — NoSuchKey (clé renommée), accès refusé, réseau : job rouge, message sans secret
+            tmp.unlink(missing_ok=True)
+            raise FetchError(f"lecture R2 impossible ({config.R2_BUCKET}/{config.R2_OBJECT}) : {type(e).__name__}: {e}") from e
+        _record_download(cache_dir, label, meta["sha256"] or "sans-empreinte")
+        if not meta["sha256"]:
+            tmp.unlink(missing_ok=True)
+            raise FetchError("base R2 : métadonnée sha256 absente, empreinte invérifiable — aucune édition")
+        if sha256_file(tmp) == meta["sha256"] or tentative >= config.R2_MAX_RETRIES:
+            break
+        tentative += 1                                              # base remplacée pendant la lecture : nouvelle lecture
+        sleep(config.R2_RETRY_DELAY_S)
     try:
-        obj = client.get_object(Bucket=config.R2_BUCKET, Key=config.R2_OBJECT)
-        meta = _norm_meta(obj.get("Metadata"))                      # métadonnées de l'objet effectivement lu
-        body = obj["Body"]
-        with tmp.open("wb") as f:
-            for chunk in iter(lambda: body.read(1 << 20), b""):
-                f.write(chunk)
-    except Exception as e:  # noqa: BLE001
-        tmp.unlink(missing_ok=True)
-        raise FetchError(f"lecture R2 impossible ({config.R2_BUCKET}/{config.R2_OBJECT}) : {type(e).__name__}: {e}") from e
-    _record_download(cache_dir, label, meta["sha256"] or "sans-empreinte")
-    try:
-        sha = _verify(tmp, meta["sha256"], where="base R2")
+        sha = _verify(tmp, meta["sha256"], where=f"base R2 (après {tentative + 1} lecture(s))")
     except FetchError:
         tmp.unlink(missing_ok=True)
         raise
