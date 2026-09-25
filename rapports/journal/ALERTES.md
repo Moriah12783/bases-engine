@@ -4,3 +4,4 @@
 - 2026-09-22T00:37:39Z — ⛔ BASES — arrêt : contract_version=2 (prédictions du jour) a échoué sur commit e04f727606. Aucune publication. Action requise : Steph. — ✅ schema:predictions
 - 2026-09-22T19:46:46Z — ⛔ BASES — arrêt : erreur inattendue dans resultats — FetchError('empreinte 2026-09-22.json ≠ manifeste')
 - 2026-09-22T19:46:46Z — ⛔ BASES — arrêt : resultats — empreinte 2026-09-22.json ≠ manifeste. Aucune publication. Action requise : Steph. — empreinte 2026-09-22.json ≠ manifeste
+- 2026-09-25T08:10:07Z — ⛔ BASES — contract-check : contract_version=2 (prédictions du jour) a échoué sur commit 3d66c4ef6c — ✅ schema:predictions
