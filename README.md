@@ -4,8 +4,8 @@ Service **indépendant et en lecture seule** qui produit chaque matin, pour chaq
 « échelle des bases » (1 à 4 chevaux à fixer en bases d'un champ réduit Quarté/Quinté) avec sa probabilité
 de réussite, un indice de solidité (A/B/C) et une structure de ticket recommandée.
 
-Il consomme les sorties **publiques** du moteur `Moriah12783/turf-engine` (SQLite `turf_bench.db` et
-`benchmark_report.json` sur `main`, JSON `/resultats/`) exactement comme un partenaire tiers : aucune
+Depuis le 25/09/2026, il lit la **base vivante du moteur sur R2** (objet `turf_bench.db` du bucket `turf-engine-data`,
+lecture seule, empreinte et intégrité vérifiées) et les JSON publics `/resultats/`, exactement comme un partenaire tiers : aucune
 écriture chez les autres, aucun secret d'autrui, aucun scraping HTML, aucun appel LLM.
 
 Documents de référence : `BRIEF_SERVICE_BASES.md` (brief d'exécution), `CHARTE_DEVELOPPEUR_BASES.md`
@@ -33,7 +33,7 @@ Page ombre : `https://bases.elite-turf.fr/shadow/<SHADOW_TOKEN>/`.
 
 Les crons GitHub sont servis « au mieux » (retards de plusieurs heures, occurrences sautées). Un Worker
 Cloudflare `bases-metronome` (`metronome/`) frappe `workflow_dispatch` de `bases.yml` à la minute :
-`5 9 * * *` matin, `3 22 * * *` soir, `28 7 * * MON` hebdo, `18 11-21 * * *` resultats (UTC), deux minutes avant les crons GitHub qui
+`5 9,11,13 * * *` matin (09:05, 11:05, 13:05 ; répétition si la journée est servie), `3 22 * * *` soir, `28 7 * * MON` hebdo, `18 11-21 * * *` resultats (UTC), deux minutes avant les crons GitHub qui
 restent le filet. Déploiement : Actions → « Métronome · déploiement » (secrets `CLOUDFLARE_API_TOKEN_METRONOME`,
 `CLOUDFLARE_ACCOUNT_ID`, `METRONOME_GH_TOKEN`). Exploitation : `docs/RUNBOOK.md`.
 
@@ -53,7 +53,7 @@ régulièrement l'estimation.
 
 ## Pipeline (résumé)
 
-1. `fetch.py` — SHA de `main` via `git ls-remote`, téléchargement **au SHA** (jamais `main` flottant), cache par SHA, budget 4 téléchargements/jour/fichier, client résultats ≤ 1 requête/minute avec vérification d'empreinte.
+1. `fetch.py` — objet `turf_bench.db` sur R2 (lecture seule) : empreinte sha256 = métadonnée du moteur, `PRAGMA integrity_check`, cache par empreinte (aucun téléchargement si inchangée), budget 4 téléchargements/jour ; client résultats ≤ 1 requête/minute avec vérification d'empreinte. Aucune lecture du dépôt turf-engine.
 2. `contract.py` — tables/colonnes, `contract_version = 2` sur les prédictions du jour, sommes de probabilités, `historical_logs` (date J, clés, `publication_reason` connus), manifeste public. Un échec = arrêt, exit ≠ 0, aucune publication.
 3. `eligibility.py` — miroir de la porte de publication (`publishable` + `OK` = autorité), prédiction `NEW_VALUE_ENGINE` conforme, départ > maintenant + 20 min, peloton ≥ 8, candidats = `editions_moteur.<horizon>.sel` (≥ 6 valides), cible top 5 si `QUINTE_PLUS`, sinon top 4.
 4. `compute.py` + `core.py` — simulateur d'ordre à discount (lambdas littérature), échelles k = 1..4 pour m = 4 **et** m = 5, 5 meilleurs trios, recalibration post-sélection par (k, m), solidité par terciles gelés, structure v1. Graine fixée par (date, race_id).

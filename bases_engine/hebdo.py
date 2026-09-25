@@ -187,7 +187,7 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
     return "\n".join(L) + "\n"
 
 
-def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.DB_PATH, recalibrer: bool = True, declencheur: str | None = None) -> int:
+def run_hebdo(*, day: str | None = None, db_path=config.DB_PATH, recalibrer: bool = True, declencheur: str | None = None) -> int:
     from .pipeline import _garde_fou_metronome, _repetition_rapide, default_declencheur, is_planned
     day = day or _date.today().isoformat()
     declencheur = declencheur or default_declencheur()
@@ -202,7 +202,7 @@ def run_hebdo(*, day: str | None = None, sha: str | None = None, db_path=config.
                 return _repetition_rapide(con, run_id, "hebdo", day, declencheur, served, t0)
         snap = None
         try:
-            snap = get_snapshot(sha)
+            snap = get_snapshot()
             con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
         except FetchError as e:
             notify("alerte", "⚠️ BASES — hebdo sans instantané (baseline marché indisponible)", str(e), date=day)

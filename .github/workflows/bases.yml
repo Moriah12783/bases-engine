@@ -117,6 +117,11 @@ jobs:
       - name: Exécution
         id: run
         if: steps.cmd.outputs.cmd != 'pages-init'
+        env:
+          # Base vivante du moteur sur R2, lecture seule (jeton bases-engine-ro, objet turf_bench.db uniquement)
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           ARGS=""
           case "${{ steps.cmd.outputs.cmd }}" in

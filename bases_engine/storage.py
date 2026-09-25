@@ -109,6 +109,14 @@ MIGRATIONS: list[tuple[int, str]] = [
         date TEXT PRIMARY KEY, consecutifs INTEGER NOT NULL DEFAULT 0, total INTEGER NOT NULL DEFAULT 0,
         premier_at_utc TEXT, dernier_at_utc TEXT);
     """),
+    (9, """
+    -- Source moteur R2 (décision du mentor du 25/09/2026) : en-tête de source stocké pour chaque édition et chaque run ;
+    -- journées perdues (amendement n°1 au protocole) ; courses retirées du palmarès (vérification d'empreinte de l'annexe).
+    ALTER TABLE bases_editions ADD COLUMN source_json TEXT;
+    ALTER TABLE runs ADD COLUMN source_json TEXT;
+    CREATE TABLE IF NOT EXISTS journees_perdues (date TEXT PRIMARY KEY, motif TEXT NOT NULL, recorded_at_utc TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS exclusions_palmares (race_id TEXT PRIMARY KEY, date TEXT, motif TEXT NOT NULL, recorded_at_utc TEXT NOT NULL);
+    """),
 ]
 
 
@@ -238,6 +246,35 @@ def insert_edition(con, row: dict) -> None:
     con.execute(f"insert or ignore into bases_editions ({cols}) values ({','.join('?' * len(row))})", list(row.values()))
 
 
+def set_run_source(con, run_id: str, snap) -> None:
+    import json as _json
+    con.execute("update runs set snapshot_commit=?, source_json=? where run_id=?", (snap.sha, _json.dumps(snap.source, ensure_ascii=False), run_id))
+    con.commit()
+
+
+def jour_servi(con, day: str) -> bool:
+    """Amendement n°1 : une journée est servie si une édition valide (hors répétition) a été publiée par une passe planifiée."""
+    return con.execute("""select 1 from bases_editions where date=? and horizon='T_MATIN' and repetition=0 and mode in ('shadow','live')
+                          and published_at_utc is not null and coalesce(declencheur,'cron') in ('cron','metronome') limit 1""", (day,)).fetchone() is not None
+
+
+def marquer_journee_perdue(con, day: str, motif: str) -> bool:
+    from .util import iso_utc
+    cur = con.execute("insert or ignore into journees_perdues(date, motif, recorded_at_utc) values (?,?,?)", (day, motif, iso_utc()))
+    con.commit()
+    return cur.rowcount > 0
+
+
+def journees_perdues(con) -> list[dict]:
+    return [dict(r) for r in con.execute("select date, motif, recorded_at_utc from journees_perdues order by date")]
+
+
+def exclure_du_palmares(con, race_id: str, date: str, motif: str) -> None:
+    from .util import iso_utc
+    con.execute("insert or replace into exclusions_palmares(race_id, date, motif, recorded_at_utc) values (?,?,?,?)", (race_id, date, motif, iso_utc()))
+    con.commit()
+
+
 def current_edition_for_race(con, race_id: str, horizon: str) -> dict | None:
     r = con.execute("select * from bases_editions where race_id=? and horizon=? and superseded_by is null order by computed_at_utc desc limit 1",
                     (race_id, horizon)).fetchone()
@@ -257,7 +294,8 @@ def latest_results(con, horizon: str = "T_MATIN") -> list[dict]:
         select r.*, e.date, e.solidite as ed_solidite, e.ladder_json, e.top_m as ed_top_m, e.mode as ed_mode,
                e.engine8_json, e.repetition as ed_repetition
         from bases_results r join bases_editions e on e.edition_id = r.edition_id
-        where r.horizon = ? and r.statut = 'DEFINITIVE' and r.finalite = 'VERIFIEE_PMU' and r.result_version = (
+        where r.horizon = ? and r.statut = 'DEFINITIVE' and r.finalite = 'VERIFIEE_PMU'
+          and r.race_id not in (select race_id from exclusions_palmares) and r.result_version = (
             select max(result_version) from bases_results r2 where r2.race_id = r.race_id and r2.top_m = r.top_m and r2.horizon = r.horizon)
         order by e.date, r.race_id""", (horizon,))
     return [dict(r) for r in rows]

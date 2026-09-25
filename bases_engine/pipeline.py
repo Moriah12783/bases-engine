@@ -11,7 +11,7 @@ from . import config, storage
 from .compute import compute_edition
 from .contract import CHECK_PREDICTIONS, run_contract_checks
 from .eligibility import Abstention, EligibleRace, evaluate_race
-from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot, ls_remote
+from .fetch import FetchError, ResultsClient, Snapshot, get_snapshot
 from .notify import alert, notify
 from .params import load_params
 from .protocol import set_start_date
@@ -71,28 +71,54 @@ def _mode() -> str:
 # MATIN
 # ----------------------------------------------------------------------------
 
-def _snapshot_for_day(day: str, sha: str | None, *, wait_s: float, max_wait: int, sleep=time.sleep) -> tuple[Snapshot | None, str]:
-    """Instantané contenant la date J ; attend (5 min × 3 max) si le commit du matin n'est pas encore là."""
-    tried = 0
-    while True:
-        snap = get_snapshot(sha)
-        if any(h.get("date") == day for h in snap.historical_logs()):
-            return snap, "OK"
-        tried += 1
-        if sha or tried > max_wait:
-            return snap, "SNAPSHOT_LATE"
-        sleep(wait_s)
-        sha_new = ls_remote()
-        if sha_new == snap.sha:
-            continue
-        sha = None          # nouveau commit : on le lit au prochain tour (ls-remote dans get_snapshot)
+def _parse_utc(v) -> datetime | None:
+    if v is None or v == "":
+        return None
+    if isinstance(v, (int, float)) or str(v).replace(".", "", 1).isdigit():
+        try:
+            x = float(v)
+            return datetime.fromtimestamp(x / 1000 if x > 1e11 else x, tz=timezone.utc)
+        except (ValueError, OverflowError, OSError):
+            return None
+    try:
+        dt = datetime.fromisoformat(str(v).strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
-def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool = False, sha: str | None = None,
+def source_freshness(snap: Snapshot, day: str, now: datetime) -> tuple[bool, str, list[str]]:
+    """Garde de fraîcheur fondée sur le contenu (décision du mentor du 25/09/2026, 1b) :
+    l'édition exige les T_MATIN du jour et une poussée (pushed-at) postérieure à leur lock_time_utc.
+    Retourne (ok, motif si refus, avertissements) ; une poussée vieille de plus d'une heure n'est qu'un avertissement."""
+    con = snap.connect()
+    try:
+        locks = [r[0] for r in con.execute("""select p.lock_time_utc from predictions p join races r using(race_id)
+                                              where r.date = ? and p.engine_name = ? and p.horizon = 'T_MATIN'""", (day, config.ENGINE_NAME))]
+    finally:
+        con.close()
+    if not locks:
+        return False, f"source sans matin du jour : aucune prédiction T_MATIN du {day} dans la base lue", []
+    pushed = _parse_utc(snap.source.get("pushed_at"))
+    if pushed is None:
+        return False, f"source sans matin du jour : pushed-at absent ou illisible ({snap.source.get('pushed_at')!r}), fraîcheur invérifiable", []
+    parsed = [x for x in (_parse_utc(v) for v in locks) if x is not None]
+    if len(parsed) < len(locks):
+        return False, "source sans matin du jour : lock_time_utc absent ou illisible sur une T_MATIN du jour", []
+    dernier = max(parsed)
+    if pushed <= dernier:
+        return False, f"source sans matin du jour : poussée {snap.source.get('pushed_at')} antérieure ou égale au dernier verrou T_MATIN ({dernier:%Y-%m-%dT%H:%M:%SZ})", []
+    warns = []
+    age = (now - pushed).total_seconds()
+    if age > config.SOURCE_STALE_WARN_S:
+        warns.append(f"base poussée il y a {int(age // 60)} min ({snap.source.get('pushed_at')}) : avertissement seulement")
+    return True, "", warns
+
+
+def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool = False,
               network: bool = True, results_client: ResultsClient | None = None, now: datetime | None = None,
-              db_path=config.DB_PATH, shadow_token: str | None = None, wait_s: float = 300.0, max_wait: int = 3,
-              sleep=time.sleep, n_sims: int = config.N_SIMS, scheduled: bool | None = None,
-              protocol_path=None, declencheur: str | None = None) -> int:
+              db_path=config.DB_PATH, shadow_token: str | None = None, n_sims: int = config.N_SIMS, scheduled: bool | None = None,
+              protocol_path=None, declencheur: str | None = None, source_client=None) -> int:
     day = day or _date.today().isoformat()
     now = now or now_utc()
     mode = "dry-run" if dry_run else _mode()
@@ -109,25 +135,32 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
             served = storage.served_run(con, "matin", day, planned_only=False)
             if served:
                 return _repetition_rapide(con, run_id, "matin", day, declencheur, served, t0)
-        # 1. Instantané
+        # 1. Base vivante du moteur (R2) : empreinte = métadonnée sha256 et integrity_check, sinon job rouge et aucune édition
         try:
-            snap, state = _snapshot_for_day(day, sha, wait_s=wait_s, max_wait=max_wait, sleep=sleep)
+            snap = get_snapshot(client=source_client)
         except FetchError as e:
-            alert("arrêt : téléchargement de l'instantané", str(e), date=day)
+            alert("arrêt : source moteur R2 invalide ou injoignable. Aucune édition. Action requise : Steph.", str(e), date=day)
+            storage.finish_run(con, run_id, "SOURCE_INVALIDE", error=str(e), duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, str(e))
-        con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
-        if state == "SNAPSHOT_LATE":
-            body = f"Le commit {snap.sha[:10]} ne contient pas la date {day} (instantané du matin en retard). Aucune base ce tour ; le rattrapage prendra le relais."
-            notify("alerte", f"⚠️ BASES — {day} — SNAPSHOT_LATE", body, date=day)
-            storage.finish_run(con, run_id, "SNAPSHOT_LATE", races_seen=0, races_published=0, duration_s=round(time.time() - t0, 1))
+        storage.set_run_source(con, run_id, snap)
+        # 1bis. Garde de fraîcheur fondée sur le contenu : T_MATIN du jour présents et poussée postérieure à leur verrou.
+        #       Sinon abstention motivée, annotation visible, aucune édition ; la passe n'est pas « servie » (11:05, 13:05 retentent).
+        ok, motif, avertissements = source_freshness(snap, day, now)
+        for w in avertissements:
+            print(f"::warning title=Source moteur ancienne::{w}")
+            notify("info", f"⚠️ BASES — {day} — source moteur ancienne (avertissement)", f"{w}\n{snap.header()}", date=day)
+        if not ok:
+            print(f"::warning title=Source sans matin du jour::{motif}")
+            notify("alerte", f"⚠️ BASES — {day} — source sans matin du jour", f"{motif}\n{snap.header()}\nAucune édition ; la passe planifiée suivante retentera.", date=day)
+            storage.finish_run(con, run_id, "SOURCE_SANS_MATIN", error=motif, races_seen=0, races_published=0, duration_s=round(time.time() - t0, 1))
             return 0
 
         # 2. Tests de contrat (bloquants)
         res = run_contract_checks(snap, day, results_client=results_client, network=network or results_client is not None)
         if not res.ok:
             name = res.failed[0][0]
-            alert(f"arrêt : {name} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.",
-                  res.summary(), date=day)
+            alert(f"arrêt : {name} a échoué sur la base {snap.sha[:12]}. Aucune publication. Action requise : Steph.",
+                  res.summary() + "\n" + snap.header(), date=day)
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=name, duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {name}")
 
@@ -138,13 +171,12 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
         # Idempotence : (date, horizon, snapshot_commit)
         replay = storage.editions_exist(con, day, horizon, snap.sha)
         params = load_params()
-        logs = snap.logs_by_race()
         scon = snap.connect()
         editions, abstentions = [], []
         try:
             race_ids = [r[0] for r in scon.execute("select race_id from races where date=? order by meeting_number, race_number", (day,))]
             for race_id in race_ids:
-                ev = evaluate_race(scon, race_id, horizon, logs.get(race_id), mode="matin", now=now)
+                ev = evaluate_race(scon, race_id, horizon, mode="matin", now=now)
                 if isinstance(ev, Abstention):
                     abstentions.append(ev)
                     con.execute("insert or ignore into abstentions(date, race_id, horizon, snapshot_commit, motif, recorded_at_utc) values (?,?,?,?,?,?)",
@@ -157,6 +189,7 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
                     continue
                 ed = compute_edition(ev, params, n_sims=n_sims)
                 row = _edition_row(eid, ev, ed, snap.sha, mode if mode != "dry-run" else _mode(), params)
+                row["source_json"] = json.dumps(snap.source, ensure_ascii=False)
                 row["repetition"] = int(repetition)
                 row["declencheur"] = declencheur
                 storage.insert_edition(con, row)
@@ -191,7 +224,7 @@ def run_matin(*, day: str | None = None, horizon: str = "T_MATIN", dry_run: bool
             _garde_fou_metronome(con, "matin", day, declencheur)
 
         # 5. Notification (annexe E)
-        body = matin_message(day, snap.sha, contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info, repetition=repetition)
+        body = matin_message(day, snap.header(), contract, len(race_ids), abstentions, mode, replay=replay, superseded=n_sup, site_info=site_info, repetition=repetition)
         notify("matin", f"🏇 BASES — {day} — édition du matin ({mode} · {declencheur})" + (" · RÉPÉTITION, hors palmarès et verdict" if repetition else ""), body, date=day)
         return 0
     except PipelineStop:
@@ -226,10 +259,10 @@ def _edition_row(eid: str, ev: EligibleRace, ed: dict, sha: str, mode: str, para
     }
 
 
-def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, mode: str, *, replay=False, superseded=0, site_info=None, repetition=False) -> str:
+def matin_message(day: str, source: str, contract: dict, n_seen: int, abstentions, mode: str, *, replay=False, superseded=0, site_info=None, repetition=False) -> str:
     d = datetime.strptime(day, "%Y-%m-%d")
     L = [f"🏇 BASES — {d:%d/%m} — édition du matin ({mode})" + (" · RÉPÉTITION (repetition = 1) : hors palmarès et hors verdict" if repetition else ""),
-         f"Source moteur commit {sha[:7]} · {n_seen} courses lues · {len(contract['courses'])} éligibles · {len(contract['abstentions'])} abstentions"
+         f"{source} · {n_seen} courses lues · {len(contract['courses'])} éligibles · {len(contract['abstentions'])} abstentions"
          + (" · rejeu idempotent (aucun doublon)" if replay else "") + (f" · {superseded} édition(s) remplacée(s)" if superseded else ""), ""]
     from .publish import sort_courses          # même ordre que la page : Quinté+ épinglé, puis A, B, C, puis heure
     for c in sort_courses(contract["courses"]):
@@ -251,9 +284,9 @@ def matin_message(day: str, sha: str, contract: dict, n_seen: int, abstentions, 
 # SOIR
 # ----------------------------------------------------------------------------
 
-def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = True, results_client: ResultsClient | None = None,
+def run_soir(*, day: str | None = None, network: bool = True, results_client: ResultsClient | None = None,
              db_path=config.DB_PATH, shadow_token: str | None = None, lookback: int = 7, n_sims: int = config.N_SIMS,
-             mesure_horizons: tuple[str, ...] = ("T90", "T30", "T15"), declencheur: str | None = None) -> int:
+             mesure_horizons: tuple[str, ...] = ("T90", "T30", "T15"), declencheur: str | None = None, source_client=None) -> int:
     day = day or _date.today().isoformat()
     declencheur = declencheur or default_declencheur()
     run_id = f"soir-{day}-{uuid.uuid4().hex[:6]}"
@@ -268,24 +301,23 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
             if served:
                 return _repetition_rapide(con, run_id, "soir", day, declencheur, served, t0)
         try:
-            snap = get_snapshot(sha)
+            snap = get_snapshot(client=source_client)
         except FetchError as e:
-            alert("arrêt : téléchargement de l'instantané (soir)", str(e), date=day)
+            alert("arrêt : source moteur R2 invalide ou injoignable (soir). Action requise : Steph.", str(e), date=day)
+            storage.finish_run(con, run_id, "SOURCE_INVALIDE", error=str(e), duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, str(e))
-        con.execute("update runs set snapshot_commit=? where run_id=?", (snap.sha, run_id))
+        storage.set_run_source(con, run_id, snap)
         res = run_contract_checks(snap, day, results_client=client, network=network or results_client is not None)
-        # Le soir, deux absences ne sont pas bloquantes : la date J absente de historical_logs (journée sans réunion) et aucune
-        # prédiction du jour dans la base du moteur (journée sans édition du matin, incident du 25/09/2026). Rien à noter pour J,
-        # mais le rattrapage J-1..J-7 et le site doivent tourner. Des prédictions du jour hors contrat v2 restent bloquantes.
-        blocking = [(n, d) for n, d in res.failed
-                    if n != "historical_logs contient la date J" and not (n == CHECK_PREDICTIONS and res.jour_sans_predictions)]
+        # Le soir, l'absence de toute prédiction du jour n'est pas bloquante (journée sans réunion ou sans édition du matin) :
+        # rien à noter pour J, mais le rattrapage J-1..J-7 et le site doivent tourner. Des prédictions hors contrat v2 restent bloquantes.
+        blocking = [(n, d) for n, d in res.failed if not (n == CHECK_PREDICTIONS and res.jour_sans_predictions)]
         if blocking:
-            alert(f"arrêt : {blocking[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph.", res.summary(), date=day)
+            alert(f"arrêt : {blocking[0][0]} a échoué sur la base {snap.sha[:12]}. Aucune publication. Action requise : Steph.", res.summary() + "\n" + snap.header(), date=day)
             storage.finish_run(con, run_id, "CONTRACT_FAILED", error=blocking[0][0], duration_s=round(time.time() - t0, 1))
             raise PipelineStop(2, f"test de contrat en échec : {blocking[0][0]}")
         if res.jour_sans_predictions:
             motif = dict(res.failed).get(CHECK_PREDICTIONS, "aucune prédiction du jour")
-            notify("info", f"⚠️ BASES — {day} — soir sans prédiction du jour (commit moteur {snap.sha[:10]})",
+            notify("info", f"⚠️ BASES — {day} — soir sans prédiction du jour (base {snap.sha[:12]})",
                    f"{motif}. Passe soir poursuivie : rien à noter ni à mesurer pour le {day}, rattrapage J-1..J-7 et site effectués.", date=day)
 
         # 1 + 2. Auto-rattrapage (complément mentor 22/09) : J puis J-1..J-7, de façon idempotente —
@@ -343,6 +375,20 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
         finally:
             scon.close()
 
+        # 2bis. Amendement n°1 : journée du protocole sans édition valide servie par une passe planifiée = journée perdue
+        debut = storage.protocol_start_date(con)
+        if debut and day >= debut and not storage.jour_servi(con, day):
+            last_matin = con.execute("select status, error from runs where command='matin' and day=? order by started_at_utc desc limit 1", (day,)).fetchone()
+            source_ko = last_matin is not None and last_matin["status"] in ("SOURCE_SANS_MATIN", "SOURCE_INVALIDE", "CONTRACT_FAILED")
+            motif = "source moteur indisponible" if source_ko or last_matin is None else "aucune édition servie"
+            if storage.marquer_journee_perdue(con, day, motif):
+                n_p = len(storage.journees_perdues(con))
+                notify("alerte", f"⚠️ BASES — {day} — journée perdue ({motif})",
+                       f"Amendement n°1 : aucune édition valide servie par une passe planifiée le {day}. Journées perdues : {n_p} "
+                       f"(fin de fenêtre repoussée d'autant ; au-delà de 7, protocole compromis).", date=day)
+                if n_p > 7:
+                    alert("protocole compromis : plus de 7 journées perdues (amendement n°1). Redémarrage à zéro à décider, mêmes paramètres.", f"{n_p} journées perdues", date=day)
+
         # 3. Palmarès, fiabilité, site (la page d'accueil reste sur la dernière édition publiée)
         params = load_params()
         pal, _ = palmares_and_fiabilite(con)
@@ -369,7 +415,6 @@ def run_soir(*, day: str | None = None, sha: str | None = None, network: bool = 
 def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int, *, repetition: bool = False) -> int:
     """Éditions rétrospectives à l'horizon de mesure (T15) pour la journée J : stockées (mode `mesure`), jamais publiées."""
     params = load_params()
-    logs = snap.logs_by_race()
     scon = snap.connect()
     n = 0
     try:
@@ -377,13 +422,14 @@ def _mesure_horizon(con, snap: Snapshot, day: str, horizon: str, n_sims: int, *,
             eid = storage.edition_id(day, race_id, horizon, snap.sha)
             if con.execute("select 1 from bases_editions where edition_id=?", (eid,)).fetchone():
                 continue
-            ev = evaluate_race(scon, race_id, horizon, logs.get(race_id), mode="backtest")
+            ev = evaluate_race(scon, race_id, horizon, mode="backtest")
             if isinstance(ev, Abstention):
                 con.execute("insert or ignore into abstentions(date, race_id, horizon, snapshot_commit, motif, recorded_at_utc) values (?,?,?,?,?,?)",
                             (day, race_id, horizon, snap.sha, ev.motif, iso_utc()))
                 continue
             ed = compute_edition(ev, params, n_sims=n_sims)
             row = _edition_row(eid, ev, ed, snap.sha, "mesure", params)
+            row["source_json"] = json.dumps(snap.source, ensure_ascii=False)
             row["repetition"] = int(repetition)
             storage.insert_edition(con, row)
             n += 1

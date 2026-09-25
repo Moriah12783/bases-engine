@@ -52,13 +52,12 @@ class RaceRecord:
 
 def collect_races(snap: Snapshot, horizon: str, since: str, until: str | None = None) -> tuple[list[RaceRecord], dict]:
     con = snap.connect()
-    logs = snap.logs_by_race()
     abst: dict[str, int] = {}
     recs: list[RaceRecord] = []
     try:
         q = "select race_id from races where date >= ? " + ("and date <= ? " if until else "") + "order by date, race_id"
         for (race_id,) in con.execute(q, (since, until) if until else (since,)):
-            ev = evaluate_race(con, race_id, horizon, logs.get(race_id), mode="backtest")
+            ev = evaluate_race(con, race_id, horizon, mode="backtest")
             if isinstance(ev, Abstention):
                 abst[ev.motif] = abst.get(ev.motif, 0) + 1
                 continue

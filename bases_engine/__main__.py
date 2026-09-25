@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import json
 import os
 import sys
@@ -17,19 +18,24 @@ from .util import iso_utc
 
 def cmd_contract_check(args) -> int:
     from .contract import run_contract_checks
-    snap = get_snapshot(args.sha)
+    from datetime import datetime, timezone
+    from .pipeline import source_freshness
+    snap = get_snapshot()
     day = args.date or _date.today().isoformat()
     res = run_contract_checks(snap, day, results_client=_results_client(args.no_network), network=not args.no_network)
-    head = f"Contract-check — commit {snap.sha[:10]} — date {day}"
-    print(head); print(res.summary())
+    ok_f, motif_f, warns_f = source_freshness(snap, day, datetime.now(timezone.utc))
+    fraicheur = ("✅ garde de fraîcheur : T_MATIN du jour présents, poussée postérieure au verrou" if ok_f else f"⚠️ garde de fraîcheur : {motif_f}") + \
+                "".join(f"\n⚠️ {w}" for w in warns_f)
+    head = f"Contract-check — {snap.header()} — date {day}\n✅ empreinte sha256 = métadonnée · PRAGMA integrity_check = ok"
+    print(head); print(res.summary()); print(fraicheur)
     if not res.ok:
-        msg = f"⛔ BASES — arrêt : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}. Aucune publication. Action requise : Steph."
+        msg = f"⛔ BASES — arrêt : {res.failed[0][0]} a échoué sur la base {snap.sha[:12]}. Aucune publication. Action requise : Steph."
         print("\n" + msg)
-        alert(f"contract-check : {res.failed[0][0]} a échoué sur commit {snap.sha[:10]}", res.summary(), date=day)
+        alert(f"contract-check : {res.failed[0][0]} a échoué sur la base {snap.sha[:12]}", f"{head}\n{res.summary()}\n{fraicheur}", date=day)
         return 2
     tail = "OK — tous les tests de contrat exécutés sont verts." + (f" · {len(res.warnings)} avertissement(s) non bloquant(s)" if res.warnings else "") + (" (test réseau sauté)" if res.skipped else "")
     print("\n" + tail)
-    step_summary(f"✅ BASES — contract-check {day}", f"{head}\n{res.summary()}\n{tail}")
+    step_summary(f"✅ BASES — contract-check {day}", f"{head}\n{res.summary()}\n{fraicheur}\n{tail}")
     return 0
 
 
@@ -37,7 +43,7 @@ def cmd_backtest(args) -> int:
     from .report import backtest_markdown
     from .scoring import backtest
     from .params import load_params, save_params
-    snap = get_snapshot(args.sha)
+    snap = get_snapshot()
     run_id = f"backtest-{iso_utc()}-{uuid.uuid4().hex[:6]}"
     con = storage.connect(args.db)
     storage.start_run(con, run_id, "backtest", snap.sha, "backtest")
@@ -92,21 +98,63 @@ def cmd_backtest(args) -> int:
     return 0
 
 
+def cmd_annexe_empreintes(args) -> int:
+    """Annexe factuelle (décision du mentor du 25/09/2026, §3) : compare les prediction_hash des T_MATIN de la journée entre
+    la copie Git figée (référence extraite avant la vérification) et la base R2. Règle fixée avant la vérification : une course
+    dont l'empreinte diffère est retirée du palmarès, les autres comptent."""
+    import json as _json
+    from .notify import step_summary as _summary
+    day = args.date
+    ref_path = Path(args.reference) if args.reference else config.RAPPORTS_DIR / "annexe" / f"{day}_empreintes_copie_git.json"
+    ref = _json.loads(ref_path.read_text(encoding="utf-8"))
+    snap = get_snapshot()
+    scon = snap.connect()
+    r2 = {r["race_id"]: r["prediction_hash"] for r in scon.execute(
+        """select p.race_id, p.prediction_hash from predictions p join races r using(race_id)
+           where r.date=? and p.engine_name=? and p.horizon='T_MATIN'""", (day, config.ENGINE_NAME))}
+    scon.close()
+    con = storage.connect(args.db)
+    lignes, diff = [], []
+    for race_id, h_git in sorted(ref["empreintes"].items()):
+        h_r2 = r2.get(race_id)
+        ok = h_r2 == h_git
+        lignes.append(f"| {race_id} | {h_git[:16]}… | {(h_r2 or 'absente')[:16]}{'…' if h_r2 else ''} | {'identique' if ok else 'DIFFÉRENTE'} |")
+        if not ok:
+            diff.append(race_id)
+            storage.exclure_du_palmares(con, race_id, day, "empreinte T_MATIN R2 ≠ copie Git (annexe du protocole)")
+    ed = con.execute("""select count(*) n, min(computed_at_utc) c0, max(computed_at_utc) c1, min(published_at_utc) p0, max(published_at_utc) p1,
+                               count(distinct snapshot_commit) nsc, max(snapshot_commit) sc
+                        from bases_editions where date=? and horizon='T_MATIN' and superseded_by is null""", (day,)).fetchone()
+    con.close()
+    corps = [f"# Annexe — empreintes des T_MATIN du {day} : copie Git figée vs base R2", "",
+             f"- Référence : `{ref_path.name}` ({len(ref['empreintes'])} lignes, {ref.get('source', 'copie Git')}).",
+             f"- Base R2 lue : {snap.header()}.",
+             f"- Résultat : {len(ref['empreintes']) - len(diff)} identique(s), {len(diff)} différente(s)" + (f" : {', '.join(diff)} retirée(s) du palmarès." if diff else "."),
+             f"- Éditions du {day} (non remplacées) : {ed['n']}, calculées entre {ed['c0']} et {ed['c1']}, publiées entre {ed['p0']} et {ed['p1']}, "
+             f"sur {ed['nsc']} instantané(s) ({str(ed['sc'])[:10]}). Aucune n'a été recalculée ; les pages régénérées ensuite ne font que les réafficher.",
+             "", "| Course | Copie Git | R2 | Verdict |", "|---|---|---|---|", *lignes]
+    out = config.RAPPORTS_DIR / "annexe" / f"{day}_verification_empreintes.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(corps) + "\n", encoding="utf-8")
+    print("\n".join(corps))
+    _summary(f"{'✅' if not diff else '⚠️'} BASES — annexe : empreintes T_MATIN du {day}", "\n".join(corps[2:6]))
+    return 0
+
+
 def cmd_show(args) -> int:
     """Calcule et affiche l'édition (sans stockage ni publication) pour la date J de l'instantané."""
     from .compute import compute_edition
     from .eligibility import Abstention, evaluate_race
     from .params import load_params
-    snap = get_snapshot(args.sha)
+    snap = get_snapshot()
     day = args.date or _date.today().isoformat()
     params = load_params()
     con = snap.connect()
-    logs = snap.logs_by_race()
     mode = "backtest" if args.retro else "matin"
     n_ok = 0
-    print(f"🏇 BASES — {day} — édition {args.horizon} (aperçu, commit {snap.sha[:7]}, params {params.get('version')})")
+    print(f"🏇 BASES — {day} — édition {args.horizon} (aperçu, {snap.header()}, params {params.get('version')})")
     for (race_id,) in con.execute("select race_id from races where date = ? order by meeting_number, race_number", (day,)):
-        ev = evaluate_race(con, race_id, args.horizon, logs.get(race_id), mode=mode)
+        ev = evaluate_race(con, race_id, args.horizon, mode=mode)
         if isinstance(ev, Abstention):
             print(f"  ✗ {race_id} — {ev.motif}")
             continue
@@ -136,9 +184,9 @@ def cmd_matin(args) -> int:
     from .pipeline import PipelineStop, run_matin
     now = datetime.fromisoformat(args.now.replace("Z", "+00:00")).astimezone(timezone.utc) if args.now else None
     try:
-        return run_matin(day=args.date, horizon=args.horizon, dry_run=args.dry_run, sha=args.sha, network=not args.no_network,
+        return run_matin(day=args.date, horizon=args.horizon, dry_run=args.dry_run, network=not args.no_network,
                          results_client=_results_client(args.no_network), now=now, db_path=args.db, shadow_token=args.shadow_token,
-                         n_sims=args.n_sims, max_wait=0 if args.no_wait else 3, declencheur=args.declencheur)
+                         n_sims=args.n_sims, declencheur=args.declencheur)
     except PipelineStop as e:
         print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
         return e.code
@@ -147,7 +195,7 @@ def cmd_matin(args) -> int:
 def cmd_soir(args) -> int:
     from .pipeline import PipelineStop, run_soir
     try:
-        return run_soir(day=args.date, sha=args.sha, network=not args.no_network, results_client=_results_client(args.no_network),
+        return run_soir(day=args.date, network=not args.no_network, results_client=_results_client(args.no_network),
                         db_path=args.db, shadow_token=args.shadow_token, n_sims=args.n_sims, declencheur=args.declencheur)
     except PipelineStop as e:
         print(f"⛔ BASES — arrêt : {e}", file=sys.stderr)
@@ -166,7 +214,6 @@ def cmd_resultats(args) -> int:
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="bases_engine", description="Service Bases Elite Turf (lecture seule du moteur).")
-    p.add_argument("--sha", help="commit turf-engine à utiliser (défaut : ls-remote main)")
     p.add_argument("--db", default=str(config.DB_PATH), help="chemin de bases.db")
     p.add_argument("--declencheur", choices=["manuel", "cron", "metronome"], default=None,
                    help="origine de la passe (défaut : cron si GITHUB_EVENT_NAME=schedule, sinon manuel) ; cron et metronome = passe planifiée")
@@ -196,7 +243,6 @@ def main(argv=None) -> int:
     s.add_argument("--no-network", action="store_true"); s.add_argument("--shadow-token")
     s.add_argument("--now", help="instant de calcul UTC (tests), ex. 2026-09-21T09:05:00Z")
     s.add_argument("--n-sims", type=int, default=config.N_SIMS)
-    s.add_argument("--no-wait", action="store_true", help="ne pas attendre l'instantané du matin (SNAPSHOT_LATE immédiat)")
     s.set_defaults(fn=cmd_matin)
 
     s = sub.add_parser("soir", help="notation J et J-7..J-1 sur le JSON public, mesure T15, palmarès, site, journal")
@@ -210,7 +256,12 @@ def main(argv=None) -> int:
 
     s = sub.add_parser("hebdo", help="lundi : recalibration (k, cible) hors répétitions, rapport hebdomadaire rapports/AAAA-Www.md")
     s.add_argument("--date"); s.add_argument("--sans-recalibration", action="store_true")
-    s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, sha=a.sha, db_path=a.db, recalibrer=not a.sans_recalibration, declencheur=a.declencheur))
+    s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, db_path=a.db, recalibrer=not a.sans_recalibration, declencheur=a.declencheur))
+
+    s = sub.add_parser("annexe-empreintes", help="annexe du protocole : prediction_hash des T_MATIN d'une journée, copie Git (référence figée) vs base R2")
+    s.add_argument("--date", default="2026-09-24")
+    s.add_argument("--reference", default=None, help="JSON de référence (défaut : rapports/annexe/<date>_empreintes_copie_git.json)")
+    s.set_defaults(fn=cmd_annexe_empreintes)
 
     args = p.parse_args(argv)
     try:

@@ -68,9 +68,9 @@ def test_matin_dry_run_then_shadow_is_idempotent(env, results_client, capsys):
 
 def test_matin_supersedes_previous_commit(env, results_client, snapshot, monkeypatch):
     run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
-    other = Snapshot("abcdef0123456789", snapshot.dir, snapshot.db_path, snapshot.report_path)
+    other = Snapshot("abcdef0123456789", snapshot.dir, snapshot.db_path, dict(snapshot.source, sha256="abcdef0123456789"))
     import bases_engine.pipeline as pl
-    monkeypatch.setattr(pl, "get_snapshot", lambda sha=None, **kw: other)
+    monkeypatch.setattr(pl, "get_snapshot", lambda **kw: other)
     run_matin(day="2026-09-21", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS)
     con = storage.connect(env["db"])
     assert con.execute("select count(*) from bases_editions where superseded_by is not null").fetchone()[0] == 20
@@ -95,12 +95,17 @@ def test_matin_stops_on_contract_failure(env, monkeypatch):
     assert con.execute("select status from runs").fetchone()[0] == "CONTRACT_FAILED"
 
 
-def test_matin_snapshot_late_when_date_missing(env, results_client):
-    rc = run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, max_wait=0)
-    assert rc == 0
+def test_matin_without_todays_t_matin_abstains_and_is_not_served(env, results_client, capsys):
+    """Garde de fraîcheur (1b) : pas de T_MATIN du jour dans la base lue → abstention motivée, annotation, aucune édition,
+    job vert ; la passe n'est pas « servie », la frappe planifiée suivante retente au lieu de sortir en répétition."""
+    for decl in ("metronome", "metronome"):
+        assert run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, declencheur=decl) == 0
     con = storage.connect(env["db"])
-    assert con.execute("select status from runs").fetchone()[0] == "SNAPSHOT_LATE"
-    assert "SNAPSHOT_LATE" in (env["rapports"] / "journal" / "ALERTES.md").read_text(encoding="utf-8")
+    assert [r[0] for r in con.execute("select status from runs where command='matin' order by started_at_utc")] == ["SOURCE_SANS_MATIN", "SOURCE_SANS_MATIN"]
+    assert con.execute("select count(*) from bases_editions").fetchone()[0] == 0
+    assert "::warning title=Source sans matin du jour::source sans matin du jour : aucune prédiction T_MATIN du 2026-09-22" in capsys.readouterr().out
+    assert "source sans matin du jour" in (env["rapports"] / "journal" / "ALERTES.md").read_text(encoding="utf-8")
+    con.close()
 
 
 def test_soir_scores_from_public_json(env, results_client):
@@ -168,7 +173,7 @@ def test_scheduled_matin_fixes_protocol_start_and_marks_no_repetition(env, resul
     assert "à renseigner" not in proto.read_text(encoding="utf-8") and "à l'activation : `" in proto.read_text(encoding="utf-8")
     assert all(e["repetition"] == 0 for e in storage.editions_for_day(con, "2026-09-21", "T_MATIN"))
     # un second matin planifié ne réécrit jamais la date
-    rc = run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto, max_wait=0)
+    rc = run_matin(day="2026-09-22", now=NOW, results_client=results_client, db_path=env["db"], n_sims=N_SIMS, scheduled=True, protocol_path=proto)
     assert storage.protocol_start_date(con) == "2026-09-21" and start_date_in_file(proto) == "2026-09-21"
     assert "début du protocole" in (env["rapports"] / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
 

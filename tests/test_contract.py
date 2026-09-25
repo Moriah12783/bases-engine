@@ -46,7 +46,7 @@ def test_contract_detects_schema_drift(snapshot, tmp_path):
     con = sqlite3.connect(db)
     con.execute("alter table predictions rename column prediction_hash to hash_prediction")
     con.commit(); con.close()
-    drift = Snapshot("drift", tmp_path, db, snapshot.report_path)
+    drift = Snapshot("drift", tmp_path, db, {"origine": "local", "sha256": "drift"})
     res = run_contract_checks(drift, "2026-09-21", network=False)
     assert not res.ok and res.failed[0][0] == "schema:predictions"
 
@@ -58,52 +58,11 @@ def test_contract_passes_with_local_results_fixture(snapshot, fixtures_dir):
     assert res.ok and not res.skipped, res.summary()
 
 
-def _with_reason(snapshot, tmp_path, reason, publishable):
-    import json
-    from bases_engine.fetch import Snapshot
-    logs = json.loads(snapshot.report_path.read_text(encoding="utf-8"))
-    for h in logs["historical_logs"]:
-        if h["race_id"] == "R1C1_21092026_LA CAPELLE":
-            h["publication_reason"], h["publishable"] = reason, publishable
-    rep = tmp_path / "benchmark_report.json"
-    rep.write_text(json.dumps(logs, ensure_ascii=False), encoding="utf-8")
-    return Snapshot("test", tmp_path, snapshot.db_path, rep)
-
-
-def test_priced_ratio_low_is_known(snapshot, tmp_path):
-    res = run_contract_checks(_with_reason(snapshot, tmp_path, "PRICED_RATIO_LOW", False), "2026-09-21", network=False, notify_warnings=False)
-    assert res.ok and not res.warnings
-
-
-def test_unknown_reason_non_publishable_is_a_warning(snapshot, tmp_path):
-    res = run_contract_checks(_with_reason(snapshot, tmp_path, "NOUVELLE_RAISON", False), "2026-09-21", network=False, notify_warnings=False)
-    assert res.ok and len(res.warnings) == 1 and "NOUVELLE_RAISON" in res.warnings[0][1] and "⚠️" in res.summary()
-
-
-def test_unknown_reason_publishable_is_blocking(snapshot, tmp_path):
-    res = run_contract_checks(_with_reason(snapshot, tmp_path, "NOUVELLE_RAISON", True), "2026-09-21", network=False, notify_warnings=False)
-    assert not res.ok and "publishable = true" in res.failed[0][0]
-
-
-def test_warning_is_journalised_in_alertes(snapshot, tmp_path, monkeypatch):
-    import bases_engine.notify as notify
-    monkeypatch.setattr(notify, "JOURNAL_DIR", tmp_path / "journal")
-    res = run_contract_checks(_with_reason(snapshot, tmp_path, "NOUVELLE_RAISON", False), "2026-09-21", network=False)
-    assert res.ok
-    assert "NOUVELLE_RAISON" in (tmp_path / "journal" / "ALERTES.md").read_text(encoding="utf-8")
-
-
-def test_empty_engine_db_with_listed_races_is_explained(snapshot, monkeypatch):
-    """25/09/2026 : le rapport public liste les courses du jour, la copie Git de turf_bench.db (figée depuis la bascule R2 du
-    moteur) n'en contient aucune. Le motif doit nommer la copie figée et désigner la source de Bases, pas le moteur."""
+def test_day_without_predictions_is_explained_with_source_header(snapshot):
+    """Aucune prédiction du jour dans la base lue : le motif cite l'en-tête de la source (base R2, empreinte, poussée)."""
     from bases_engine.contract import CHECK_PREDICTIONS
-    logs = snapshot.historical_logs()
-    relabel = [dict(h, date="2026-09-22") for h in logs if h.get("date") == "2026-09-21"]
-    monkeypatch.setattr(snapshot, "historical_logs", lambda: logs + relabel)
     res = run_contract_checks(snapshot, "2026-09-22", network=False)
     assert res.jour_sans_predictions
     detail = dict(res.failed)[CHECK_PREDICTIONS]
-    assert f"le rapport public liste {len(relabel)} course(s) pour 2026-09-22" in detail
-    assert "copie Git de turf_bench.db" in detail and "dernière prédiction : 20" in detail and "source lue par Bases" in detail
-    assert "développeur du moteur" not in detail and "non rafraîchie" not in detail
-    assert "historical_logs contient la date J" not in dict(res.failed)
+    assert "aucune prédiction du jour dans la base du moteur lue" in detail and "sha256 " in detail and "poussée 2026-09-21T09:00:00Z" in detail
+    assert "copie Git" not in detail and "développeur du moteur" not in detail

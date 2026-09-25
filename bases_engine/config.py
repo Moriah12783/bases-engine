@@ -6,15 +6,16 @@ from pathlib import Path
 
 ROOT = Path(os.environ.get("BASES_ROOT", Path(__file__).resolve().parent.parent))
 
-# --- Source moteur (lecture seule, dépôt public) ---------------------------------
-ENGINE_REPO = "Moriah12783/turf-engine"
-ENGINE_GIT_URL = os.environ.get("BASES_ENGINE_GIT_URL", f"https://github.com/{ENGINE_REPO}.git")
-ENGINE_BRANCH = "main"
-# Source alternative (§12) : base d'URL des fichiers bruts, ou répertoire local (tests / hors-ligne).
-SOURCE_BASE_URL = os.environ.get("BASES_SOURCE_BASE_URL", f"https://raw.githubusercontent.com/{ENGINE_REPO}")
-LOCAL_SNAPSHOT_DIR = os.environ.get("BASES_LOCAL_SNAPSHOT_DIR")          # ex. .cache/<sha> déjà rempli
-DB_FILENAME = os.environ.get("BASES_DB_FILENAME", "turf_bench.db")        # peut être turf_bench.db.gz
-REPORT_FILENAME = os.environ.get("BASES_REPORT_FILENAME", "benchmark_report.json")
+# --- Source moteur : base vivante sur R2, lecture seule (décision du mentor du 25/09/2026) ------------
+# Contrat de lecture : l'objet turf_bench.db du bucket turf-engine-data, rien d'autre (jamais backups/ ni state/),
+# et les JSON publics de résultats. Aucune lecture du dépôt turf-engine (ni ls-remote, ni fichiers bruts).
+R2_BUCKET = os.environ.get("BASES_R2_BUCKET", "turf-engine-data")
+R2_OBJECT = "turf_bench.db"                      # clé fixe : aucune autre clé du bucket n'est lue
+R2_ACCOUNT_ENV = "CLOUDFLARE_ACCOUNT_ID"         # point d'accès https://<compte>.r2.cloudflarestorage.com
+R2_KEY_ID_ENV, R2_SECRET_ENV = "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY"
+SOURCE_STALE_WARN_S = 3600                      # pushed-at plus vieux qu'une heure : avertissement seulement
+LOCAL_SNAPSHOT_DIR = os.environ.get("BASES_LOCAL_SNAPSHOT_DIR")          # base + source.json déjà présents (tests, hors-ligne)
+DB_FILENAME = "turf_bench.db"
 DOWNLOAD_BUDGET_PER_DAY = 4
 CACHE_DIR = Path(os.environ.get("BASES_CACHE_DIR", ROOT / ".cache"))
 

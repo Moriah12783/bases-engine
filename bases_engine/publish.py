@@ -26,6 +26,7 @@ MOTIFS_FR = {
     "PRICED_RATIO": "couverture des cotes insuffisante",
     "CANDIDATES_TOO_FEW": "moins de 6 candidats valides",
     "CONTRACT": "prédiction hors contrat",
+    "CONTRACT:NO_PREDICTION": "pas d'édition T_MATIN du moteur pour cette course",
     "RACE_UNKNOWN": "course inconnue dans l'instantané",
 }
 
@@ -96,6 +97,16 @@ def _structure(code: str, solid: str, top_m: int) -> dict:
     return st
 
 
+def _source_du_jour(eds: list[dict], sha: str | None, horizon: str) -> dict:
+    """Source des éditions du jour : en-tête R2 stocké par édition, sinon copie Git (éditions antérieures au 25/09/2026)."""
+    from .fetch import source_header
+    raw = next((e.get("source_json") for e in eds if e.get("source_json")), None)
+    src = json.loads(raw) if raw else {"origine": "git", "commit": sha}
+    depot = f"r2:{config.R2_BUCKET}/{config.R2_OBJECT}" if src.get("origine") == "r2" else ("Moriah12783/turf-engine" if src.get("origine") == "git" else "local")
+    return {"depot": depot, "origine": src.get("origine"), "sha256": src.get("sha256"), "poussee": src.get("pushed_at"), "run": src.get("run_id"),
+            "commit": src.get("commit"), "entete": source_header(src), "moteur": config.ENGINE_NAME, "horizon": horizon}
+
+
 def build_day_contract(con, day: str, horizon: str, snapshot_commit: str | None, params: dict, *, mode: str) -> dict:
     eds = storage.editions_for_day(con, day, horizon)
     eds = [e for e in eds if e["mode"] in ("shadow", "live")]
@@ -105,7 +116,7 @@ def build_day_contract(con, day: str, horizon: str, snapshot_commit: str | None,
     calib = {k: {"n": v.get("n"), "mode": v.get("mode")} for k, v in (params.get("calibration") or {}).items()}
     return {
         "contract_version": CONTRACT_VERSION, "date": day, "mode": mode, "genere_le_utc": iso_utc(),
-        "source": {"depot": config.ENGINE_REPO, "commit": sha, "moteur": config.ENGINE_NAME, "horizon": horizon},
+        "source": _source_du_jour(eds, sha, horizon),
         "parametres": {"version": params.get("version"), "lambdas": params.get("lambdas"),
                        "seuils_solidite": params.get("seuils_solidite"), "calibration": calib},
         "courses": [edition_to_course(e) for e in eds],
@@ -131,6 +142,14 @@ def _rates(rows: list[dict]) -> dict:
     return out
 
 
+def _fin_fenetre(depuis: str | None, n_perdues: int) -> str | None:
+    """Amendement n°1 : fenêtre de 28 jours à partir du début, repoussée d'un jour par journée perdue (arrêt à 800 inchangé)."""
+    if not depuis:
+        return None
+    from datetime import datetime as _dt, timedelta as _td
+    return (_dt.strptime(depuis, "%Y-%m-%d") + _td(days=27 + n_perdues)).strftime("%Y-%m-%d")
+
+
 def palmares_and_fiabilite(con, horizon: str = "T_MATIN") -> tuple[dict, dict]:
     rows = [r for r in storage.latest_results(con, horizon)
             if r["ed_mode"] in ("shadow", "live") and r["top_m"] == r["ed_top_m"] and not r["repetition"] and not r["ed_repetition"]]
@@ -147,6 +166,7 @@ def palmares_and_fiabilite(con, horizon: str = "T_MATIN") -> tuple[dict, dict]:
     n_rep = con.execute("select count(*) from bases_editions where horizon=? and repetition=1", (horizon,)).fetchone()[0]
     pal = {
         "genere_le_utc": iso_utc(), "horizon": horizon, "depuis": depuis,
+        "journees_perdues": storage.journees_perdues(con), "fin_fenetre": _fin_fenetre(depuis, len(storage.journees_perdues(con))),
         "note": "Compteurs glissants depuis le début du protocole (premier matin planifié). Les répétitions manuelles antérieures sont exclues. Aucun chiffre retouché ni filtré.",
         "repetitions_exclues": n_rep,
         "editions_publiees": n_editions, "abstentions": n_abst, "global": _rates(rows),

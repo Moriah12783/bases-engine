@@ -1,9 +1,13 @@
 """Porte d'éligibilité (§4.1) et ensemble candidat / cible (§4.2).
 
-Mode `matin` : miroir strict de la porte de publication du moteur (historical_logs = autorité).
-Mode `backtest` : rétrospectif — les courses passées sont toutes `RACE_STARTED` dans historical_logs,
-la porte `publishable` et l'heure de départ ne s'appliquent donc pas ; les lignes antérieures au
-contrat v2 sont acceptées avec le drapeau `LEGACY_CONTRACT` (jamais dans le pipeline quotidien).
+Source : la base vivante du moteur (R2) uniquement, depuis le 25/09/2026 (le rapport public n'est plus lu).
+Mode `matin` : porte de publication du moteur reconstituée sur les champs de la base, avec les mêmes motifs :
+course annulée (`races.status` = ANNULEE ou `pmu_statut` = COURSE_ANNULEE) → RACE_CANCELLED ; cotes non réelles
+(`odds_real` ≠ 1, ou pas de T_MATIN et aucune cote réelle chez les partants) → ODDS_DEFAULT ; T_MATIN non verrouillée (absente) → CONTRACT:NO_PREDICTION ; départ passé ou
+à moins de 20 minutes → RACE_STARTED. Sélection moteur = `predictions.selection_json` (identique à la sélection
+du rapport public sur 574 courses sur 574 comparées, 08/09 → 24/09/2026).
+Mode `backtest` : rétrospectif — l'heure de départ ne s'applique pas ; les lignes antérieures au contrat v2 sont
+acceptées avec le drapeau `LEGACY_CONTRACT` (jamais dans le pipeline quotidien).
 """
 from __future__ import annotations
 
@@ -56,36 +60,27 @@ def _parse_dt(s: str | None) -> datetime | None:
     return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
-def _sel_from_log(log: dict | None, horizon: str) -> list[int] | None:
-    sel = (((log or {}).get("editions_moteur") or {}).get(horizon) or {}).get("sel")
-    if not sel or not isinstance(sel, str):
-        return None
-    try:
-        return [int(x) for x in sel.split("-") if x != ""]
-    except ValueError:
-        return None
-
-
-def evaluate_race(con, race_id: str, horizon: str, log: dict | None, *, mode: str = "matin",
+def evaluate_race(con, race_id: str, horizon: str, *, mode: str = "matin",
                   now: datetime | None = None) -> EligibleRace | Abstention:
-    """Applique §4.1 puis §4.2 à une course. `con` = connexion à l'instantané (lecture seule)."""
+    """Applique §4.1 puis §4.2 à une course. `con` = connexion à la base du moteur (lecture seule)."""
     race = con.execute("select * from races where race_id = ?", (race_id,)).fetchone()
     if race is None:
         return Abstention(race_id, "?", "RACE_UNKNOWN")
     date = race["date"]
     flags: list[str] = []
 
-    # 1. Autorité de la porte de publication (mode matin uniquement)
-    if mode == "matin":
-        if log is None:
-            return Abstention(race_id, date, "NON_PUBLISHABLE:ABSENT_HISTORICAL_LOGS")
-        if not log.get("publishable") or log.get("publication_reason") != "OK":
-            return Abstention(race_id, date, f"NON_PUBLISHABLE:{log.get('publication_reason')}")
+    # 1. Porte de publication reconstituée sur la base (mode matin uniquement)
+    if mode == "matin" and (str(race["status"] or "").upper() == "ANNULEE" or str(race["pmu_statut"] or "").upper() == "COURSE_ANNULEE"):
+        return Abstention(race_id, date, "NON_PUBLISHABLE:RACE_CANCELLED")
 
     # 2. Prédiction du moteur à l'horizon
     pred = con.execute("select * from predictions where race_id = ? and engine_name = ? and horizon = ?",
                        (race_id, config.ENGINE_NAME, horizon)).fetchone()
     if pred is None:
+        if mode == "matin":
+            n_run, n_reel = con.execute("select count(*), sum(coalesce(odds_is_real, 0)) from runners where race_id = ?", (race_id,)).fetchone()
+            if n_run and not n_reel:                     # aucune cote réelle : la porte du moteur la classe ODDS_DEFAULT
+                return Abstention(race_id, date, "NON_PUBLISHABLE:ODDS_DEFAULT")
         return Abstention(race_id, date, "CONTRACT:NO_PREDICTION")
     if pred["contract_version"] != config.CONTRACT_VERSION or not pred["prediction_hash"]:
         if mode == "backtest":
@@ -93,7 +88,7 @@ def evaluate_race(con, race_id: str, horizon: str, log: dict | None, *, mode: st
         else:
             return Abstention(race_id, date, "CONTRACT")
     if pred["odds_real"] != 1:
-        return Abstention(race_id, date, "CONTRACT:ODDS_NOT_REAL")
+        return Abstention(race_id, date, "NON_PUBLISHABLE:ODDS_DEFAULT" if mode == "matin" else "CONTRACT:ODDS_NOT_REAL")
     if pred["priced_ratio"] is None:
         if mode != "backtest":
             return Abstention(race_id, date, "PRICED_RATIO")
@@ -127,11 +122,10 @@ def evaluate_race(con, race_id: str, horizon: str, log: dict | None, *, mode: st
     probs = {n: p / tot for n, p in probs.items()}
 
     # §4.2 candidats
-    engine8 = _sel_from_log(log, horizon)
-    if engine8 is None:
-        engine8 = [int(x) for x in json.loads(pred["selection_json"])][:config.MAX_CANDIDATES]
-        flags.append("SEL_FROM_PREDICTIONS")
-    engine8 = engine8[:config.MAX_CANDIDATES]
+    try:
+        engine8 = [int(x) for x in json.loads(pred["selection_json"] or "[]")][:config.MAX_CANDIDATES]
+    except (ValueError, TypeError):
+        return Abstention(race_id, date, "CONTRACT:SELECTION_INVALID")
     candidates = [n for n in engine8 if n in probs]
     if len(candidates) < config.MIN_CANDIDATES:
         return Abstention(race_id, date, "CANDIDATES_TOO_FEW")

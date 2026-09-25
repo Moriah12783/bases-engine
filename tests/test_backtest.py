@@ -26,8 +26,7 @@ def test_backtest_on_fixture_is_consistent(snapshot):
 
 def test_compute_edition_is_reproducible(snapshot):
     con = snapshot.connect()
-    log = snapshot.logs_by_race()["R1C1_21092026_LA CAPELLE"]
-    ev = evaluate_race(con, "R1C1_21092026_LA CAPELLE", "T_MATIN", log, mode="backtest")
+    ev = evaluate_race(con, "R1C1_21092026_LA CAPELLE", "T_MATIN", mode="backtest")
     assert isinstance(ev, EligibleRace)
     params = {"version": "test", "lambdas": [1.0, 0.81, 0.65, 0.55, 0.5], "shrink": 0.85, "calibration": {},
               "seuils_solidite": {"top5": {"A": 0.30, "B": 0.18}, "top4": {"A": 0.20, "B": 0.10}}}

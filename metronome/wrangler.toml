@@ -7,7 +7,7 @@ workers_dev = false            # aucune URL publique : le Worker ne vit que par 
 # Heures UTC (= GMT Abidjan). Chaque frappe précède de deux minutes le cron GitHub correspondant (filet).
 # Jour de la semaine en toutes lettres (MON) : Cloudflare numérote 1 = dimanche … 7 = samedi, à la différence de GitHub.
 # Toute expression ajoutée ici doit être reprise à l'identique (chaîne exacte) dans COMMANDES de worker.js.
-crons = ["5 9 * * *", "3 22 * * *", "28 7 * * MON", "18 11-21 * * *"]
+crons = ["5 9,11,13 * * *", "3 22 * * *", "28 7 * * MON", "18 11-21 * * *"]
 
 [observability]
 enabled = true                 # journaux consultables dans le tableau de bord (Workers Logs)

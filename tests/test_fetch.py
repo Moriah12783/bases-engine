@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from bases_engine import config
-from bases_engine.fetch import FetchError, ResultsClient, _downloads_today, _record_download, download_raw
+from bases_engine.fetch import FetchError, ResultsClient, _downloads_today, _record_download
 from bases_engine.util import sha256_json_compact
 
 
@@ -34,23 +34,13 @@ class _Session:
         return self.responses[Path(url).name]
 
 
-def test_download_budget_is_enforced(tmp_path):
+def test_download_budget_is_counted_per_file(tmp_path):
     cache = tmp_path / "cache"
     cache.mkdir()
     for _ in range(config.DOWNLOAD_BUDGET_PER_DAY):
-        _record_download(cache, "turf_bench.db", "abc")
-    assert _downloads_today(cache, "turf_bench.db") == config.DOWNLOAD_BUDGET_PER_DAY
-    assert _downloads_today(cache, "benchmark_report.json") == 0
-    with pytest.raises(FetchError, match="budget"):
-        download_raw("abc", "turf_bench.db", cache / "abc" / "turf_bench.db", cache_dir=cache, session=_Session({}))
-
-
-def test_download_uses_sha_not_main(tmp_path):
-    cache = tmp_path / "cache"
-    s = _Session({"benchmark_report.json": _Resp(200, {"historical_logs": []})})
-    dest = download_raw("deadbeef", "benchmark_report.json", cache / "deadbeef" / "benchmark_report.json", cache_dir=cache, session=s, base_url="https://raw.example/repo")
-    assert s.calls == ["https://raw.example/repo/deadbeef/benchmark_report.json"]
-    assert json.loads(dest.read_text()) == {"historical_logs": []}
+        _record_download(cache, "r2:turf_bench.db", "abc")
+    assert _downloads_today(cache, "r2:turf_bench.db") == config.DOWNLOAD_BUDGET_PER_DAY
+    assert _downloads_today(cache, "autre") == 0
 
 
 def test_results_client_throttles_to_one_request_per_minute():

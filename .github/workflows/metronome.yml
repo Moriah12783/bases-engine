@@ -31,6 +31,6 @@ jobs:
           {
             echo "## Métronome déployé"
             echo "- Worker : bases-metronome"
-            echo "- Crons : 5 9 * * * (matin) · 3 22 * * * (soir) · 28 7 * * MON (hebdo) · 18 11-21 * * * (resultats)"
+            echo "- Crons : 5 9,11,13 * * * (matin) · 3 22 * * * (soir) · 28 7 * * MON (hebdo) · 18 11-21 * * * (resultats)"
             echo "- Vérifier dans Cloudflare → Workers & Pages → bases-metronome → Settings → Triggers"
           } >> "$GITHUB_STEP_SUMMARY"

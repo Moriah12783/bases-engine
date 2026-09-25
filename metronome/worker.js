@@ -6,7 +6,7 @@ const INPUT_COMMANDE = "command";   // nom exact de l'input de commande dans bas
 
 // Clé = expression cron telle qu'écrite dans wrangler.toml (égalité stricte de chaîne).
 const COMMANDES = {
-  "5 9 * * *":  "matin",
+  "5 9,11,13 * * *": "matin",   // 09:05, 11:05, 13:05 : répétition si la journée est servie, sinon courses restantes (mentor 25/09)
   "3 22 * * *": "soir",
   "28 7 * * MON": "hebdo",   // Cloudflare numérote les jours 1 = dimanche … 7 = samedi : le nom du jour lève l'ambiguïté
   "18 11-21 * * *": "resultats",   // passe horaire, deux minutes avant le cron GitHub 20 11-21 (filet) — GO Steph 23/09

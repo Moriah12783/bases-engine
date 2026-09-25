@@ -186,7 +186,7 @@ def render_day_page(day: str, contract: dict, results: dict, statuts: dict, nav:
          f"<div><b>{len(courses)}</b><span>courses éligibles</span></div><div><b>{len(contract['abstentions'])}</b><span>courses écartées (non éligibles)</span></div>"
          f"<div><b>{sum(1 for c in courses if c['base_des_bases']['solidite'] == 'C')}</b><span>solidité C · abstention sur bases fixes</span></div>"
          + (f"<div><b>{n_prov}</b><span>provisoires</span></div>" if n_prov else "") + "</div>",
-         f"<p class='meta'>Source moteur commit <code>{(contract['source']['commit'] or '')[:10]}</code> · paramètres {html.escape(str(contract['parametres']['version']))} · généré le {contract['genere_le_utc']} · heures en GMT (= Abidjan/Dakar) et Paris.</p>",
+         f"<p class='meta'>{html.escape(contract['source'].get('entete') or '')} · paramètres {html.escape(str(contract['parametres']['version']))} · généré le {contract['genere_le_utc']} · heures en GMT (= Abidjan/Dakar) et Paris.</p>",
          f"<p class='meta'>Palmarès depuis le {_fr(pal_depuis) if pal_depuis else '— (protocole non démarré)'} : <a href='{root}palmares.html'>voir le palmarès</a>.</p>",
          "<input class='recherche' id='q' type='search' placeholder='Rechercher un hippodrome, une réunion (R1), un numéro (C3)…' aria-label='Recherche'>"]
     H += lines or ["<p class='meta'>Aucune course éligible ce jour.</p>"]
@@ -221,7 +221,8 @@ def build_nav(con, today: str, days: int = 14) -> list[dict]:
 # ----------------------------------------------------------------------------
 
 def render_month_page(month: str, days: list[dict], *, mode: str) -> str:
-    rows = "".join(f"<tr><td><a href='../jours/{d['date']}.html'>{_fr(d['date'])}</a></td><td>{d['n']}</td><td>{d['notees']}</td><td>{d['k3']}</td><td>{d['k2']}</td></tr>" for d in days)
+    rows = "".join((f"<tr><td>{_fr(d['date'])}</td><td colspan=4>journée perdue · {html.escape(d['perdue'])}</td></tr>" if d.get("perdue") else
+                    f"<tr><td><a href='../jours/{d['date']}.html'>{_fr(d['date'])}</a></td><td>{d['n']}</td><td>{d['notees']}</td><td>{d['k3']}</td><td>{d['k2']}</td></tr>") for d in days)
     return (_head(f"Elite Turf · Bases · archive {month}", mode) + f"<body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Archive {month} · mode {html.escape(mode)}</p></header><main>"
             f"<p class='meta'><a href='../index.html'>← édition du jour</a> · <a href='../palmares.html'>palmarès</a></p>"
             f"<table><tr><th>Journée</th><th>Courses</th><th>Notées (définitives)</th><th>3/3</th><th>≥ 2/3</th></tr>{rows or '<tr><td colspan=5>aucune journée</td></tr>'}</table>"
@@ -232,6 +233,10 @@ def render_palmares_page(pal: dict, fiab: dict, *, mode: str) -> str:
     g = pal.get("global", {})
     H = [_head("Elite Turf · Bases · palmarès", mode) + f"<body><header><h1>ELITE TURF · BASE DES BASES</h1><p>Palmarès depuis le {_fr(pal['depuis']) if pal.get('depuis') else '—'} · mode {html.escape(mode)} · non retouché</p></header><main>",
          "<p class='meta'><a href='index.html'>← édition du jour</a></p>",
+         (f"<p class='meta'>Fenêtre du protocole : jusqu'au {_fr(pal['fin_fenetre'])} · journées perdues : {len(pal.get('journees_perdues') or [])}"
+          + (" (" + ", ".join(_fr(j['date']) for j in pal['journees_perdues']) + ")" if pal.get('journees_perdues') else "")
+          + " · amendement n°1 : chaque journée perdue repousse la fin d'un jour ; au-delà de 7, protocole compromis ; arrêt à 800 courses inchangé.</p>"
+          if pal.get("fin_fenetre") else ""),
          f"<p class='legende'>Compteurs depuis le début du protocole, arrivées définitives vérifiées uniquement. Répétitions manuelles exclues : {pal.get('repetitions_exclues', 0)} édition(s). Abstentions comptées : {pal.get('abstentions', 0)}.</p>",
          "<h2 class='sec'>Par barreau</h2><div class='pal'>" + "".join(f"<div><b>{_pct(g.get(f'taux_{k}'))}</b><span>{lbl} · n = {g.get('n', 0)}</span></div>" for k, lbl in (("k1", "1 base"), ("k2", "2 bases"), ("k3", "3 bases"), ("k4", "4 bases"), ("2of3", "≥ 2/3"))) + "</div>",
          "<h2 class='sec'>Par solidité</h2><table><tr><th>Solidité</th><th>n</th><th>1 base</th><th>2 bases</th><th>3 bases</th><th>4 bases</th><th>≥ 2/3</th></tr>"
@@ -309,6 +314,9 @@ def build_site(con, day: str, params: dict, *, mode: str, shadow_token: str | No
                                  "k3": sum(r["hit_k3"] or 0 for r in notees), "k2": sum(r["hit_2of3"] or 0 for r in notees)})
         if d == day:
             (content / "index.html").write_text(render_day_page(d, contract, results, statuts, nav, mode=mode, root="", pal_depuis=pal.get("depuis")), encoding="utf-8")
+    for jp in storage.journees_perdues(con):                  # amendement n°1 : les journées perdues restent visibles dans l'archive
+        if jp["date"] not in days:
+            per_month[jp["date"][:7]].append({"date": jp["date"], "perdue": jp["motif"], "n": 0, "notees": 0, "k3": 0, "k2": 0})
     for month, rows in per_month.items():
         (content / "archive" / f"{month}.html").write_text(render_month_page(month, sorted(rows, key=lambda x: x["date"], reverse=True), mode=mode), encoding="utf-8")
     (content / "palmares.html").write_text(render_palmares_page(pal, fiab, mode=mode), encoding="utf-8")

@@ -24,7 +24,6 @@ REQUIRED_COLUMNS = {
                      "non_partants_json", "statut", "finalite", "version", "nb_corrections", "updated_at"],
     "rapports": ["race_id", "bet_type", "combination", "dividend"],
 }
-REQUIRED_LOG_KEYS = ["race_id", "date", "course", "publishable", "publication_reason", "editions_moteur"]
 
 
 CHECK_PREDICTIONS = "contract_version=2 (prédictions du jour)"
@@ -57,7 +56,6 @@ def _check(res: ContractResult, name: str, cond: bool, detail: str = "") -> None
 def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsClient | None = None,
                         network: bool = True, notify_warnings: bool = True) -> ContractResult:
     res = ContractResult()
-    derniere_prediction = None
     con = snap.connect()
     try:
         # 1. Tables et colonnes
@@ -77,8 +75,6 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
                                join races r using(race_id) where r.date = ?""", (date,)).fetchall()
         bad = [(r["engine_name"], r["horizon"]) for r in rows if r["contract_version"] != config.CONTRACT_VERSION]
         res.jour_sans_predictions = not rows
-        if res.jour_sans_predictions:
-            derniere_prediction = con.execute("select max(created_at) from predictions").fetchone()[0]
         _check(res, CHECK_PREDICTIONS, bool(rows) and not bad,
                "aucune prédiction du jour" if not rows else f"{len(bad)} ligne(s) hors contrat v2 : {sorted(set(bad))[:5]}")
 
@@ -98,44 +94,12 @@ def run_contract_checks(snap: Snapshot, date: str, *, results_client: ResultsCli
     finally:
         con.close()
 
-    # 4. historical_logs
-    try:
-        logs = snap.historical_logs()
-    except (OSError, ValueError) as e:
-        res.failed.append(("historical_logs lisible", str(e)))
-        return res
-    today = [h for h in logs if h.get("date") == date]
-    _check(res, "historical_logs contient la date J", bool(today), f"0 course pour {date}")
-    if res.jour_sans_predictions and today:
-        # 25/09/2026 : la copie Git de turf_bench.db est figée depuis la bascule R2 du moteur (24/09/2026 07:16 GMT) ; le rapport
-        # public reste à jour. Le moteur fonctionne : c'est la source lue par Bases qui doit changer (décision mentor).
-        detail = (f"aucune prédiction du jour dans la copie Git de turf_bench.db (dernière prédiction : {derniere_prediction or 'inconnue'}) "
-                  f"alors que le rapport public liste {len(today)} course(s) pour {date} — copie figée depuis la bascule R2 du moteur "
-                  "(24/09/2026 07:16 GMT) : le moteur fonctionne, c'est la source lue par Bases qui doit changer")
+    if res.jour_sans_predictions:
+        # depuis le 25/09/2026 la base lue est la base vivante R2 : l'absence de prédiction du jour se lit avec son en-tête
+        detail = f"aucune prédiction du jour dans la base du moteur lue ({snap.header()})"
         res.failed = [(n, detail if n == CHECK_PREDICTIONS else d) for n, d in res.failed]
-    missing_keys = sorted({k for h in today for k in REQUIRED_LOG_KEYS if k not in h})
-    _check(res, "historical_logs : clés attendues", not missing_keys, f"clés absentes : {missing_keys}")
-    # publication_reason : le drapeau `publishable` est l'autorité, la raison est informative.
-    # Valeur inconnue avec publishable = false → AVERTISSEMENT (compté, listé, journalisé, non bloquant) ;
-    # valeur inconnue avec publishable = true → BLOQUANT (une course serait publiée pour une raison que l'on ne comprend pas).
-    unknown_pub = {}
-    unknown_nonpub = {}
-    for h in logs:
-        r = str(h.get("publication_reason"))
-        if r in config.KNOWN_PUBLICATION_REASONS:
-            continue
-        (unknown_pub if h.get("publishable") else unknown_nonpub).setdefault(r, []).append(h.get("race_id"))
-    _check(res, "publication_reason inconnue avec publishable = true", not unknown_pub,
-           "valeurs inconnues sur des courses publiables : " + ", ".join(f"{k} ({len(v)} course(s), ex. {v[0]})" for k, v in sorted(unknown_pub.items())))
-    if unknown_nonpub:
-        detail = "valeurs inconnues sur des courses NON publiables (informatif) : " + ", ".join(
-            f"{k} × {len(v)} (ex. {v[0]})" for k, v in sorted(unknown_nonpub.items()))
-        res.warnings.append(("publication_reason inconnue avec publishable = false", detail))
-        if notify_warnings:
-            from .notify import notify
-            notify("alerte", f"⚠️ BASES — avertissement contrat (non bloquant) — commit {snap.sha[:10]}", detail, date=date)
 
-    # 5. Manifeste public
+    # 4. Manifeste public
     if not network:
         res.skipped.append(("manifeste index.json", "réseau désactivé (--no-network) — test NON exécuté"))
     else:

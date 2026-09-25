@@ -71,3 +71,10 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Retour transmis par Steph : le moteur va bien ; la copie Git de `turf_bench.db` est figée depuis la bascule R2 du 24/09 07:16 GMT (voulu). Mon diagnostic « base non rafraîchie côté moteur » était faux, et le motif poussé dans ce46503 orientait à tort vers le développeur du moteur → motif corrigé (commit local, GO attendu).
 - Vérifié sur fichiers en cache (aucun téléchargement) : les exports publics ne portent qu'un vecteur de probabilités par course (dernier horizon affiché, arrondi à 0,1 point), sans `prediction_hash` ni `race_results` → insuffisants pour recalculer l'échelle à l'identique. Recommandation : base vivante R2 en lecture seule pour les prédictions et `race_results`, rapport Git épinglé par commit pour la porte de publication. Décisions attendues : source (mentor), jeton R2 lecture seule dédié à Bases (charte), annexe factuelle 24/09–25/09.
 - Paragraphe « d956c960 / fix/j14-protocole » du message : côté moteur, absent de mes dépôts, non traité.
+
+## 2026-09-25 (fin de matinée) — Sprint source R2 (décisions du mentor validées par Steph)
+
+- Source R2 lecture seule (boto3, faux client S3 en test), empreinte + integrity_check, garde de fraîcheur, en-tête par édition, porte reconstituée sur la base (équivalence : sélection 574/574, instantané de test 20 éditions / 12 abstentions inchangées), amendement n°1 (journées perdues, fin de fenêtre, exclusions), commande `annexe-empreintes`, métronome `5 9,11,13 * * *`, .gitignore + test, docs. Aucune ligne cron de bases.yml touchée.
+- Référence d'empreintes du 24/09 extraite du cache local (blob 653cc3c8 vérifié par git hash-object, 25 lignes créées 06:30:23 → 06:30:29 UTC).
+- Question ouverte au mentor : l'extrait de test `fixtures/snapshot/turf_bench.db` (Sprint 1) est une portion de la base du moteur ; conservé en exception explicite du test, à confirmer ou à remplacer.
+- Worker `elite-turf-bases-independent` : aucune trace dans mes dépôts ni dans l'historique de ma session.
