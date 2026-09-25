@@ -65,3 +65,9 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - 7d9f87b poussé sur GO de Steph ; déployé par `resultats · manuel` à 09:24:13 UTC (wrangler 4.140.0, 20 fichiers).
 - Écart charte : mon diagnostic local du matin a fait 2 téléchargements (SHA complet puis SHA abrégé → second répertoire de cache). Avec les 3 runs CI (contract-check manuel, soir manuel, matin métronome), 5 téléchargements par fichier moteur aujourd'hui pour une limite de 4. Plus aucun téléchargement local aujourd'hui. Constat structurel : le compteur vit dans `.cache/` (runner éphémère), il n'est donc pas global en CI → décision mentor (compteur global dans bases.db ?).
 - Risque du soir 25/09 : test « prédictions du jour » bloquant au soir si la base moteur n'est pas rafraîchie → correctif local, 64 tests verts, en attente de GO avant 22:03 UTC.
+
+## 2026-09-25 (fin de matinée, suite) — Diagnostic corrigé : bascule R2 du moteur, source de Bases figée
+
+- Retour transmis par Steph : le moteur va bien ; la copie Git de `turf_bench.db` est figée depuis la bascule R2 du 24/09 07:16 GMT (voulu). Mon diagnostic « base non rafraîchie côté moteur » était faux, et le motif poussé dans ce46503 orientait à tort vers le développeur du moteur → motif corrigé (commit local, GO attendu).
+- Vérifié sur fichiers en cache (aucun téléchargement) : les exports publics ne portent qu'un vecteur de probabilités par course (dernier horizon affiché, arrondi à 0,1 point), sans `prediction_hash` ni `race_results` → insuffisants pour recalculer l'échelle à l'identique. Recommandation : base vivante R2 en lecture seule pour les prédictions et `race_results`, rapport Git épinglé par commit pour la porte de publication. Décisions attendues : source (mentor), jeton R2 lecture seule dédié à Bases (charte), annexe factuelle 24/09–25/09.
+- Paragraphe « d956c960 / fix/j14-protocole » du message : côté moteur, absent de mes dépôts, non traité.

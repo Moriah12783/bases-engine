@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-25 — Correction du diagnostic du matin : copie Git de `turf_bench.db` figée par la bascule R2 du moteur
+
+- Le diagnostic « base du moteur non rafraîchie, à signaler au développeur du moteur » (entrées ci-dessous et motif du commit ce46503) était **faux**. Le moteur tourne normalement : 41 courses éditées le 25/09, édition matin verrouillée à 06:30. Depuis la bascule R2 du 24/09 à 07:16 GMT, la copie Git de `turf_bench.db` est figée pour toujours (dernier commit 24/09 07:01, dernier verrou 06:30) ; la base vivante est sur R2 et seuls les exports légers restent publiés dans Git.
+- Motif d'arrêt corrigé : il nomme la copie Git figée et sa dernière prédiction, et désigne la source lue par Bases comme ce qui doit changer.
+- Impact constaté sur Bases : matin impossible depuis le 25/09 (aucune édition) ; 24/09 : 23 éditions valides (verrou 06:30 présent dans la dernière copie), mais mesure intrajournée impossible et 52 notations comptées sans contrôle croisé (`race_results` absent de la copie figée).
+- Constat sur les exports publics (rapport du 25/09 09:05) : une seule distribution de probabilités par course, celle du dernier horizon affiché, arrondie au dixième de point (T-15 sur les 24 courses du 23/09 ; T_MATIN déjà remplacée pour 7 courses sur 41 à 09:05) ; ni `prediction_hash` ni verrou UTC complet ; pas de `race_results`. Choix de la nouvelle source : décision du mentor en attente.
+
 ## 2026-09-25 — Passe soir non bloquée par une journée sans prédiction du jour ; motif d'arrêt explicite
 
 - Constat : le soir appliquait le test de contrat et ne tolérait que l'absence de la date J dans `historical_logs`. Une journée sans aucune prédiction dans la base du moteur (25/09/2026 : matin en échec de contrat, aucune édition) aurait donc aussi arrêté le soir et ses deux filets cron : aucun rattrapage J-1..J-7, trois runs rouges, trois téléchargements de plus.

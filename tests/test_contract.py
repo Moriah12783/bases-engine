@@ -94,8 +94,8 @@ def test_warning_is_journalised_in_alertes(snapshot, tmp_path, monkeypatch):
 
 
 def test_empty_engine_db_with_listed_races_is_explained(snapshot, monkeypatch):
-    """Incident du 25/09/2026 : le rapport du moteur liste les courses du jour, sa base SQLite n'en contient aucune.
-    Le motif d'arrêt doit le dire explicitement (base du moteur non rafraîchie), et le drapeau jour_sans_predictions est posé."""
+    """25/09/2026 : le rapport public liste les courses du jour, la copie Git de turf_bench.db (figée depuis la bascule R2 du
+    moteur) n'en contient aucune. Le motif doit nommer la copie figée et désigner la source de Bases, pas le moteur."""
     from bases_engine.contract import CHECK_PREDICTIONS
     logs = snapshot.historical_logs()
     relabel = [dict(h, date="2026-09-22") for h in logs if h.get("date") == "2026-09-21"]
@@ -103,5 +103,7 @@ def test_empty_engine_db_with_listed_races_is_explained(snapshot, monkeypatch):
     res = run_contract_checks(snapshot, "2026-09-22", network=False)
     assert res.jour_sans_predictions
     detail = dict(res.failed)[CHECK_PREDICTIONS]
-    assert f"son rapport liste {len(relabel)} course(s) pour 2026-09-22" in detail and "non rafraîchie" in detail
+    assert f"le rapport public liste {len(relabel)} course(s) pour 2026-09-22" in detail
+    assert "copie Git de turf_bench.db" in detail and "dernière prédiction : 20" in detail and "source lue par Bases" in detail
+    assert "développeur du moteur" not in detail and "non rafraîchie" not in detail
     assert "historical_logs contient la date J" not in dict(res.failed)
