@@ -15,31 +15,44 @@ from .publish import (NEUTRAL_HTML, _archive, build_day_contract, palmares_and_f
                       write_day_contract)
 from .util import iso_utc
 
-CSS = """:root{--bg:#0b0b0d;--panel:#141416;--line:#2a2a2e;--gold:#c9a227;--gold2:#e6c65a;--ink:#e8e1cf;--mute:#9a9482;--a:#3fae6b;--b:#c9a227;--c:#8a6f6f;--ok:#3fae6b;--ko:#b05555}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif;line-height:1.45}
-header{padding:24px 16px 10px;border-bottom:1px solid var(--line);text-align:center}header h1{margin:0;font-weight:400;letter-spacing:.12em;color:var(--gold);font-size:1.5rem}
-header p{margin:6px 0 0;color:var(--mute);font-size:.95rem}main{max-width:960px;margin:0 auto;padding:16px}
-a{color:var(--gold)}.meta{color:var(--mute);font-size:.9rem;margin:8px 0 12px}
-.legende{color:var(--mute);font-size:.86rem;border-left:2px solid var(--gold);padding-left:10px;margin:0 0 14px}
-nav.dates{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}nav.dates a,nav.dates span{display:inline-block;border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:.84rem;color:var(--ink);text-decoration:none;background:var(--panel)}
-nav.dates a.cur{border-color:var(--gold);color:var(--gold2)}nav.dates small{color:var(--mute)}
-.compteur{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:10px 0 16px}.compteur div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center}
-.compteur b{display:block;font-size:1.25rem;color:var(--gold2);font-weight:400}.compteur span{color:var(--mute);font-size:.82rem}
-.recherche{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-family:inherit;font-size:.95rem;margin:0 0 12px}
-details.course{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:8px 0}details.course[open]{border-color:#3a3a40}
-summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}summary::-webkit-details-marker{display:none}
-summary .lib{color:var(--gold2);min-width:150px}summary .h{color:var(--mute);font-size:.9rem}summary .bases{font-size:1.15rem;letter-spacing:.05em;color:#fff}
-summary .struct{color:var(--mute);font-size:.88rem}summary .res{margin-left:auto;font-size:.9rem;border:1px solid var(--line);border-radius:6px;padding:1px 8px}
-.res.ok{color:var(--ok);border-color:var(--ok)}.res.ko{color:var(--ko);border-color:var(--ko)}.res.att{color:var(--mute)}.res.prov{color:var(--gold2);border-color:var(--gold)}
-.sol{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:.82rem}.sol.A{color:var(--a);border-color:var(--a)}.sol.B{color:var(--b);border-color:var(--b)}.sol.C{color:var(--c);border-color:var(--c)}
-.pin{display:inline-block;background:var(--gold);color:#0b0b0d;border-radius:6px;padding:1px 8px;font-size:.76rem}
-.fiche{padding:0 14px 14px;border-top:1px solid var(--line)}.fiche .sel{color:var(--mute);font-size:.92rem}.fiche .when{color:var(--mute);font-size:.9rem;margin-top:8px}
-table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:8px}th,td{padding:5px 6px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}th{color:var(--mute);font-weight:400}
-.structure{margin-top:8px;color:var(--gold2)}.resultat{margin-top:10px;padding:10px;border:1px dashed var(--line);border-radius:8px}.resultat h3{margin:0 0 6px;font-size:.95rem;font-weight:400;color:var(--gold)}
-.resultat ul{margin:4px 0 0 18px;padding:0}.resultat li{margin:2px 0}
-h2.sec{font-weight:400;color:var(--gold);margin-top:28px;font-size:1.1rem}footer{color:var(--mute);font-size:.85rem;text-align:center;padding:24px 16px;border-top:1px solid var(--line);margin-top:24px}
-.pal{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.pal div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center}
-.pal b{display:block;font-size:1.3rem;color:var(--gold2);font-weight:400}.pal span{color:var(--mute);font-size:.82rem}"""
+CSS = """:root{--bg:#0b1120;--panel:#151f32;--panel-hover:#1c2942;--line:#24344d;--blue:#3b82f6;--cyan:#38bdf8;--accent:#60a5fa;--purple:#818cf8;--ink:#f8fafc;--mute:#94a3b8;--a:#10b981;--b:#38bdf8;--c:#f59e0b;--ok:#10b981;--ko:#ef4444;--prov:#f59e0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+header{padding:28px 16px 14px;border-bottom:1px solid var(--line);text-align:center}
+header h1{margin:0;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.85rem}
+header p{margin:8px 0 0;color:var(--mute);font-size:.95rem}main{max-width:960px;margin:0 auto;padding:16px}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}.meta{color:var(--mute);font-size:.88rem;margin:8px 0 12px}
+.meta code{background:#0f172a;padding:2px 6px;border-radius:4px;border:1px solid var(--line);font-family:monospace;color:var(--cyan)}
+.legende{color:var(--mute);font-size:.85rem;border-left:3px solid var(--cyan);background:rgba(56,189,248,.05);padding:8px 12px;border-radius:0 8px 8px 0;margin:0 0 16px;line-height:1.5}
+nav.dates{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px}nav.dates a,nav.dates span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:9999px;padding:4px 12px;font-size:.84rem;color:var(--ink);text-decoration:none;background:var(--panel);transition:all .15s}
+nav.dates a:hover{border-color:var(--cyan);color:#fff;background:var(--panel-hover)}
+nav.dates a.cur{border-color:var(--cyan);background:rgba(56,189,248,.15);color:var(--cyan);font-weight:600}nav.dates small{color:var(--mute)}
+.compteur{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 20px}.compteur div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;box-shadow:0 4px 6px -1px rgba(0,0,0,.15)}
+.compteur b{display:block;font-size:1.5rem;color:#fff;font-weight:700;margin-bottom:2px}.compteur span{color:var(--mute);font-size:.78rem;text-transform:uppercase;font-weight:600;letter-spacing:.03em}
+.compteur div:first-child b{color:var(--ok)}.compteur div:nth-child(2) b{color:var(--cyan)}.compteur div:nth-child(5) b{color:var(--c)}
+.recherche{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 14px;font-family:inherit;font-size:.95rem;margin:0 0 16px;outline:none;transition:border-color .15s}
+.recherche:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(56,189,248,.2)}
+details.course{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;transition:all .15s}details.course:hover{background:var(--panel-hover);border-color:#3b4f73}details.course[open]{border-color:var(--cyan);background:#131c2d}
+summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}summary::-webkit-details-marker{display:none}
+summary .lib{color:#fff;font-weight:700;min-width:140px;font-size:1.02rem}summary .h{color:var(--mute);font-size:.88rem}
+summary .bases{font-family:monospace,sans-serif;font-size:1.1rem;font-weight:800;color:#fff;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:2px 10px;letter-spacing:.08em;display:inline-flex;align-items:center}
+summary .struct{color:var(--mute);font-size:.88rem}summary .res{margin-left:auto;font-size:.85rem;border:1px solid var(--line);border-radius:6px;padding:2px 10px;font-weight:600}
+.res.ok{color:var(--ok);border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.12)}.res.ko{color:var(--ko);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.12)}.res.att{color:var(--mute);background:rgba(148,163,184,.08)}.res.prov{color:var(--prov);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.12)}
+.sol{display:inline-block;border-radius:6px;padding:2px 8px;font-size:.8rem;font-weight:700}.sol.A{color:var(--a);background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3)}.sol.B{color:var(--b);background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3)}.sol.C{color:var(--c);background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)}
+.pin{display:inline-block;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border-radius:6px;padding:2px 8px;font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.fiche{padding:14px 18px 18px;border-top:1px solid var(--line);background:rgba(11,17,32,.4)}.fiche .when{color:var(--cyan);font-size:.88rem;font-weight:600;margin-bottom:6px}.fiche .sel{color:var(--mute);font-size:.88rem;margin-top:4px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.88rem;margin-top:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th{background:#0f172a;color:var(--mute);font-weight:600;font-size:.8rem;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
+td{padding:8px 10px;text-align:right;border-bottom:1px solid rgba(36,52,77,.5);background:var(--panel);color:var(--ink)}
+tr:last-child td{border-bottom:none}th:first-child,td:first-child{text-align:left;font-weight:600}
+.structure{margin-top:12px;color:#fff;background:rgba(56,189,248,.1);border-left:3px solid var(--cyan);padding:8px 12px;border-radius:0 6px 6px 0;font-size:.9rem}
+.resultat{margin-top:14px;padding:14px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.05);border-radius:10px}
+.resultat h3{margin:0 0 8px;font-size:.95rem;font-weight:700;color:var(--ok)}
+.resultat ul{margin:4px 0 0 18px;padding:0}.resultat li{margin:3px 0;color:var(--ink)}
+h2.sec{font-weight:700;color:#fff;margin-top:28px;font-size:1.15rem;display:flex;align-items:center;gap:8px}
+footer{color:var(--mute);font-size:.82rem;text-align:center;padding:28px 16px;border-top:1px solid var(--line);margin-top:35px}
+footer a{color:var(--cyan);text-decoration:none}footer a:hover{text-decoration:underline}
+.pal{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.pal div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.pal b{display:block;font-size:1.4rem;color:var(--cyan);font-weight:700}.pal span{color:var(--mute);font-size:.8rem}"""
 
 SEARCH_JS = """<script>(function(){var i=document.getElementById('q');if(!i)return;i.addEventListener('input',function(){var q=i.value.toLowerCase().trim();
 document.querySelectorAll('details.course').forEach(function(d){d.style.display=(!q||(d.dataset.search||'').indexOf(q)>=0)?'':'none';});});})();</script>"""
@@ -112,7 +125,7 @@ def resultat_course(course: dict, res: dict | None, statut: dict | None) -> dict
         n_in = len(set(st["bases"]) & placed_s)
         v_struct = (f"{st['texte']} → " + ("réussie" if n_in == len(st["bases"]) else "manquée") + f" ({n_in} sur {len(st['bases'])} bases dans les {cible} premiers)")
     return {"badge": badge, "classe": classe, "compte": not prov,
-            "bloc": {"arrivee": arrivee[:m], "statut": (res.get("statut") or "") + (f" · {statut.get('pmu_statut')}" if statut and statut.get("pmu_statut") else ""),
+            "bloc": {"arrivee": arrivee[:m], "statut": (res.get("statut") or "") + (f" · {statut.get('pmu_statut')}" if statut and statut.get('pmu_statut') else ""),
                      "finalite": res.get("finalite"), "verdicts": verdicts, "structure": v_struct,
                      "non_partants": json.loads(res.get("non_partants_json") or "[]")}}
 
@@ -130,7 +143,8 @@ def _card_body(c: dict, r: dict) -> str:
     H.append("<table><tr><th>Échelle</th><th>1 base</th><th>2 bases</th><th>3 bases</th><th>4 bases</th></tr>")
     H.append("<tr><td>Chevaux</td>" + "".join(f"<td>{' - '.join(map(str, e[k]['chevaux']))}</td>" for k in ("1", "2", "3", "4")) + "</tr>")
     H.append("<tr><td>Tous à l'arrivée</td>" + "".join(f"<td>{_pct(e[k]['p_calibree'])} ({k} sur {k})</td>" for k in ("1", "2", "3", "4")) + "</tr>")
-    H.append("<tr><td>Tous sauf un</td><td>—</td>" + "".join(f"<td>{_pct(e[k]['p_k_moins_1'])} ({int(k) - 1} sur {k})</td>" for k in ("2", "3", "4")) + "</tr></table>")
+    H.append("<tr><td>Tous sauf un</td><td>—</td>" + "".join(f"<td>{_pct(e[k]['p_k_moins_1'])} ({int(k) - 1} sur {k})</td>" for k in ("2", "3", "4")) + "</tr>")
+    H.append("</table>")
     if c.get("echelle_top3"):
         e3 = c["echelle_top3"]
         H.append("<div class='sel' style='margin-top:6px'>Échelle cible top 3 (Trio / Couplé placé, brute) : " + " · ".join(f"{k} base{'s' if k != '1' else ''} {' - '.join(map(str, e3[k]['chevaux']))} {_pct(e3[k]['p_brute'])}" for k in ("1", "2", "3")) + "</div>")
@@ -140,7 +154,7 @@ def _card_body(c: dict, r: dict) -> str:
         H.append(f"<div class='resultat'><h3>Résultat — {html.escape(bl['statut'])}{' · ' + html.escape(bl['finalite']) if bl.get('finalite') else ''}</h3>")
         H.append(f"<div>Arrivée (top {c['top_m']}) : <b>{' - '.join(map(str, bl['arrivee'])) or '—'}</b>" + (f" · non-partants : {' - '.join(map(str, bl['non_partants']))}" if bl["non_partants"] else "") + "</div>")
         H.append("<ul>" + "".join(f"<li>{html.escape(v)}</li>" for v in bl["verdicts"]) + "</ul>")
-        H.append(f"<div style='margin-top:6px;color:var(--gold2)'>Structure recommandée : {html.escape(bl['structure'])}</div></div>")
+        H.append(f"<div style='margin-top:6px;color:var(--cyan)'>Structure recommandée : {html.escape(bl['structure'])}</div></div>")
     H.append("</div>")
     return "".join(H)
 
@@ -197,7 +211,7 @@ def _nav_html(nav: list[dict], current: str, root: str) -> str:
 
 
 def build_nav(con, today: str, days: int = 14) -> list[dict]:
-    counts = {r[0]: r[1] for r in con.execute("select date, count(*) from bases_editions where horizon='T_MATIN' and mode in ('shadow','live') and superseded_by is null group by 1")}
+    counts = {r[0]: r for r in con.execute("select date, count(*) from bases_editions where horizon='T_MATIN' and mode in ('shadow','live') and superseded_by is null group by 1")}
     d0 = datetime.strptime(today, "%Y-%m-%d")
     return [{"date": (d0 - timedelta(days=i)).strftime("%Y-%m-%d"), "delta": i, "n": counts.get((d0 - timedelta(days=i)).strftime("%Y-%m-%d"), 0)} for i in range(days)]
 
