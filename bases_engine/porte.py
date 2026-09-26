@@ -74,20 +74,46 @@ def parite(con, reference_path=None) -> tuple[bool, list[str], list[tuple[str, s
     from collections import Counter
     from datetime import datetime
     from .eligibility import Abstention, evaluate_race
+    import sqlite3
     ref = json.loads(Path(reference_path or REFERENCE_PARITE).read_text(encoding="utf-8"))
     now = datetime.fromisoformat(ref["maintenant_utc"].replace("Z", "+00:00"))
+    # Rejeu « à l'instant de référence » : la base est en ajout seul ; une prédiction verrouillée après cet instant n'existait pas
+    # pour la passe rejouée. Copie en mémoire sans ces lignes (la base lue n'est jamais modifiée ; aucune logique de porte changée).
+    au = sqlite3.connect(":memory:"); con.backup(au); au.row_factory = sqlite3.Row
+    borne = now.strftime("%Y-%m-%dT%H:%M:%S")
+    posterieures = [tuple(r) for r in au.execute(
+        """select p.race_id, p.horizon, p.lock_time_utc from predictions p join races r using(race_id)
+           where r.date = ? and p.engine_name = ? and replace(p.lock_time_utc, 'Z', '') > ?""", (ref["date"], config.ENGINE_NAME, borne))]
+    au.execute("delete from predictions where replace(lock_time_utc, 'Z', '') > ?", (borne,))
     obtenu = {}
-    for (rid,) in con.execute("select race_id from races where date = ? order by race_id", (ref["date"],)):
-        ev = evaluate_race(con, rid, ref["horizon"], mode="matin", now=now)
+    for (rid,) in au.execute("select race_id from races where date = ? order by race_id", (ref["date"],)):
+        ev = evaluate_race(au, rid, ref["horizon"], mode="matin", now=now)
         obtenu[rid] = ev.motif if isinstance(ev, Abstention) else "ELIGIBLE"
+    au.close()
     attendu = ref["decisions"]
+    # Sans T_MATIN à l'instant de référence, « cotes par défaut » et « pas d'édition T_MATIN » sont la même décision de porte
+    # (pas d'édition) : seul le drapeau de cote des partants, mis à jour dans la journée (table non « ajout seul »), les distingue.
+    sans_t_matin = {"NON_PUBLISHABLE:ODDS_DEFAULT", "CONTRACT:NO_PREDICTION"}
+    equivalents = [rid for rid in sorted(set(attendu) & set(obtenu))
+                   if attendu[rid] != obtenu[rid] and {attendu[rid], obtenu[rid]} <= sans_t_matin]
     ecarts = [(rid, attendu.get(rid, "ABSENTE"), obtenu.get(rid, "ABSENTE")) for rid in sorted(set(attendu) | set(obtenu))
-              if attendu.get(rid) != obtenu.get(rid)]
+              if attendu.get(rid) != obtenu.get(rid) and rid not in equivalents]
     ca, co = Counter(attendu.values()), Counter(obtenu.values())
     lignes = [f"Journée de référence {ref['date']} à {ref['maintenant_utc']} ({ref['horizon']}) : "
               f"attendu {ca.get('ELIGIBLE', 0)} éligibles / {sum(ca.values()) - ca.get('ELIGIBLE', 0)} abstentions, "
               f"obtenu {co.get('ELIGIBLE', 0)} / {sum(co.values()) - co.get('ELIGIBLE', 0)}",
               "Parité : " + ("✅ identique course par course" if not ecarts else f"⛔ {len(ecarts)} écart(s)")]
-    lignes += [f"  {rid} : attendu {a}, obtenu {o}" for rid, a, o in ecarts[:20]]
+    if equivalents:
+        lignes.append(f"Motif équivalent (pas de T_MATIN à l'instant de référence ; cotes des partants mises à jour depuis) : {', '.join(equivalents)}")
+    t_matin_post = [x for x in posterieures if x[1] == ref["horizon"]]
+    lignes.append(f"Prédictions du moteur verrouillées après l'instant de référence (écartées du rejeu) : {len(posterieures)}"
+                  + (f", dont {len(t_matin_post)} {ref['horizon']} : " + ", ".join(f"{r} ({l})" for r, _, l in t_matin_post[:10]) if t_matin_post else ""))
+    for rid, a, o in ecarts[:20]:
+        pr = con.execute("select lock_time_utc, odds_real, priced_ratio from predictions where race_id=? and engine_name=? and horizon=?",
+                         (rid, config.ENGINE_NAME, ref["horizon"])).fetchone()
+        n_run, n_reel = con.execute("select count(*), sum(coalesce(odds_is_real, 0)) from runners where race_id=?", (rid,)).fetchone()
+        lignes.append(f"  {rid} : attendu {a}, obtenu {o} · {ref['horizon']} "
+                      + (f"verrou {pr['lock_time_utc']}, odds_real {pr['odds_real']}, priced_ratio {pr['priced_ratio']}" if pr else "absente")
+                      + f" · partants à cote réelle {n_reel or 0}/{n_run}")
     return not ecarts, lignes, ecarts
 

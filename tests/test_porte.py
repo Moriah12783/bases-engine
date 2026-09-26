@@ -67,3 +67,22 @@ def test_gate_parity_on_reference_day_and_gap_report(snapshot, tmp_path):
     p = tmp_path / "ref.json"; p.write_text(json.dumps(ref), encoding="utf-8")
     ok, lignes, ecarts = porte.parite(con, p)
     assert not ok and ecarts == [("R1C1_21092026_LA CAPELLE", "FIELD_TOO_SMALL", "ELIGIBLE")] and "1 écart(s)" in lignes[1]
+
+
+def test_parity_replays_as_of_the_reference_instant(snapshot, tmp_path):
+    """Une T_MATIN ajoutée après l'instant de référence (base en ajout seul) est écartée du rejeu et signalée, pas comptée en écart."""
+    import shutil, sqlite3
+    from bases_engine.fetch import Snapshot
+    db = tmp_path / "turf_bench.db"; shutil.copy(snapshot.db_path, db)
+    c = sqlite3.connect(db)
+    c.execute("update runners set odds_is_real=1 where race_id='R8C8_21092026_LE MONT SAINT MICHEL'")
+    c.execute("""insert into predictions select race_id, engine_name, 'T_MATIN', contract_version, prediction_hash, 1, 1.0, 0, probabilities_json,
+                 selection_json, '2026-09-21T13:02:00.000000', confidence_stars from predictions where race_id='R1C1_21092026_LA CAPELLE'
+                 and engine_name='NEW_VALUE_ENGINE' and horizon='T_MATIN'""")
+    c.execute("update predictions set race_id='R8C8_21092026_LE MONT SAINT MICHEL' where lock_time_utc='2026-09-21T13:02:00.000000'")
+    c.commit(); c.close()
+    ok, lignes, ecarts = porte.parite(Snapshot("x", tmp_path, db, {}).connect())
+    assert ok and not ecarts
+    texte = "\n".join(lignes)
+    assert "R8C8_21092026_LE MONT SAINT MICHEL (2026-09-21T13:02:00.000000)" in texte and "Motif équivalent" in texte
+
