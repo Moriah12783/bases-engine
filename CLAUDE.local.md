@@ -96,3 +96,8 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 
 - Contrôle 09:50 : filets soir de la nuit (00:23, 01:59) en répétition, déploiement sauté ; matin métronome 09:05 sur R2 (sha256 1df95b77b426, poussée 09:02:22) : 21 éditions, 4 abstentions, déployé ; aucune alerte, aucune journée perdue.
 - Fait : fixture synthétique générée à chaque session (spec publique PMU + sorties moteur synthétisées), journée de cas limites 18/09, extrait réel et make_fixture.py retirés, exception anti-base supprimée ; commande parite-porte + workflow parite.yml + hebdo.
+
+## 2026-09-26 (10:05) — Parité de la porte verte sur R2 ; T_MATIN tardives (question au mentor)
+
+- Run parité n°2 (bf09d94) : 20 éligibles / 12 abstentions, identique course par course. Run n°1 rouge (1 écart R8C8) : T_MATIN verrouillée après 09:05 et cotes des partants mises à jour ; rejeu corrigé à l'instant de référence.
+- Constat : le moteur crée des T_MATIN « tardives » quand les cotes deviennent réelles (Mont-Saint-Michel 21/09 : verrous de 10:16 à 13:45, environ 1 h 45 avant chaque départ). Aucune édition servie 22→26/09 n'en a utilisé (toutes verrouillées avant 06:35). Question au mentor : une passe planifiée tardive (11:05, 13:05) doit-elle accepter une T_MATIN verrouillée après 06:30 ? Aujourd'hui oui (la garde exige seulement pushed-at > verrou).
