@@ -1,0 +1,12996 @@
+{
+"note": "Données publiques PMU (programme, partants, non-partants, cotes du matin, paris offerts, arrivées) des 20 et 21/09/2026, et liste des horizons auxquels le moteur a publié. Aucune sortie du moteur (probabilités, sélections, empreintes) : le script scripts/generer_fixture.py les synthétise avec une graine fixe.",
+"courses": [
+{
+"race_id": "R1C1_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 1,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T11:34:00Z",
+"depart_affiche": "11:34 GMT (13:34 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 46.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 50.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.0
+}
+],
+"arrivee": [
+3,
+9,
+7,
+10,
+5,
+11,
+4,
+8,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C2_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 2,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-20T12:07:00Z",
+"depart_affiche": "12:07 GMT (14:07 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 47.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 65.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.6
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 47.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.6
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+}
+],
+"arrivee": [
+8,
+10,
+9,
+3,
+12,
+2,
+5,
+1,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C3_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 3,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_MONTE",
+"distance": 2700,
+"depart_utc": "2026-09-20T12:40:00Z",
+"depart_affiche": "12:40 GMT (14:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 110.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 57.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 57.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+3,
+8,
+13,
+5,
+4,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C4_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 4,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-20T13:15:00Z",
+"depart_affiche": "13:15 GMT (15:15 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"TIERCE",
+"E_TIERCE",
+"QUARTE_PLUS",
+"E_QUARTE_PLUS",
+"QUINTE_PLUS",
+"E_QUINTE_PLUS",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.4
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 28.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.8
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.6
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 39.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.5
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+}
+],
+"arrivee": [
+8,
+13,
+12,
+7,
+4,
+5,
+1,
+3,
+9,
+10,
+2,
+11,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C5_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 5,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_MONTE",
+"distance": 2850,
+"depart_utc": "2026-09-20T13:50:00Z",
+"depart_affiche": "13:50 GMT (15:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"PICK5",
+"E_PICK5",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 43.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.9
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+}
+],
+"arrivee": [
+12,
+11,
+4,
+3,
+10,
+9,
+5,
+2,
+6,
+8,
+7
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C6_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 6,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2100,
+"depart_utc": "2026-09-20T14:25:00Z",
+"depart_affiche": "14:25 GMT (16:25 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 51.0
+},
+{
+"num": 9,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+5,
+6,
+2,
+10,
+4,
+1,
+3,
+7,
+11,
+8
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C7_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 7,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-20T15:00:00Z",
+"depart_affiche": "15:00 GMT (17:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"PICK5",
+"E_PICK5",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 12,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.2
+}
+],
+"arrivee": [
+13,
+8,
+11,
+5,
+6,
+1,
+3,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C8_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 8,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T15:38:00Z",
+"depart_affiche": "15:38 GMT (17:38 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 2,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 6.5
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.6
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.9
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+}
+],
+"arrivee": [
+17,
+1,
+14,
+3,
+4,
+16,
+8,
+9,
+12,
+13,
+6,
+7,
+5,
+11,
+10,
+18
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C9_20092026_VINCENNES",
+"date": "2026-09-20",
+"reunion": 1,
+"course": 9,
+"hippodrome": "VINCENNES",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T16:13:00Z",
+"depart_affiche": "16:13 GMT (18:13 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 15,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 47.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.8
+},
+{
+"num": 6,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.4
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 47.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+}
+],
+"arrivee": [
+12,
+5,
+1,
+4,
+14,
+10,
+9,
+13
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C1_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 1,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T08:45:00Z",
+"depart_affiche": "08:45 GMT (10:45 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.3
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.8
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 73.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 52.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.8
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 532.0
+}
+],
+"arrivee": [
+2,
+14,
+11,
+13,
+4,
+8,
+5,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C2_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 2,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T09:15:00Z",
+"depart_affiche": "09:15 GMT (11:15 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 263.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 163.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 78.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 78.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 78.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+7,
+11,
+4,
+6,
+10,
+13,
+1,
+8,
+5,
+3,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C3_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 3,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T09:47:00Z",
+"depart_affiche": "09:47 GMT (11:47 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 103.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 103.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.3
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.6
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.3
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+}
+],
+"arrivee": [
+2,
+9,
+10,
+14,
+11,
+1,
+8,
+13,
+3,
+4,
+7,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C4_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 4,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T10:20:00Z",
+"depart_affiche": "10:20 GMT (12:20 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 37.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.6
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 60.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 183.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+}
+],
+"arrivee": [
+6,
+10,
+3,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C5_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 5,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T10:51:00Z",
+"depart_affiche": "10:51 GMT (12:51 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 59.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 124.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 46.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+}
+],
+"arrivee": [
+1,
+8,
+5,
+6,
+7,
+10,
+9,
+11,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C6_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 6,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T11:20:00Z",
+"depart_affiche": "11:20 GMT (13:20 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 2,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 113.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 56.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 92.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.2
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+}
+],
+"arrivee": [
+1,
+3,
+6,
+14,
+11,
+10,
+5,
+12,
+8,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R2C7_20092026_CHOLET",
+"date": "2026-09-20",
+"reunion": 2,
+"course": 7,
+"hippodrome": "CHOLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T11:50:00Z",
+"depart_affiche": "11:50 GMT (13:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 63.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+}
+],
+"arrivee": [
+11,
+14,
+6,
+2,
+5,
+8,
+3,
+1,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C1_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 1,
+"hippodrome": "STRASBOURG",
+"discipline": "OBSTACLE_HAIE",
+"distance": 3600,
+"depart_utc": "2026-09-20T09:00:00Z",
+"depart_affiche": "09:00 GMT (11:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 8,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.4
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.5
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.5
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.5
+}
+],
+"arrivee": [
+6,
+2,
+3,
+7,
+1,
+8,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C2_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 2,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 1400,
+"depart_utc": "2026-09-20T09:34:00Z",
+"depart_affiche": "09:34 GMT (11:34 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 6,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.3
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.5
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 97.0
+}
+],
+"arrivee": [
+4,
+2,
+3,
+6,
+1,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C3_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 3,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 2350,
+"depart_utc": "2026-09-20T10:05:00Z",
+"depart_affiche": "10:05 GMT (12:05 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.9
+}
+],
+"arrivee": [
+5,
+8,
+2,
+4,
+10,
+7,
+6,
+9,
+1,
+12,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C4_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 4,
+"hippodrome": "STRASBOURG",
+"discipline": "OBSTACLE_STEEPLE",
+"distance": 4200,
+"depart_utc": "2026-09-20T10:35:00Z",
+"depart_affiche": "10:35 GMT (12:35 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 9,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.3
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 41.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.4
+}
+],
+"arrivee": [
+4,
+9,
+7,
+8,
+1,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C5_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 5,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-20T11:06:00Z",
+"depart_affiche": "11:06 GMT (13:06 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.9
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 52.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 216.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+}
+],
+"arrivee": [
+16,
+3,
+11,
+1,
+5,
+10,
+2,
+7,
+8,
+12,
+15,
+6,
+4,
+13,
+9,
+14
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C6_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 6,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 2100,
+"depart_utc": "2026-09-20T11:48:00Z",
+"depart_affiche": "11:48 GMT (13:48 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+2,
+3,
+4,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C7_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 7,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 1550,
+"depart_utc": "2026-09-20T12:21:00Z",
+"depart_affiche": "12:21 GMT (14:21 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.6
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.9
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+}
+],
+"arrivee": [
+5,
+8,
+9,
+4,
+12,
+1,
+3,
+2,
+7,
+10,
+6,
+11
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C8_20092026_STRASBOURG",
+"date": "2026-09-20",
+"reunion": 3,
+"course": 8,
+"hippodrome": "STRASBOURG",
+"discipline": "PLAT",
+"distance": 1550,
+"depart_utc": "2026-09-20T12:54:00Z",
+"depart_affiche": "12:54 GMT (14:54 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 12,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": [
+10,
+8,
+3,
+1,
+7,
+5,
+9,
+6,
+4,
+2,
+11
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C1_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 1,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 1200,
+"depart_utc": "2026-09-20T13:32:00Z",
+"depart_affiche": "13:32 GMT (15:32 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.2
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+}
+],
+"arrivee": [
+8,
+10,
+2,
+1,
+9,
+5,
+6,
+7,
+3,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C2_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 2,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 2200,
+"depart_utc": "2026-09-20T14:07:00Z",
+"depart_affiche": "14:07 GMT (16:07 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.2
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.6
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+}
+],
+"arrivee": [
+3,
+4,
+6,
+12,
+7,
+10,
+1,
+9,
+2,
+5,
+8,
+11
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C3_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 3,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 2200,
+"depart_utc": "2026-09-20T14:42:00Z",
+"depart_affiche": "14:42 GMT (16:42 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 46.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.9
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.3
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+}
+],
+"arrivee": [
+6,
+2,
+4,
+12,
+9,
+11,
+8,
+3,
+1,
+7,
+5,
+10
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C4_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 4,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 1400,
+"depart_utc": "2026-09-20T15:21:00Z",
+"depart_affiche": "15:21 GMT (17:21 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 8,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+6,
+1,
+5,
+7,
+2,
+3,
+8,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C5_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 5,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-20T15:54:00Z",
+"depart_affiche": "15:54 GMT (17:54 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 6,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 3,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 57.0
+}
+],
+"arrivee": [
+2,
+1,
+4,
+5,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C6_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 6,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 2200,
+"depart_utc": "2026-09-20T16:29:00Z",
+"depart_affiche": "16:29 GMT (18:29 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.8
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.0
+}
+],
+"arrivee": [
+1,
+4,
+2,
+5,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C7_20092026_FONTAINEBLEAU",
+"date": "2026-09-20",
+"reunion": 4,
+"course": 7,
+"hippodrome": "FONTAINEBLEAU",
+"discipline": "PLAT",
+"distance": 2600,
+"depart_utc": "2026-09-20T17:02:00Z",
+"depart_affiche": "17:02 GMT (19:02 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 9,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 35.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.9
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.3
+},
+{
+"num": 8,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.3
+}
+],
+"arrivee": [
+6,
+7,
+5,
+9,
+4,
+2,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C1_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 1,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2625,
+"depart_utc": "2026-09-20T11:10:00Z",
+"depart_affiche": "11:10 GMT (13:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 9,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 95.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+}
+],
+"arrivee": [
+7,
+5,
+9,
+4,
+3,
+6,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C2_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 2,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T11:40:00Z",
+"depart_affiche": "11:40 GMT (13:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.8
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.9
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.3
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 39.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 79.0
+}
+],
+"arrivee": [
+8,
+2,
+10,
+4,
+11,
+5,
+3,
+7,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C3_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 3,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T12:10:00Z",
+"depart_affiche": "12:10 GMT (14:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 41.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 103.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+}
+],
+"arrivee": [
+11,
+7,
+9,
+3,
+5,
+4,
+1,
+13,
+12
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C4_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 4,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T12:40:00Z",
+"depart_affiche": "12:40 GMT (14:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 60.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 9,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+}
+],
+"arrivee": [
+2,
+1,
+5,
+11,
+4,
+7,
+3,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C5_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 5,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2625,
+"depart_utc": "2026-09-20T13:10:00Z",
+"depart_affiche": "13:10 GMT (15:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.8
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.3
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+}
+],
+"arrivee": [
+13,
+6,
+8,
+2,
+9,
+10,
+12,
+7,
+4,
+11,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C6_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 6,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T13:40:00Z",
+"depart_affiche": "13:40 GMT (15:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 135.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 135.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.4
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 95.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 54.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 135.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+}
+],
+"arrivee": [
+11,
+4,
+10,
+7,
+9,
+6,
+16
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C7_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 7,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T14:10:00Z",
+"depart_affiche": "14:10 GMT (16:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 76.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 76.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.2
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 76.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 74.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 56.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 56.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+}
+],
+"arrivee": [
+5,
+7,
+4,
+11,
+2,
+13,
+8,
+6,
+3,
+15
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C8_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 8,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2625,
+"depart_utc": "2026-09-20T14:40:00Z",
+"depart_affiche": "14:40 GMT (16:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 79.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.9
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+}
+],
+"arrivee": [
+3,
+5,
+7,
+8,
+9,
+6,
+1,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C9_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 9,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2050,
+"depart_utc": "2026-09-20T15:10:00Z",
+"depart_affiche": "15:10 GMT (17:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"QUARTE_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.9
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+}
+],
+"arrivee": [
+1,
+6,
+2,
+10,
+4,
+7,
+8,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C10_20092026_AGEN LA GARENNE",
+"date": "2026-09-20",
+"reunion": 8,
+"course": 10,
+"hippodrome": "AGEN LA GARENNE",
+"discipline": "TROT_ATTELE",
+"distance": 2575,
+"depart_utc": "2026-09-20T15:45:00Z",
+"depart_affiche": "15:45 GMT (17:45 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 80.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 80.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+}
+],
+"arrivee": [
+6,
+5,
+8,
+11,
+12,
+10,
+7,
+2,
+9,
+3,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C1_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 1,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_MONTE",
+"distance": 2850,
+"depart_utc": "2026-09-20T11:30:00Z",
+"depart_affiche": "11:30 GMT (13:30 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 9,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.5
+},
+{
+"num": 3,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+}
+],
+"arrivee": [
+6,
+4,
+7,
+8,
+2,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C2_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 2,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T12:00:00Z",
+"depart_affiche": "12:00 GMT (14:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 6,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+}
+],
+"arrivee": [
+5,
+3,
+4,
+2,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C3_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 3,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T12:35:00Z",
+"depart_affiche": "12:35 GMT (14:35 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 75.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 50.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.5
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.1
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+}
+],
+"arrivee": [
+14,
+3,
+9,
+7,
+11,
+10,
+5,
+8,
+2,
+4,
+6,
+12,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C4_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 4,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T13:05:00Z",
+"depart_affiche": "13:05 GMT (15:05 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 153.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 67.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.7
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+}
+],
+"arrivee": [
+14,
+13,
+10,
+12,
+3,
+1,
+5,
+6,
+9,
+11,
+4,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C5_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 5,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T13:45:00Z",
+"depart_affiche": "13:45 GMT (15:45 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 15,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 6,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 4.2
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 101.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 101.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 50.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 28.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+}
+],
+"arrivee": [
+3,
+9,
+15,
+2,
+5,
+13,
+8,
+10,
+12,
+11,
+4,
+7,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C6_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 6,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T14:15:00Z",
+"depart_affiche": "14:15 GMT (16:15 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 75.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 150.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 150.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+}
+],
+"arrivee": [
+16,
+14,
+15,
+8,
+9,
+7,
+1,
+10,
+2,
+12,
+5,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C7_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 7,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T14:45:00Z",
+"depart_affiche": "14:45 GMT (16:45 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"QUARTE_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 80.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 61.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 11,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.6
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+}
+],
+"arrivee": [
+2,
+6,
+10,
+8,
+5,
+4,
+3,
+9,
+7,
+12,
+13
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R9C8_20092026_LYON-PARILLY",
+"date": "2026-09-20",
+"reunion": 9,
+"course": 8,
+"hippodrome": "LYON-PARILLY",
+"discipline": "TROT_ATTELE",
+"distance": 2850,
+"depart_utc": "2026-09-20T15:15:00Z",
+"depart_affiche": "15:15 GMT (17:15 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 63.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 126.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 63.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+}
+],
+"arrivee": [
+5,
+14,
+10,
+7,
+8,
+4,
+9,
+3,
+12,
+2,
+6,
+11,
+13
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C1_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 1,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_STEEPLE",
+"distance": 3500,
+"depart_utc": "2026-09-20T12:30:00Z",
+"depart_affiche": "12:30 GMT (14:30 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.6
+}
+],
+"arrivee": [
+5,
+3,
+2,
+4,
+1
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C2_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 2,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_HAIE",
+"distance": 3500,
+"depart_utc": "2026-09-20T13:00:00Z",
+"depart_affiche": "13:00 GMT (15:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 7,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.2
+}
+],
+"arrivee": [
+4,
+7,
+1,
+6,
+3,
+2,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C3_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 3,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_STEEPLE",
+"distance": 4100,
+"depart_utc": "2026-09-20T13:30:00Z",
+"depart_affiche": "13:30 GMT (15:30 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 8,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.1
+},
+{
+"num": 5,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.0
+},
+{
+"num": 7,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 97.0
+}
+],
+"arrivee": [
+1,
+4,
+8,
+6,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C4_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 4,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_HAIE",
+"distance": 3500,
+"depart_utc": "2026-09-20T14:00:00Z",
+"depart_affiche": "14:00 GMT (16:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 9,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 39.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.8
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": [
+8,
+4,
+5,
+1,
+3,
+7,
+2,
+6,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C5_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 5,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_STEEPLE",
+"distance": 3800,
+"depart_utc": "2026-09-20T14:30:00Z",
+"depart_affiche": "14:30 GMT (16:30 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+}
+],
+"arrivee": [
+3,
+4,
+2,
+1,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C6_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 6,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_HAIE",
+"distance": 3800,
+"depart_utc": "2026-09-20T15:00:00Z",
+"depart_affiche": "15:00 GMT (17:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+}
+],
+"arrivee": [
+1,
+3,
+2,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R10C7_20092026_DAX",
+"date": "2026-09-20",
+"reunion": 10,
+"course": 7,
+"hippodrome": "DAX",
+"discipline": "OBSTACLE_STEEPLE",
+"distance": 3500,
+"depart_utc": "2026-09-20T15:30:00Z",
+"depart_affiche": "15:30 GMT (17:30 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 5,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.9
+}
+],
+"arrivee": [
+4,
+1,
+2,
+3,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C1_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 1,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2000,
+"depart_utc": "2026-09-20T11:50:00Z",
+"depart_affiche": "11:50 GMT (13:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 48.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.9
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+}
+],
+"arrivee": [
+7,
+9,
+5,
+2,
+11,
+12,
+13,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C2_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 2,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2000,
+"depart_utc": "2026-09-20T12:20:00Z",
+"depart_affiche": "12:20 GMT (14:20 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 119.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 124.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.5
+}
+],
+"arrivee": [
+9,
+10,
+11,
+6,
+7,
+8,
+12
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C3_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 3,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T12:55:00Z",
+"depart_affiche": "12:55 GMT (14:55 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 74.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 74.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.2
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.3
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+}
+],
+"arrivee": [
+13,
+14,
+8
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C4_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 4,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T13:20:00Z",
+"depart_affiche": "13:20 GMT (15:20 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 64.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 244.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.2
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 40.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 97.0
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+}
+],
+"arrivee": [
+11,
+14,
+15,
+12,
+18,
+10,
+17,
+9,
+4,
+2,
+6,
+5,
+1,
+16,
+3
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C5_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 5,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T13:50:00Z",
+"depart_affiche": "13:50 GMT (15:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 17,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 109.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 109.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 57.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+}
+],
+"arrivee": [
+8,
+6,
+5,
+12,
+16,
+17,
+9,
+3,
+7,
+11,
+1,
+2,
+14,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C6_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 6,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T14:25:00Z",
+"depart_affiche": "14:25 GMT (16:25 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 43.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+}
+],
+"arrivee": [
+12,
+11,
+13,
+2,
+14,
+1,
+7,
+10,
+9
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C7_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 7,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T14:50:00Z",
+"depart_affiche": "14:50 GMT (16:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 85.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 49.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 85.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 98.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 128.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 98.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 256.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 51.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 128.0
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 18,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": [
+11,
+6,
+4,
+16,
+17,
+7,
+9,
+10,
+12,
+1,
+14,
+8,
+15,
+2,
+13
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R11C8_20092026_RAMBOUILLET",
+"date": "2026-09-20",
+"reunion": 11,
+"course": 8,
+"hippodrome": "RAMBOUILLET",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T15:25:00Z",
+"depart_affiche": "15:25 GMT (17:25 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 60.0
+},
+{
+"num": 3,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.8
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 60.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 39.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+}
+],
+"arrivee": [
+14,
+9,
+11,
+15,
+16,
+5,
+12,
+7,
+6,
+8,
+10,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C1_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 1,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T12:00:00Z",
+"depart_affiche": "12:00 GMT (14:00 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 100.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 50.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.3
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 50.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.4
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+}
+],
+"arrivee": [
+12,
+9,
+8,
+7,
+11,
+5,
+4,
+10,
+3,
+2,
+6
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C2_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 2,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2825,
+"depart_utc": "2026-09-20T12:35:00Z",
+"depart_affiche": "12:35 GMT (14:35 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 33.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+}
+],
+"arrivee": [
+5,
+7,
+1,
+11,
+15,
+14,
+12,
+16,
+3,
+13,
+8,
+2
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C3_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 3,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T13:10:00Z",
+"depart_affiche": "13:10 GMT (15:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 34.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 34.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 34.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.1
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+}
+],
+"arrivee": [
+18,
+5,
+17,
+3,
+16,
+15,
+12,
+14,
+10,
+4,
+11,
+8
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C4_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 4,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T13:40:00Z",
+"depart_affiche": "13:40 GMT (15:40 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 28.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 70.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 70.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 70.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 82.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 70.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 88.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.8
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+}
+],
+"arrivee": [
+15,
+14,
+16,
+18,
+7,
+12,
+17,
+13,
+1,
+2,
+8,
+3,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C5_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 5,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2825,
+"depart_utc": "2026-09-20T14:10:00Z",
+"depart_affiche": "14:10 GMT (16:10 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 58.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 88.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 10,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 88.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.3
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.0
+}
+],
+"arrivee": [
+11,
+18,
+5,
+13,
+2,
+3,
+16,
+14,
+4,
+12,
+8,
+1,
+17
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C6_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 6,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T14:45:00Z",
+"depart_affiche": "14:45 GMT (16:45 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 18,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 35.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 143.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 71.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 107.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 28.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.7
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 41.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 143.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.3
+},
+{
+"num": 17,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 18,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+}
+],
+"arrivee": [
+11,
+16,
+13,
+7,
+10,
+6,
+17,
+8,
+14,
+3,
+1,
+12,
+2,
+4
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C7_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 7,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2800,
+"depart_utc": "2026-09-20T15:20:00Z",
+"depart_affiche": "15:20 GMT (17:20 Paris)",
+"status": "FINISHED",
+"pmu_statut": "FIN_COURSE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.8
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 78.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.4
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+}
+],
+"arrivee": [
+10,
+9,
+3,
+4,
+8,
+11,
+7,
+12,
+6,
+1,
+2,
+5
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R12C8_20092026_VIRE",
+"date": "2026-09-20",
+"reunion": 12,
+"course": 8,
+"hippodrome": "VIRE",
+"discipline": "TROT_ATTELE",
+"distance": 2825,
+"depart_utc": "2026-09-20T15:50:00Z",
+"depart_affiche": "15:50 GMT (17:50 Paris)",
+"status": "FINISHED",
+"pmu_statut": "ARRIVEE_DEFINITIVE_COMPLETE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 5,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+}
+],
+"arrivee": [
+9,
+1,
+8,
+2,
+6,
+3,
+7
+],
+"arrivee_statut": "DEFINITIVE",
+"arrivee_finalite": "VERIFIEE_PMU",
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T15",
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C1_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 1,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2750,
+"depart_utc": "2026-09-21T11:55:00Z",
+"depart_affiche": "11:55 GMT (13:55 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"MULTI",
+"E_MULTI",
+"TIERCE",
+"E_TIERCE",
+"QUARTE_PLUS",
+"E_QUARTE_PLUS",
+"QUINTE_PLUS",
+"E_QUINTE_PLUS",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 93.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 48.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 55.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 48.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 96.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.6
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 58.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.6
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.2
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C2_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 2,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-21T12:30:00Z",
+"depart_affiche": "12:30 GMT (14:30 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 11,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 44.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 142.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C3_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 3,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-21T13:05:00Z",
+"depart_affiche": "13:05 GMT (15:05 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 100.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C4_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 4,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_MONTE",
+"distance": 2750,
+"depart_utc": "2026-09-21T13:40:00Z",
+"depart_affiche": "13:40 GMT (15:40 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 46.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 46.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 76.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 41.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 58.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 83.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C5_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 5,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2750,
+"depart_utc": "2026-09-21T14:15:00Z",
+"depart_affiche": "14:15 GMT (16:15 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"PICK5",
+"E_PICK5",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 54.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 36.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 38.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.8
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 108.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.3
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.5
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C6_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 6,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-21T14:51:00Z",
+"depart_affiche": "14:51 GMT (16:51 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 16,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 45.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 39.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 126.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.8
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 13,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 3.1
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.5
+},
+{
+"num": 16,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C7_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 7,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2700,
+"depart_utc": "2026-09-21T15:29:00Z",
+"depart_affiche": "15:29 GMT (17:29 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 15,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 34.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 41.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 63.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R1C8_21092026_LA CAPELLE",
+"date": "2026-09-21",
+"reunion": 1,
+"course": 8,
+"hippodrome": "LA CAPELLE",
+"discipline": "TROT_ATTELE",
+"distance": 2750,
+"depart_utc": "2026-09-21T16:07:00Z",
+"depart_affiche": "16:07 GMT (18:07 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 15,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"PICK5",
+"E_PICK5",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.8
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 74.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 21.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 42.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C1_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 1,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 2100,
+"depart_utc": "2026-09-21T09:20:00Z",
+"depart_affiche": "09:20 GMT (11:20 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 8,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 13.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T30",
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T30",
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C2_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 2,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 2100,
+"depart_utc": "2026-09-21T09:51:00Z",
+"depart_affiche": "09:51 GMT (11:51 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 6,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 48.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C3_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 3,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 2300,
+"depart_utc": "2026-09-21T10:23:00Z",
+"depart_affiche": "10:23 GMT (12:23 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 7,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.1
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 58.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.3
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.7
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T90",
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T90",
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C4_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 4,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 1600,
+"depart_utc": "2026-09-21T10:55:00Z",
+"depart_affiche": "10:55 GMT (12:55 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 3,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 54.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 19.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C5_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 5,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 1600,
+"depart_utc": "2026-09-21T11:27:00Z",
+"depart_affiche": "11:27 GMT (13:27 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 35.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.4
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.4
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C6_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 6,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 3000,
+"depart_utc": "2026-09-21T12:12:00Z",
+"depart_affiche": "12:12 GMT (14:12 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 83.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.9
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 56.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 58.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C7_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 7,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 2100,
+"depart_utc": "2026-09-21T12:47:00Z",
+"depart_affiche": "12:47 GMT (14:47 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 31.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.8
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.7
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R3C8_21092026_ANGERS",
+"date": "2026-09-21",
+"reunion": 3,
+"course": 8,
+"hippodrome": "ANGERS",
+"discipline": "PLAT",
+"distance": 1350,
+"depart_utc": "2026-09-21T13:22:00Z",
+"depart_affiche": "13:22 GMT (15:22 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 125.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.1
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 30.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.4
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 43.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C1_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 1,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 1400,
+"depart_utc": "2026-09-21T13:57:00Z",
+"depart_affiche": "13:57 GMT (15:57 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 15,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.9
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 26.0
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 5.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.3
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 27.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.3
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.3
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 16.0
+},
+{
+"num": 15,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.1
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C2_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 2,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T14:33:00Z",
+"depart_affiche": "14:33 GMT (16:33 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 10,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.7
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.9
+},
+{
+"num": 8,
+"np": 1,
+"cote_reelle": 1,
+"cote_matin": 2.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 14.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C3_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 3,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T15:10:00Z",
+"depart_affiche": "15:10 GMT (17:10 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 8,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"TRIO",
+"E_TRIO",
+"SUPER_QUATRE",
+"E_SUPER_QUATRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.5
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.8
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.2
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.3
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 4.1
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.3
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C4_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 4,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T15:48:00Z",
+"depart_affiche": "15:48 GMT (17:48 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MULTI",
+"E_MULTI",
+"QUARTE_PLUS",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 20.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 81.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.2
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 18.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 47.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 22.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 32.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 9.4
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.7
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C5_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 5,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T16:25:00Z",
+"depart_affiche": "16:25 GMT (18:25 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 72.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 11.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 2.5
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 123.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.9
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.9
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.8
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 23.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C6_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 6,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T16:57:00Z",
+"depart_affiche": "16:57 GMT (18:57 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 24.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 51.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 87.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 118.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.4
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 6.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 12.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 8.5
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C7_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 7,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T17:27:00Z",
+"depart_affiche": "17:27 GMT (19:27 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 13,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"E_COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"E_COUPLE_PLACE",
+"DEUX_SUR_QUATRE",
+"E_DEUX_SUR_QUATRE",
+"TRIO",
+"E_TRIO",
+"MINI_MULTI",
+"E_MINI_MULTI",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 5.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 25.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 10.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.4
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.7
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 17.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 7.7
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 29.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R4C8_21092026_VICHY",
+"date": "2026-09-21",
+"reunion": 4,
+"course": 8,
+"hippodrome": "VICHY",
+"discipline": "PLAT",
+"distance": 2000,
+"depart_utc": "2026-09-21T17:57:00Z",
+"depart_affiche": "17:57 GMT (19:57 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 4,
+"paris": [
+"SIMPLE_GAGNANT",
+"E_SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"E_SIMPLE_PLACE",
+"COUPLE_ORDRE",
+"E_COUPLE_ORDRE",
+"TRIO_ORDRE",
+"E_TRIO_ORDRE",
+"REPORT_PLUS",
+"E_REPORT_PLUS"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 1.1
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.2
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 1,
+"cote_matin": 3.6
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [
+"T_MATIN"
+],
+"MARKET_BASELINE": [
+"T_MATIN"
+]
+}
+},
+{
+"race_id": "R8C1_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 1,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T10:30:00Z",
+"depart_affiche": "10:30 GMT (12:30 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C2_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 2,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T11:00:00Z",
+"depart_affiche": "11:00 GMT (13:00 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C3_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 3,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T11:30:00Z",
+"depart_affiche": "11:30 GMT (13:30 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C4_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 4,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T12:00:00Z",
+"depart_affiche": "12:00 GMT (14:00 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C5_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 5,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T12:30:00Z",
+"depart_affiche": "12:30 GMT (14:30 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C6_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 6,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T13:00:00Z",
+"depart_affiche": "13:00 GMT (15:00 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 12,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C7_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 7,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T13:30:00Z",
+"depart_affiche": "13:30 GMT (15:30 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+},
+{
+"race_id": "R8C8_21092026_LE MONT SAINT MICHEL",
+"date": "2026-09-21",
+"reunion": 8,
+"course": 8,
+"hippodrome": "LE MONT SAINT MICHEL",
+"discipline": "TROT_ATTELE",
+"distance": 2675,
+"depart_utc": "2026-09-21T14:00:00Z",
+"depart_affiche": "14:00 GMT (16:00 Paris)",
+"status": "SCHEDULED",
+"pmu_statut": "PROGRAMMEE",
+"partants_declares": 14,
+"paris": [
+"SIMPLE_GAGNANT",
+"SIMPLE_PLACE",
+"COUPLE_GAGNANT",
+"COUPLE_PLACE",
+"TRIO"
+],
+"partants": [
+{
+"num": 1,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 2,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 3,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 4,
+"np": 1,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 5,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 6,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 7,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 8,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 9,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 10,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 11,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 12,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 13,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+},
+{
+"num": 14,
+"np": 0,
+"cote_reelle": 0,
+"cote_matin": 15.0
+}
+],
+"arrivee": null,
+"arrivee_statut": null,
+"arrivee_finalite": null,
+"horizons_publies": {
+"NEW_VALUE_ENGINE": [],
+"MARKET_BASELINE": []
+}
+}
+]
+}

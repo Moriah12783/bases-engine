@@ -1,5 +1,6 @@
 """Source moteur R2 (décision du mentor du 25/09/2026) : faux client S3, aucune clé dans la session."""
 import hashlib
+import os
 import io
 import json
 import re
@@ -15,7 +16,7 @@ from bases_engine import config, storage
 from bases_engine.fetch import FetchError, get_snapshot, r2_client, source_header
 
 ROOT = Path(__file__).resolve().parent.parent
-FIX = ROOT / "fixtures" / "snapshot"
+FIX = Path(os.environ["BASES_LOCAL_SNAPSHOT_DIR"])          # base synthétique générée par conftest
 NOW = datetime(2026, 9, 21, 9, 5, tzinfo=timezone.utc)
 
 
@@ -113,12 +114,12 @@ def test_no_read_of_the_engine_repository_remains():
 
 
 def test_engine_database_is_never_tracked():
-    """Seule bases.db est suivie ; l'extrait de test fixtures/snapshot/turf_bench.db (Sprint 1) est l'unique exception,
-    signalée au mentor. Toute autre base (dont une copie R2 du cache) fait échouer le test."""
+    """Seule bases.db est suivie (plus aucune exception depuis la fixture synthétique générée, décision du mentor du 25/09/2026).
+    Toute autre base, dont une copie R2 du cache ou une base de test, fait échouer le test."""
     tracked = subprocess.run(["git", "ls-files", "*.db", "**/*.db"], cwd=ROOT, capture_output=True, text=True).stdout.split()
-    assert set(tracked) <= {"bases.db", "fixtures/snapshot/turf_bench.db"}, tracked
+    assert set(tracked) <= {"bases.db"}, tracked
     ign = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert "*.db" in ign and "!bases.db" in ign
+    assert "*.db" in ign and "!bases.db" in ign and "!fixtures/snapshot/turf_bench.db" not in ign
 
 
 def _env(tmp_path, monkeypatch):

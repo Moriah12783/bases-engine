@@ -98,6 +98,24 @@ def cmd_backtest(args) -> int:
     return 0
 
 
+def cmd_parite_porte(args) -> int:
+    """Test de parité de la porte sur la base R2 (lancé à chaque modification du code de la porte et avec l'hebdo)."""
+    from .notify import step_summary as _summary
+    from .porte import parite
+    snap = get_snapshot()
+    con = snap.connect()
+    try:
+        ok, lignes, _ = parite(con)
+    finally:
+        con.close()
+    corps = "\n".join([snap.header(), *lignes])
+    print(corps)
+    if not ok:
+        print(f"::error title=Parité de porte::{lignes[1]}")
+    _summary(f"{'✅' if ok else '⛔'} BASES — parité de la porte", corps)
+    return 0 if ok else 1
+
+
 def cmd_annexe_empreintes(args) -> int:
     """Annexe factuelle (décision du mentor du 25/09/2026, §3) : compare les prediction_hash des T_MATIN de la journée entre
     la copie Git figée (référence extraite avant la vérification) et la base R2. Règle fixée avant la vérification : une course
@@ -257,6 +275,9 @@ def main(argv=None) -> int:
     s = sub.add_parser("hebdo", help="lundi : recalibration (k, cible) hors répétitions, rapport hebdomadaire rapports/AAAA-Www.md")
     s.add_argument("--date"); s.add_argument("--sans-recalibration", action="store_true")
     s.set_defaults(fn=lambda a: __import__("bases_engine.hebdo", fromlist=["run_hebdo"]).run_hebdo(day=a.date, db_path=a.db, recalibrer=not a.sans_recalibration, declencheur=a.declencheur))
+
+    s = sub.add_parser("parite-porte", help="parité de la porte sur la base R2 : 21/09/2026 rejoué course par course (20 éligibles, 12 abstentions)")
+    s.set_defaults(fn=cmd_parite_porte)
 
     s = sub.add_parser("annexe-empreintes", help="annexe du protocole : prediction_hash des T_MATIN d'une journée, copie Git (référence figée) vs base R2")
     s.add_argument("--date", default="2026-09-24")

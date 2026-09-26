@@ -10,6 +10,8 @@ Verdicts de porte (indépendants de l'heure : le moteur décide à T_MATIN) :
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 from . import config
 from .eligibility import PRED_COLS, RACE_COLS
 
@@ -56,3 +58,36 @@ def comparer(bases: dict[str, str], moteur: dict[str, bool]) -> list[tuple[str, 
         if v is None or pub is None or (v == "OK") != pub:
             ecarts.append((rid, v or "ABSENTE_DE_LA_BASE", pub))
     return ecarts
+
+
+# ----------------------------------------------------------------------------
+# Test de parité de la porte sur la base réelle (décision du mentor du 25/09/2026, point 1)
+# ----------------------------------------------------------------------------
+
+REFERENCE_PARITE = config.ROOT / "fixtures" / "synthetique" / "parite_2026-09-21.json"
+
+
+def parite(con, reference_path=None) -> tuple[bool, list[str], list[tuple[str, str, str]]]:
+    """Rejoue l'éligibilité (mode matin, instant de référence) sur la journée de référence et compare course par course
+    aux décisions enregistrées (21/09/2026 : 20 éligibles, 12 abstentions). Retourne (parité, lignes de rapport, écarts)."""
+    import json
+    from collections import Counter
+    from datetime import datetime
+    from .eligibility import Abstention, evaluate_race
+    ref = json.loads(Path(reference_path or REFERENCE_PARITE).read_text(encoding="utf-8"))
+    now = datetime.fromisoformat(ref["maintenant_utc"].replace("Z", "+00:00"))
+    obtenu = {}
+    for (rid,) in con.execute("select race_id from races where date = ? order by race_id", (ref["date"],)):
+        ev = evaluate_race(con, rid, ref["horizon"], mode="matin", now=now)
+        obtenu[rid] = ev.motif if isinstance(ev, Abstention) else "ELIGIBLE"
+    attendu = ref["decisions"]
+    ecarts = [(rid, attendu.get(rid, "ABSENTE"), obtenu.get(rid, "ABSENTE")) for rid in sorted(set(attendu) | set(obtenu))
+              if attendu.get(rid) != obtenu.get(rid)]
+    ca, co = Counter(attendu.values()), Counter(obtenu.values())
+    lignes = [f"Journée de référence {ref['date']} à {ref['maintenant_utc']} ({ref['horizon']}) : "
+              f"attendu {ca.get('ELIGIBLE', 0)} éligibles / {sum(ca.values()) - ca.get('ELIGIBLE', 0)} abstentions, "
+              f"obtenu {co.get('ELIGIBLE', 0)} / {sum(co.values()) - co.get('ELIGIBLE', 0)}",
+              "Parité : " + ("✅ identique course par course" if not ecarts else f"⛔ {len(ecarts)} écart(s)")]
+    lignes += [f"  {rid} : attendu {a}, obtenu {o}" for rid, a, o in ecarts[:20]]
+    return not ecarts, lignes, ecarts
+

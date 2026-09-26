@@ -2,6 +2,13 @@
 
 Toute évolution de formule, de paramètre ou de contrat est consignée ici avec sa date. Les éditions passées ne sont jamais recalculées.
 
+## 2026-09-26 — Fixture synthétique générée ; parité de la porte sur la base R2 (décision du mentor du 25/09, point 1)
+
+- L'extrait réel `fixtures/snapshot/turf_bench.db` (Sprint 1) est retiré du dépôt, avec `scripts/make_fixture.py`. Aucune base autre que `bases.db` n'est suivie : l'exception du test anti-base est supprimée. Pas de réécriture d'historique (dépôt privé).
+- `scripts/generer_fixture.py` génère à chaque session de tests (`tests/conftest.py`, répertoire temporaire) une base limitée aux colonnes lues. Entrée : `fixtures/synthetique/programme_public.json`, données publiques PMU des 20 et 21/09 (programme, partants, non-partants, cotes du matin, paris, arrivées, horizons publiés). Toutes les sorties du moteur (probabilités, sélections, empreintes, verrous) sont synthétisées avec une graine fixe. Le 21/09 synthétique redonne 20 éditions et 12 abstentions.
+- Journée de cas limites volontaires « SYNTHESE » au 18/09, avec ses JSON de résultats générés : moins de 8 partants, no bet, T_MATIN absent, non-partant dans la sélection, cotes manquantes, aucune cote, ex-aequo à la 3e place (6 tests de bout en bout).
+- Commande `parite-porte` : rejoue le 21/09/2026 à 09:05 sur la base R2 et compare course par course à `fixtures/synthetique/parite_2026-09-21.json` ; échec = job rouge et annotation « Parité de porte ». Workflow `.github/workflows/parite.yml` à chaque modification du code de la porte (`eligibility.py`, `porte.py`, `config.py`, référence) ; rejouée aussi par l'hebdo avec la base déjà lue (ligne dans le rapport, alerte si rompue).
+
 ## 2026-09-25 — Porte divergente : comparaison quotidienne porte reconstituée ↔ publication du moteur
 
 - `bases_engine/porte.py` : verdict de porte par course, indépendant de l'heure (OK, RACE_CANCELLED, ODDS_DEFAULT, NO_T_MATIN), mêmes règles que l'éligibilité en mode matin (test de cohérence sur les 32 courses du 21/09).

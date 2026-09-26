@@ -183,9 +183,25 @@ def weekly_markdown(day: str, stats: dict, params_new: dict | None, start: str |
               "", "| Jour | Servi par |", "|---|---|"] + [f"| {d} | {how} |" for d, how in metro["jours"]]
         L += ["", f"Écarts d'empreinte persistants (manifeste ↔ journée, 7 derniers jours) : **{metro.get('ecarts_empreinte', 0)}**."]
         L += [f"Portes divergentes (porte reconstituée ↔ publication du moteur, 7 derniers jours) : **{metro.get('portes_divergentes', 0)}**."]
+        L += ["", "Parité de la porte (21/09/2026 rejoué sur la base R2) : " + (metro.get("parite") or "non exécutée (instantané indisponible)")]
     L += ["", "## Rendement des structures de ticket", "", "_Non calculé : le mapping des rapports (`docs/rapports_mapping.md`) n'est pas validé par Steph. Informatif et « non validé » le jour où il le sera._", "",
           "---", "_Aucun chiffre retouché. Les répétitions manuelles antérieures au début du protocole sont exclues._"]
     return "\n".join(L) + "\n"
+
+
+def _parite_hebdo(snap, day: str) -> str | None:
+    if snap is None:
+        return None
+    from .porte import parite
+    con = snap.connect()
+    try:
+        ok, lignes, _ = parite(con)
+    finally:
+        con.close()
+    if not ok:
+        print(f"::error title=Parité de porte::{lignes[1]}")
+        notify("alerte", f"⛔ BASES — parité de la porte rompue ({day})", "\n".join(lignes), date=day)
+    return " · ".join(lignes[:2]) + ("" if ok else " — " + "; ".join(l.strip() for l in lignes[2:6]))
 
 
 def run_hebdo(*, day: str | None = None, db_path=config.DB_PATH, recalibrer: bool = True, declencheur: str | None = None) -> int:
@@ -216,6 +232,7 @@ def run_hebdo(*, day: str | None = None, db_path=config.DB_PATH, recalibrer: boo
         metro = storage.metronome_counter(con, day)
         metro["ecarts_empreinte"] = storage.incidents_count(con, "ECART_EMPREINTE_PERSISTANT", day)
         metro["portes_divergentes"] = storage.incidents_count(con, "PORTE_DIVERGENTE", day)
+        metro["parite"] = _parite_hebdo(snap, day)
         md = weekly_markdown(day, stats, new, storage.protocol_start_date(con), n_rep, intraday, metro)
         d = datetime.strptime(day, "%Y-%m-%d")
         path = config.RAPPORTS_DIR / f"{d.isocalendar()[0]}-W{d.isocalendar()[1]:02d}.md"

@@ -37,3 +37,8 @@ Une passe planifiée qui trouve la journée déjà servie sort en répétition e
 - Lecture : un seul GET (métadonnées et contenu dans la même réponse). Écart d'empreinte : jusqu'à 3 nouvelles lectures à 30 s, puis job rouge. `NoSuchKey` (clé renommée) : job rouge. Budget : 4 téléchargements par jour.
 - `contract-check` n'échoue que sur une colonne attendue absente ou renommée, ou un `contract_version` inattendu ; le reste est signalé en avertissement.
 
+## Parité de la porte et fixture de test (depuis le 26/09/2026)
+
+- **Parité** : Actions → « Parité de la porte » (automatique à chaque push touchant le code de la porte ; lancement manuel possible). Rejoue le 21/09/2026 à 09:05 sur la base R2 : attendu 20 éligibles et 12 abstentions, identiques course par course. Rouge = la porte ou la base a changé : lire les écarts dans le résumé du run. L'hebdo du lundi la rejoue aussi.
+- **Fixture** : les tests génèrent eux-mêmes leur base synthétique (`scripts/generer_fixture.py`) ; aucune base du moteur n'est jamais committée.
+

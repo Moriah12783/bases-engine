@@ -46,7 +46,6 @@ def test_added_columns_and_tables_are_ignored(snapshot, tmp_path):
     db = tmp_path / "turf_bench.db"; shutil.copy(snapshot.db_path, db)
     con = sqlite3.connect(db)
     con.execute("alter table predictions add column nouvelle_colonne TEXT"); con.execute("create table nouvelle_table (x INTEGER)")
-    con.execute("drop table rapports")                               # table non lue par Bases : sa disparition est sans effet
     con.commit(); con.close()
     res = run_contract_checks(Snapshot("ajout", tmp_path, db, {}), "2026-09-21", network=False)
     assert res.ok, res.summary()

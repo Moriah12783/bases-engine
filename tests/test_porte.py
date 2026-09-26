@@ -54,3 +54,16 @@ def test_soir_says_plainly_when_the_engine_publication_source_is_missing(tmp_pat
     assert run_soir(day="2026-09-21", results_client=results_client, db_path=db, n_sims=2000, declencheur="metronome") == 0
     assert "comparaison de porte non disponible" in (tmp_path / "rapports" / "journal" / "2026-09-21.md").read_text(encoding="utf-8")
     assert storage.incidents_count(storage.connect(db), "PORTE_DIVERGENTE", "2026-09-21") == 0
+
+
+def test_gate_parity_on_reference_day_and_gap_report(snapshot, tmp_path):
+    """La base synthétique reproduit le 21/09 : parité course par course ; une référence altérée est signalée."""
+    import json
+    con = snapshot.connect()
+    ok, lignes, ecarts = porte.parite(con)
+    assert ok and not ecarts and "attendu 20 éligibles / 12 abstentions, obtenu 20 / 12" in lignes[0]
+    ref = json.loads(porte.REFERENCE_PARITE.read_text(encoding="utf-8"))
+    ref["decisions"]["R1C1_21092026_LA CAPELLE"] = "FIELD_TOO_SMALL"
+    p = tmp_path / "ref.json"; p.write_text(json.dumps(ref), encoding="utf-8")
+    ok, lignes, ecarts = porte.parite(con, p)
+    assert not ok and ecarts == [("R1C1_21092026_LA CAPELLE", "FIELD_TOO_SMALL", "ELIGIBLE")] and "1 écart(s)" in lignes[1]

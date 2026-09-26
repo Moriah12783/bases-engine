@@ -1,0 +1,38 @@
+name: Parité de la porte
+
+# Décision du mentor du 25/09/2026 : le test de parité de la porte (21/09/2026 : 20 éditions, 12 abstentions) se joue sur la
+# base R2, à chaque modification du code de la porte ; il est aussi rejoué par l'hebdo. Lecture seule, aucun commit.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bases_engine/eligibility.py"
+      - "bases_engine/porte.py"
+      - "bases_engine/config.py"
+      - "fixtures/synthetique/parite_2026-09-21.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bases-parite
+  cancel-in-progress: false
+
+jobs:
+  parite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Parité de la porte sur la base R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: python -m bases_engine parite-porte

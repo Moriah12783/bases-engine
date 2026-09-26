@@ -91,3 +91,8 @@ Brief de 5 lignes à demander en début de session ; journal mis à jour à chaq
 - Le jour venu : éligibilité sur la décision T_MATIN enregistrée ; porte reconstituée en parallèle quelques jours (parité, écarts consignés) puis en retrait ; changement de gate_version → annotation + procédure « changements externes » ; basculement consigné au protocole ; paramètres gelés intacts.
 - Interdit en attendant : page d'accueil de prono (archive publique inutilisable : états finaux, arrêt au 03/09).
 - 25/09 : journée partielle, 15 éditions (frappe de 11:05). Aucune journée perdue ; verdict au 20/10.
+
+## 2026-09-26 (matin) — Contrôle vert ; point 1 du mentor réalisé
+
+- Contrôle 09:50 : filets soir de la nuit (00:23, 01:59) en répétition, déploiement sauté ; matin métronome 09:05 sur R2 (sha256 1df95b77b426, poussée 09:02:22) : 21 éditions, 4 abstentions, déployé ; aucune alerte, aucune journée perdue.
+- Fait : fixture synthétique générée à chaque session (spec publique PMU + sorties moteur synthétisées), journée de cas limites 18/09, extrait réel et make_fixture.py retirés, exception anti-base supprimée ; commande parite-porte + workflow parite.yml + hebdo.

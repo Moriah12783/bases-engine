@@ -7,4 +7,3 @@ site/shadow/
 # Base du moteur : jamais committée (décision du mentor du 25/09/2026). Seule bases.db est suivie.
 *.db
 !bases.db
-!fixtures/snapshot/turf_bench.db
